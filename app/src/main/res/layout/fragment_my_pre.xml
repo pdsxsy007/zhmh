@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/view2"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimaryDark"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:id="@+id/layout_back"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:onClick="onBack">
+
+                <ImageView
+                    android:id="@+id/iv_back"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp15"
+                    android:padding="@dimen/dp5"
+                    android:src="@mipmap/navibar_back" />
+
+
+                <TextView
+                    android:layout_centerVertical="true"
+                    android:id="@+id/tv_title"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:layout_centerHorizontal="true"
+                    android:textColor="@color/white"
+                    android:textSize="16sp"
+                    android:gravity="center"
+                    android:text="标题"
+                    />
+
+                <TextView
+                    android:id="@+id/tv_sure"
+                    android:visibility="gone"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp"
+                    android:textColor="@color/white"
+                    android:layout_alignParentRight="true"
+                    android:layout_alignBottom="@+id/tv_title"
+                    android:gravity="center"
+                    android:layout_marginRight="@dimen/dp12"
+                    android:text="@string/setting"
+                    />
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="@dimen/dp12">
+
+                <ImageView
+                    android:id="@+id/iv_user_head"
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:padding="@dimen/dp8"
+                    android:layout_gravity="center_horizontal"
+                    android:src="@drawable/tab_my" />
+
+                <TextView
+                    android:id="@+id/tv_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/dp8"
+                    android:padding="@dimen/sp8"
+                    android:textSize="@dimen/sp12"
+                    android:layout_toRightOf="@+id/iv_user_head"
+                    android:text="名字"/>
+
+                <TextView
+                    android:visibility="visible"
+                    android:id="@+id/tv_company"
+                    android:layout_below="@+id/tv_user_name"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp12"
+                    android:padding="@dimen/sp8"
+                    android:layout_toRightOf="@+id/iv_user_head"
+                    android:text="专业"/>
+            </RelativeLayout>
+        </LinearLayout>
+
+        <!--<View-->
+            <!--style="@style/view"-->
+            <!--android:layout_marginLeft="@dimen/sp16"-->
+            <!--android:layout_marginRight="@dimen/sp16"/>-->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="@dimen/sp18"
+            android:layout_marginRight="@dimen/sp12"
+            android:layout_marginLeft="@dimen/sp12"
+            android:orientation="horizontal">
+
+            <RelativeLayout
+                android:visibility="gone"
+                android:id="@+id/rv_my_data"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_data_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:padding="@dimen/sp8"
+                    android:textSize="@dimen/sp16"
+                    android:text="0"
+                    android:textColor="@color/black2"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:layout_below="@+id/tv_data_num"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/sp12"
+                    android:text="个人信息"
+                    />
+
+
+            </RelativeLayout>
+            <RelativeLayout
+                android:id="@+id/rv_my_collection"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+                <TextView
+                    android:id="@+id/tv_my_collection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:padding="@dimen/sp8"
+                    android:textSize="@dimen/sp16"
+                    android:textColor="@color/black2"
+                    android:text="0"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:layout_below="@+id/tv_my_collection"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/sp12"
+                    android:text="我的收藏"
+                    />
+
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:id="@+id/rv_my_to_do_msg"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1">
+
+                <TextView
+                    android:id="@+id/tv_my_to_do_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:padding="@dimen/sp8"
+                    android:textSize="@dimen/sp16"
+                    android:text="0"
+                    android:textColor="@color/black2"
+                    android:textStyle="bold"
+                    />
+                <TextView
+                    android:layout_below="@+id/tv_my_to_do_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerHorizontal="true"
+                    android:textSize="@dimen/sp12"
+                    android:text="我的消息"
+                    />
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_marginTop="14dp"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:padding="@dimen/sp12"
+            android:text="我的待办"
+            android:textColor="@color/black2"/>
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:background="@color/white2"
+            />
+
+        <android.support.v7.widget.RecyclerView
+            android:padding="5dp"
+            android:id="@+id/rv_to_do_msg_list"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+        </android.support.v7.widget.RecyclerView>
+
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/exit_login"
+        style="@style/button2"
+        android:text="退出登录"
+        />
+
+</LinearLayout>

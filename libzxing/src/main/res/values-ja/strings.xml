@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="jwstr_scan_it">スキャン</string>
+    <string name="jwstr_scan_text">QRコードを枠に映せば、自動でスキャンできます</string>
+    <string name="jwstr_prompt">注意事項</string>
+    <string name="jwstr_confirm">確認</string>
+</resources>

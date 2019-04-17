@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/layout_head_title_one"
+        android:id="@+id/id_title">
+    </include>
+    <View
+        style="@style/view2"/>
+
+    <!--手机号 tv_mobile-->
+    <LinearLayout
+
+        android:id="@+id/ll_my_mobile"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white"
+        android:layout_marginTop="@dimen/dp12">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.8"
+            android:text="手机号"
+            android:gravity="center|end"
+            android:padding="@dimen/sp12"/>
+
+        <EditText
+            android:id="@+id/tv_mobile"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:gravity="center|start"
+            android:padding="@dimen/sp12"
+            android:textColor="@color/black"
+            android:background="@null"
+            android:maxLines="1"
+            android:layout_weight="3"/>
+    </LinearLayout>
+
+    <Button
+        android:id="@+id/but_ok"
+        style="@style/button"
+        android:background="@color/title_bar_bg"
+        android:text="完成"/>
+</LinearLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="jwstr_scan_it">Escanear</string>
+    <string name="jwstr_scan_text">Coloque el código QR dentro de la caja para iniciar con el escaneo</string>
+    <string name="jwstr_prompt">Aviso</string>
+</resources>

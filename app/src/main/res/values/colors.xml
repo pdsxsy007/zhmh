@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#1d4481</color>
+    <color name="colorPrimaryDark">#1d4481</color>
+    <color name="colorAccent">#FF4081</color>
+
+    <color name="theme">#d51e36</color>
+    <color name="theme1">#986d5d</color>
+    <color name="theme2">#ed5634</color>
+    <color name="theme3">#E1D3CF</color>
+    <color name="theme4">#D7A19D</color>
+    <!--<color name="title_bar_bg">#3B8BEE</color>-->
+    <color name="title_bar_bg">#1d4481</color>
+     <color name="login_bg">#1D2E63</color>
+    <!--<color name="tab_bar_text_bg">#4B987C</color>-->
+    <color name="tab_bar_text_bg">#1d4481</color>
+    <color name="view">#c6c5c5</color>
+
+    <color name="blue">#31b4e4</color>
+    <color name="blue1">#7ECEF4</color>
+    <color name="blue2">#62A1F8</color>
+
+
+    <color name="view1">#f4f3f3</color>
+    <color name="view2">#edecec</color>
+    <color name="view3">#27d1d1d0</color>
+    <color name="view4">#e7e6e6</color>
+    <color name="view5">#f5f5f5</color>
+
+    <color name="white">#ffffff</color>
+    <color name="white1">#14fffefe</color>
+    <color name="app_bg">#f2f2f2</color>
+    <color name="rb_white">#00ffffff</color>
+    <color name="black">#232323</color>
+    <color name="black1">#600d0c0c</color>
+    <color name="black2">#dc1b1a1a</color>
+    <color name="black3">#4d4c4d</color>
+    <color name="black5">#ca0e0e0e</color>
+
+    <color name="white2">#7bf5eaea</color>
+    <color name="red1">#e77474</color>
+    <color name="gray">#8a8a8a</color>
+    <color name="gray1">#abaaaa</color>
+    <color name="gray2">#c2c2c2</color>
+    <color name="gray3">#707070</color>
+    <color name="gray4">#790e0e0e</color>
+
+    <color name="yellow">#ed9939</color>
+    <color name="yellow1">#ffdb4c</color>
+    <color name="yellow2">#F8B551</color>
+    <color name="yellow3">#EDC110</color>
+    <color name="yellow4">#997909</color>
+    <color name="yellow5">#DAA610</color>
+
+    <color name="orange">#f77344</color>
+    <color name="orange2">#ff8b34</color>
+    <color name="orange3">#ff8b34</color>
+    <color name="orange4">#92f98e4c</color>
+
+    <color name="viewfinder_mask">#60000000</color>
+    <color name="result_view">#B0000000</color>
+    <color name="viewfinder_frame">#90FFFFFF</color>
+    <color name="result_point_color">#C0FFFF00</color>
+    <color name="corner_color">#00FF00</color>
+    <color name="corner_color1">#ffffff</color>
+    <color name="green">#FF4C8354</color>
+
+    <color name="orange1">#ea5924</color>
+    <color name="colorbackground">#918f8f</color>
+    <color name="no">#00918f8f</color>
+    <color name="translucent">#85080707</color>
+    <color name="blue3">#3B8BEE</color>
+</resources>

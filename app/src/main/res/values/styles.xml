@@ -1,0 +1,88 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+    </style>
+
+    <style name="SplashTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="windowNoTitle">true</item>
+    </style>
+
+    <style name="radio_button">
+        <item name="android:layout_width">0dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:layout_weight">1</item>
+        <item name="android:textColor">@drawable/rb_text_color</item>
+        <item name="android:textSize">@dimen/sp10</item>
+        <item name="android:button">@null</item>
+        <item name="android:padding">@dimen/dp6</item>
+        <item name="android:gravity">center</item>
+        <item name="android:background">@drawable/rb_background</item>
+    </style>
+
+    <style name="button">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">39dp</item>
+        <item name="android:background">@drawable/shape_submit</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">@dimen/sp15</item>
+        <item name="android:layout_marginLeft">@dimen/dp20</item>
+        <item name="android:layout_marginRight">@dimen/dp20</item>
+        <item name="android:layout_marginTop">@dimen/dp30</item>
+    </style>
+
+    <style name="button2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">39dp</item>
+        <item name="android:background">@drawable/shape_button_white</item>
+        <item name="android:textColor">@color/gray3</item>
+        <item name="android:textSize">@dimen/sp15</item>
+        <item name="android:layout_marginLeft">@dimen/dp20</item>
+        <item name="android:layout_marginRight">@dimen/dp20</item>
+        <item name="android:layout_marginTop">@dimen/dp30</item>
+    </style>
+
+    <style name="loading_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:indeterminateDrawable">@drawable/progressbar</item>
+        <item name="android:windowFrame">@null</item><!--边框-->
+        <item name="android:windowIsFloating">true</item><!--是否浮现在activity之上-->
+        <item name="android:windowIsTranslucent">false</item><!--半透明-->
+        <item name="android:windowBackground">@android:color/transparent</item><!--背景透明-->
+        <item name="android:backgroundDimEnabled">false</item><!--模糊-->
+    </style>
+
+    <style name="view2">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp0.5</item>
+        <item name="android:background">@color/view1</item>
+    </style>
+
+    <style name="view1">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp10</item>
+        <item name="android:background">@color/view2</item>
+    </style>
+
+    <style name="view">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">@dimen/dp0.5</item>
+        <item name="android:background">@color/view</item>
+    </style>
+
+    <style name="style_text_size">
+        <item name="android:textSize">23sp</item>
+    </style>
+    <style name="style_text_size1">
+        <item name="android:textSize">18sp</item>
+    </style>
+
+    <!--沉浸式布局-->
+
+   <!-- ********************************************************************** -->
+</resources>

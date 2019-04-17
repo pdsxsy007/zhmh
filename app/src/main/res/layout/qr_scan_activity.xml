@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_head_title_one"
+        android:id="@+id/id_title">
+    </include>
+    <View
+        style="@style/view2"/>
+
+    <!--<TextView-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:padding="@dimen/sp12"-->
+        <!--android:text="点我"-->
+        <!--android:textSize="@dimen/sp12"-->
+        <!--android:onClick="onScanQR"-->
+        <!--android:textColor="@color/colorAccent"-->
+        <!--/>-->
+</LinearLayout>

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="jwstr_scan_it">scannen</string>
+    <string name="jwstr_scan_text">Automatisch scannen wenn der QR-Code in der Mitte steht</string>
+    <string name="jwstr_prompt">Hinweis</string>
+    <string name="jwstr_confirm">bestätigen</string>
+</resources>

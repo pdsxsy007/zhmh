@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+
+    tools:context="io.cordova.zhqy.Main2Activity"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <FrameLayout
+        android:id="@+id/frameLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/view"
+       />
+    <View android:id="@+id/view"
+    style="@style/view"
+    android:layout_above="@+id/main_radioGroup"    />
+
+    <RadioGroup
+        android:layout_alignParentBottom="true"
+        android:id="@+id/main_radioGroup"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:orientation="horizontal">
+
+        <RadioButton
+            style="@style/radio_button"
+            android:id="@+id/rb_home_page"
+            android:drawableTop="@drawable/tab_home_page"
+            android:text="@string/tab_home"/>
+
+
+        <RadioButton
+            style="@style/radio_button"
+            android:id="@+id/rb_recommend"
+            android:drawableTop="@drawable/tab_find"
+            android:text="@string/tab_find"/>
+
+        <RadioButton
+            style="@style/radio_button"
+            android:id="@+id/rb_shopping"
+            android:drawableTop="@drawable/tab_service_selector"
+            android:text="@string/tab_service"/>
+
+        <RadioButton
+            style="@style/radio_button"
+            android:id="@+id/rb_my"
+            android:drawableTop="@drawable/tab_my"
+            android:text="@string/tab_my"/>
+    </RadioGroup>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#00000000"
+        android:orientation="horizontal">
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:visibility="invisible" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:background="#00000000"
+            android:visibility="invisible" />
+
+        <Button
+            android:id="@+id/btn_my"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="invisible" />
+    </LinearLayout>
+
+</RelativeLayout>

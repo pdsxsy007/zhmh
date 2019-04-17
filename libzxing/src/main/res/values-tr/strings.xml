@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<resources>
+    <string name="jwstr_scan_it">Tarayın</string>
+    <string name="jwstr_scan_text">QR kodunu kutuya yerleştirin, otomatik olarak taranır.</string>
+    <string name="jwstr_prompt">Ipucu</string>
+    <string name="jwstr_confirm">onayla</string>
+</resources>

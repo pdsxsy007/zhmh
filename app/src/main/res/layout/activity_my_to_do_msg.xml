@@ -1,0 +1,491 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/view2"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+
+    <include layout="@layout/layout_head_title_one"
+        android:id="@+id/id_title">
+
+    </include>
+    <View
+        style="@style/view2"/>
+
+    <!--系统消息-->
+    <LinearLayout
+        android:id="@+id/ll_system_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/system_msg_img"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/sp8"
+            android:src="@mipmap/message_icon1"
+            android:layout_weight="1" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/system_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp12"
+                android:padding="@dimen/sp8"
+                android:textColor="@color/black"
+                android:text="系统消息"
+                android:textSize="@dimen/sp12"/>
+
+            <TextView
+                android:id="@+id/system_msg_present"
+                android:layout_below="@+id/system_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp8"
+                android:textColor="@color/black"
+                android:text="您还有未读系统消息"
+                android:layout_marginBottom="@dimen/dp6"
+                android:textSize="@dimen/sp12"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/tv_msg_num"
+                android:layout_toLeftOf="@+id/iv_next"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:textSize="@dimen/dp10"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:textColor="@color/white"
+                android:gravity="center"
+                android:padding="@dimen/dp3"
+                android:background="@drawable/shape_round_yellow"
+                android:text="100"/>
+
+<!--     android:id="@+id/iv_next" -->
+            <ImageView
+                android:visibility="gone"
+
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/dp12"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@mipmap/iv_go"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+    <View style="@style/view2"/>
+
+    <!--待办-->
+    <LinearLayout
+        android:id="@+id/ll_db_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/db_msg_img"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/sp8"
+            android:src="@mipmap/message_icon2"
+            android:layout_weight="1" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/db_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp12"
+                android:padding="@dimen/sp8"
+                android:textSize="@dimen/sp12"
+                android:textColor="@color/black"
+                android:text="待办消息"/>
+
+            <TextView
+                android:id="@+id/db_msg_present"
+                android:layout_below="@+id/db_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp8"
+                android:layout_marginBottom="@dimen/dp6"
+                android:textSize="@dimen/sp12"
+                android:textColor="@color/black"
+                android:text="您还有未读待办消息"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:visibility="visible"
+                android:id="@+id/db_msg_num"
+                android:layout_toLeftOf="@+id/iv_next"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:textSize="@dimen/dp10"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:padding="@dimen/dp3"
+                android:textColor="@color/white"
+                android:background="@drawable/shape_round_yellow"
+                android:text="100"/>
+
+            <!--     android:id="@+id/iv_next" -->
+            <ImageView
+                android:visibility="gone"
+
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/dp12"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@mipmap/iv_go"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+    <View style="@style/view2"/>
+
+    <!--待阅-->
+    <LinearLayout
+        android:id="@+id/ll_dy_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/dy_msg_img"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/sp8"
+            android:src="@mipmap/message_icon3"
+            android:layout_weight="1" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/dy_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp12"
+                android:padding="@dimen/sp8"
+                android:textSize="@dimen/sp12"
+                android:textColor="@color/black"
+                android:text="待阅消息"/>
+
+            <TextView
+                android:id="@+id/dy_msg_present"
+                android:layout_below="@+id/dy_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp8"
+                android:layout_marginBottom="@dimen/dp6"
+                android:textSize="@dimen/sp12"
+                android:textColor="@color/black"
+                android:text="您还有未读待阅消息"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:visibility="visible"
+                android:id="@+id/dy_msg_num"
+                android:layout_toLeftOf="@+id/iv_next"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:textSize="@dimen/dp10"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:background="@drawable/shape_round_yellow"
+                android:padding="@dimen/dp3"
+                android:text="100"/>
+
+            <!--     android:id="@+id/iv_next" -->
+            <ImageView
+                android:visibility="gone"
+
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/dp12"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@mipmap/iv_go"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+    <View style="@style/view2"/>
+
+    <!--已办-->
+    <LinearLayout
+        android:id="@+id/ll_yb_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/yb_msg_img"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/sp8"
+            android:src="@mipmap/message_icon4"
+            android:layout_weight="1" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/yb_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp12"
+                android:padding="@dimen/sp8"
+                android:textSize="@dimen/sp12"
+                android:text="已办消息"
+                android:textColor="@color/black"/>
+
+            <TextView
+                android:id="@+id/yb_msg_present"
+                android:layout_below="@+id/yb_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp8"
+                android:layout_marginBottom="@dimen/dp6"
+                android:textSize="@dimen/sp12"
+                android:text=""
+                android:textColor="@color/black"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/yb_msg_num"
+                android:layout_toLeftOf="@+id/iv_next"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:textSize="@dimen/dp10"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:background="@drawable/shape_round_yellow"
+                android:padding="@dimen/dp3"
+                android:text="100"/>
+
+            <!--     android:id="@+id/iv_next" -->
+            <ImageView
+                android:visibility="gone"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/dp12"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@mipmap/iv_go"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+    <View style="@style/view2"/>
+
+    <!--已阅-->
+    <LinearLayout
+        android:id="@+id/ll_yy_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/yy_msg_img"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:padding="@dimen/sp8"
+            android:src="@mipmap/message_icon5"
+            android:layout_weight="1" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/yy_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp12"
+                android:padding="@dimen/sp8"
+                android:textSize="@dimen/sp12"
+                android:textColor="@color/black"
+                android:text="已阅消息"/>
+
+            <TextView
+                android:id="@+id/yy_msg_present"
+                android:layout_below="@+id/yy_msg_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp8"
+                android:layout_marginBottom="@dimen/dp6"
+                android:textSize="@dimen/sp12"
+                android:textColor="@color/black"
+                android:text=""/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/yy_msg_num"
+                android:layout_toLeftOf="@+id/iv_next"
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+                android:textSize="@dimen/dp10"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:gravity="center"
+                android:textColor="@color/white"
+                android:background="@drawable/shape_round_yellow"
+                android:padding="@dimen/dp3"
+                android:text="100"/>
+
+            <!--     android:id="@+id/iv_next" -->
+            <ImageView
+                android:visibility="gone"
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/dp12"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@mipmap/iv_go"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+    <View style="@style/view2"/>
+
+    <!--我的消息-->
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/ll_my_msg"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <ImageView
+            android:id="@+id/my_msg_img"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:src="@mipmap/message_icon5"
+            android:padding="@dimen/sp12"
+            android:layout_weight="1" />
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="3">
+
+            <TextView
+                android:id="@+id/yy_msg_sq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp12"
+                android:padding="@dimen/sp8"
+                android:textSize="@dimen/sp12"
+                android:textColor="@color/black"
+                android:text="我的申请"/>
+
+            <TextView
+                android:id="@+id/my_msg_present"
+                android:layout_below="@+id/yy_msg_sq"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/sp8"
+                android:layout_marginBottom="@dimen/dp6"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp12"/>
+
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:visibility="gone"
+                android:id="@+id/my_msg_num"
+                android:layout_toLeftOf="@+id/iv_next"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="@dimen/dp10"
+                android:layout_centerVertical="true"
+                android:layout_centerHorizontal="true"
+                android:layout_marginRight="@dimen/dp8"
+                android:textColor="@color/white"
+                android:background="@drawable/shape_round_yellow"
+                android:padding="@dimen/sp6"
+                android:text="100"/>
+
+            <!--     android:id="@+id/iv_next" -->
+            <ImageView
+                android:visibility="gone"
+
+                android:layout_width="18dp"
+                android:layout_height="18dp"
+                android:layout_gravity="center_vertical"
+                android:layout_marginRight="@dimen/dp12"
+                android:layout_centerVertical="true"
+                android:layout_alignParentEnd="true"
+                android:src="@mipmap/iv_go"/>
+        </RelativeLayout>
+
+
+    </LinearLayout>
+    <View style="@style/view2"/>
+
+
+</LinearLayout>

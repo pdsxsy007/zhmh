@@ -1,0 +1,18 @@
+<resources>
+    <string name="app_name">i 轻工大</string>
+
+
+    <string name="input_phoneNum">登录账号</string>
+    <string name="input_passWord">登录密码</string>
+    <string name="login">登录</string>
+    <string name="exit_out">退出登录</string>
+    <string name="setting">设置</string>
+    <string name="tab_home">主页</string>
+    <string name="tab_service">应用服务</string>
+    <string name="tab_find">综合信息</string>
+    <string name="tab_my">我的</string>
+
+
+
+
+</resources>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:background="@color/view2"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    android:id="@+id/linearLayout"
+    android:orientation="vertical">
+
+
+    <include layout="@layout/layout_head_title_one"
+        android:id="@+id/id_title">
+
+    </include>
+
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipeLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+      <!--<LinearLayout-->
+          <!--android:id="@+id/ll_refresh"-->
+          <!--android:layout_width="match_parent"-->
+          <!--android:layout_height="match_parent"-->
+          <!--android:orientation="vertical">-->
+
+      <!--</LinearLayout>-->
+
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+    <!--<include layout="@layout/layout_head_title_one"-->
+        <!--android:id="@+id/id_title"></include>-->
+    <!--<View-->
+        <!--style="@style/view2"/>-->
+
+
+
+  <!--  <ScrollView
+        android:visibility="gone"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <com.youth.banner.Banner
+                android:id="@+id/banner"
+                android:layout_width="match_parent"
+                android:layout_height="160dp"
+                app:indicator_drawable_selected="@color/title_bar_bg"
+                app:indicator_drawable_unselected="@color/viewfinder_mask"
+                app:image_scale_type="center_crop"
+                app:indicator_height="4dp"
+                app:indicator_margin="4dp"
+                app:indicator_width="20dp">
+            </com.youth.banner.Banner>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/white"
+                android:orientation="horizontal"
+                >
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:padding="@dimen/dp8"
+                    android:text="热点"/>
+                <TextView
+                    android:layout_width="2dp"
+                    android:layout_height="10dp"
+                    android:background="@color/yellow"
+                    android:layout_gravity="center"
+                    android:layout_marginLeft="8sp"
+                    />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_margin="@dimen/dp8"
+                    android:layout_weight="1"
+                    android:layout_gravity="center"
+                    android:text="消息"/>
+
+                <TextView
+                    android:id="@+id/tv_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="time"/>
+
+            </LinearLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/dp8"
+                android:background="@color/white">
+
+                <ImageView
+                    android:id="@+id/iv_to_do_msg"
+                    android:layout_width="60dp"
+                    android:layout_height="60dp"
+
+                    />
+                <TextView
+                    android:id="@+id/how_to_do_msg"
+                    android:layout_toRightOf="@+id/iv_to_do_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp12"
+                   android:padding="@dimen/sp8"
+                    />
+                <TextView
+                    android:id="@+id/unread_msg"
+                    android:layout_toRightOf="@+id/iv_to_do_msg"
+                    android:layout_below="@+id/how_to_do_msg"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textSize="@dimen/sp8"
+                    />
+
+                <TextView
+                    android:id="@+id/see_msg_details"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/sp8"
+                    android:layout_centerVertical="true"
+                    android:layout_alignParentRight="true"
+                    android:textSize="@dimen/sp12"
+                    android:textColor="@color/blue3"
+                    android:text="查看详情"/>
+            </RelativeLayout>
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+
+
+
+            </RelativeLayout>
+
+        </LinearLayout>
+
+
+    </ScrollView>-->
+
+</LinearLayout>

@@ -1,0 +1,124 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:background="@color/title_bar_bg"
+    android:layout_width="match_parent"
+    android:layout_height="45dp">
+
+
+    <RelativeLayout
+        android:id="@+id/layout_back"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_centerVertical="true"
+        android:onClick="onBack">
+
+        <ImageView
+            android:id="@+id/iv_back"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginLeft="@dimen/dp12"
+            android:padding="@dimen/dp5"
+            android:src="@mipmap/navibar_back" />
+
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:layout_toRightOf="@+id/layout_back"
+        android:visibility="gone"
+        android:id="@+id/layout_close"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+
+        >
+        <ImageView
+            android:id="@+id/iv_close"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:paddingRight="@dimen/sp12"
+            android:src="@mipmap/cha" />
+
+    </RelativeLayout>
+
+    <TextView
+        android:layout_centerVertical="true"
+        android:id="@+id/tv_title"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:layout_centerHorizontal="true"
+        android:textColor="@color/white"
+        android:textSize="16sp"
+        android:gravity="center"
+        />
+
+    <TextView
+        android:id="@+id/tv_sure"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:textColor="@color/white"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/tv_title"
+        android:gravity="center"
+        android:layout_marginRight="@dimen/dp12"
+        android:text="@string/setting"
+        />
+
+
+    <CheckBox
+        android:id="@+id/rb_sc"
+        android:visibility="gone"
+        android:layout_width="wrap_content"
+        android:layout_height="40dp"
+        android:textColor="@color/white"
+        android:layout_alignParentRight="true"
+        android:layout_alignBottom="@+id/tv_title"
+        android:gravity="center"
+        android:layout_marginRight="@dimen/dp12"
+        android:padding="4dp"
+        android:button="@null"
+        android:drawableTop="@drawable/is_my_collection"
+        android:text="@string/tab_service"
+        android:checked="false"
+        tools:ignore="RelativeOverlap" />
+
+
+    <ImageView
+        android:id="@+id/iv_searcch"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/dp10"
+        android:src="@mipmap/search_ing_b"
+        android:visibility="gone" />
+
+    <RelativeLayout
+        android:id="@+id/layout_msg"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="19dp"
+        android:padding="8dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/msg_hint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:src="@mipmap/search_icon"
+            android:visibility="visible" />
+
+        <TextView
+            android:id="@+id/msg_num"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/wane_text_gay_kuang"
+            android:padding="@dimen/dp3"
+            android:layout_toRightOf="@+id/msg_hint"
+            android:text="30"
+            android:textSize="@dimen/sp8" />
+    </RelativeLayout>
+
+</RelativeLayout>

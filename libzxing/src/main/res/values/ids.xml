@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Messages IDs -->
+    <item name="jwstr_decode" type="id" />
+    <item name="jwstr_decode_succeeded" type="id" />
+    <item name="jwstr_quit" type="id" />
+    <item name="jwstr_restart_preview" type="id" />
+    <item name="jwstr_return_scan_result" type="id" />
+    <item name="jwstr_decode_failed" type="id" />
+</resources>
