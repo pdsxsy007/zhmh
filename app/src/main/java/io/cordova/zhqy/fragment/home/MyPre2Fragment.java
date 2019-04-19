@@ -27,6 +27,8 @@ import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,7 +41,10 @@ import io.cordova.zhqy.activity.AppSetting;
 import io.cordova.zhqy.activity.MyCollectionActivity;
 import io.cordova.zhqy.activity.MyDataActivity;
 import io.cordova.zhqy.activity.MyToDoMsgActivity;
+import io.cordova.zhqy.activity.OaMsgActivity;
+import io.cordova.zhqy.adapter.MyAdapter;
 import io.cordova.zhqy.bean.AppListBean;
+import io.cordova.zhqy.bean.CountBean;
 import io.cordova.zhqy.bean.MyCollectionBean;
 import io.cordova.zhqy.bean.OAMsgListBean;
 import io.cordova.zhqy.bean.ServiceAppListBean;
@@ -112,11 +117,11 @@ public class MyPre2Fragment extends BaseFragment {
         super.initView(view);
         initLoadPage();
         //情况C(默认情况)
-        remind(rlMsgApp);
+
     }
     private void remind(View view) { //BadgeView的具体使用
         BadgeView badge1 = new BadgeView(getActivity(), view);// 创建一个BadgeView对象，view为你需要显示提醒的控件
-        badge1.setText("110"); // 需要显示的提醒类容
+        badge1.setText(countBean2.getCount()+Integer.parseInt(countBean1.getObj())+countBean3.getCount()+""); // 需要显示的提醒类容
         badge1.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);// 显示的位置.右上角,BadgeView.POSITION_BOTTOM_LEFT,下左，还有其他几个属性
         badge1.setTextColor(Color.WHITE); // 文本颜色
         badge1.setBadgeBackgroundColor(Color.RED); // 提醒信息的背景颜色，自己设置
@@ -138,9 +143,11 @@ public class MyPre2Fragment extends BaseFragment {
     private void isLoginState() {
         if (isLogin){
             netWorkUserMsg();
-            netWorkOAToDoMsg();//OA待办
-//            netWorkMyCollection();//我的收藏
+            netWorkSystemMsg();
+
+            netWorkMyCollection();//我的收藏
             netWorkMyData();//我的信息
+            dbDataList();
             tvDataNum.setText("11");
             //情况E(小红点与图片重叠)+ 数字模式
 
@@ -148,6 +155,33 @@ public class MyPre2Fragment extends BaseFragment {
             ((Main2Activity)  getActivity()).mainRadioGroup.check(R.id.rb_home_page);
             ((Main2Activity)  getActivity()).showFragment(0);
         }
+    }
+
+    private void dbDataList() {
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_workFolwDbList)
+                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .params("type","db")
+                .params("workType","workdb")
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("s",response.toString());
+                        oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean.class);
+                        if (oaMsgListBean.isSuccess()) {
+                            Log.i("消息列表",response.body());
+                            setRvOAMsgList();
+
+                        }else {
+                            T.showShort(MyApp.getInstance(), "没有数据");
+                        }
+                    }
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+
+
+                    }
+                });
     }
 
     /**点击事件*/
@@ -200,11 +234,7 @@ public class MyPre2Fragment extends BaseFragment {
                                 tvZhangye.setText(userMsgBean.getObj().getModules().getMemberOtherDepartment().toString());
                             }
                             tvUserName.setText(userMsgBean.getObj().getModules().getMemberNickname());
-                            Glide.with(getActivity())
-                                    .load(UrlRes.HOME3_URL + userMsgBean.getObj().getModules().getMemberImage())
-                                    .transform(new CircleCrop(getActivity()))
-                                    .error(R.mipmap.tabbar_user_pre)
-                                    .into(ivUserHead);
+
                             StringBuilder sb = new StringBuilder();
                             if (userMsgBean.getObj().getModules().getRolecodes().size() > 0){
                                 for (int i = 0; i < userMsgBean.getObj().getModules().getRolecodes().size(); i++) {
@@ -215,16 +245,36 @@ public class MyPre2Fragment extends BaseFragment {
                             String ss = sb.substring(0, sb.lastIndexOf(","));
                             Log.e("TAG",ss);
                             SPUtils.put(MyApp.getInstance(),"rolecodes",ss);
+
+                            /*获取头像*/
+                            netGetUserHead();
                         }
                     }
                 });
 
     }
 
+    private void netGetUserHead() {
+//        ?memberId=admin&pwd=d632eeeb1548643667060e18656e0112
+        try {
+            String pwd = URLEncoder.encode(userMsgBean.getObj().getModules().getMemberPwd(),"UTF-8");
+         String ingUrl =  "http://kys.zzuli.edu.cn/authentication/public/getHeadImg?memberId="+userMsgBean.getObj().getModules().getMemberUsername()+"&pwd="+pwd;
+
+            Glide.with(getActivity())
+                    .load(ingUrl)
+                    .transform(new CircleCrop(getActivity()))
+                    .error(R.mipmap.tabbar_user_pre)
+                    .into(ivUserHead);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+    }
+
+    CountBean countBean2;
     /**OA消息列表*/
     OAMsgListBean oaMsgListBean;
     private void netWorkOAToDoMsg() {
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.OA_Msg_List)
+       /* OkGo.<String>post(UrlRes.HOME_URL + UrlRes.OA_Msg_List)
                 .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .params("platformtype", "H5手机端")
                 .params("sizes",5)
@@ -242,7 +292,7 @@ public class MyPre2Fragment extends BaseFragment {
                                         allMsgNum = allMsgNum + oaMsgListBean.getObj().size();
                                     Log.e("allMsgNum",allMsgNum+"");
                                 }
-                                tvMyToDoMsgNum.setText(oaMsgListBean.getObj().size()+"");
+                                //tvMyToDoMsgNum.setText(oaMsgListBean.getObj().size()+"");
                                 setRvOAMsgList();
                             }
                         }else {
@@ -257,6 +307,25 @@ public class MyPre2Fragment extends BaseFragment {
                         llOa.setVisibility(View.GONE);
                         ViewUtils.cancelLoadingDialog();
                         T.showShort(MyApp.getInstance(), "没有数据");
+                    }
+                });*/
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
+                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .params("type", "db")
+                .params("workType", "workdb")
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("s",response.toString());
+
+                        countBean2 = JSON.parseObject(response.body(), CountBean.class);
+                        netWorkDyMsg();
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+
                     }
                 });
     }
@@ -538,4 +607,55 @@ public class MyPre2Fragment extends BaseFragment {
         super.onResume();
 
     }
+
+    CountBean countBean1;
+    /** 获取消息数量*/
+
+    private void netWorkSystemMsg() {
+        String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_countUnreadMessagesForCurrentUser)
+                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("s",response.toString());
+
+                        countBean1 = JSON.parseObject(response.body(), CountBean.class);
+                        //yy_msg_num.setText(countBean.getCount()+"");
+                        netWorkOAToDoMsg();//OA待办
+
+                    }
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+
+                    }
+                });
+    }
+    CountBean countBean3;
+    private void netWorkDyMsg() {
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
+                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .params("type", "dy")
+                .params("workType", "workdb")
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("s",response.toString());
+
+                        countBean3 = JSON.parseObject(response.body(), CountBean.class);
+
+                        tvMyToDoMsgNum.setText(countBean2.getCount()+Integer.parseInt(countBean1.getObj())+countBean3.getCount()+"");
+                        remind(rlMsgApp);
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+
+                    }
+                });
+    }
+
+
 }

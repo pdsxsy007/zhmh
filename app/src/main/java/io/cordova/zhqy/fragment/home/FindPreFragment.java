@@ -10,6 +10,7 @@ import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -42,6 +43,7 @@ import io.cordova.zhqy.utils.BaseFragment;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.web.BaseWebActivity;
 import io.cordova.zhqy.web.FileUtil;
+import io.cordova.zhqy.web.WebLayout;
 
 /**
  * Created by Administrator on 2018/11/19 0019.
@@ -94,6 +96,7 @@ public class FindPreFragment extends BaseFragment {
                 .setAgentWebWebSettings(getSettings())//设置 IAgentWebSettings。
                 .setWebViewClient(mWebViewClient)//WebViewClient ， 与 WebView 使用一致 ，但是请勿获取WebView调用setWebViewClient(xx)方法了,会覆盖AgentWeb DefaultWebClient,同时相应的中间件也会失效。
                 .setWebChromeClient(mWebChromeClient) //WebChromeClient
+                .setWebLayout(new WebLayout(getActivity()))
                 .setPermissionInterceptor(mPermissionInterceptor) //权限拦截 2.0.0 加入。
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.DISALLOW)//打开其他页面时，弹窗质询用户前往其他应用 AgentWeb 3.0.0 加入。
                 .interceptUnkownUrl() //拦截找不到相关页面的Url AgentWeb 3.0.0 加入。
@@ -167,34 +170,11 @@ public class FindPreFragment extends BaseFragment {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-
             super.onPageFinished(view, url);
-//            String Ull = "http://platform.gilight.cn/cas/login";
-//////                    if (url.equals("http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html")|| url.equals("http://iapp.zzuli.edu.cn/portal/portal-app/app-5/yingyong.html")){
-//            CookieManager cookieManager2 = CookieManager.getInstance();
-//            String cookieStr2 = cookieManager2.getCookie(Ull);
-//            Log.i("onPageFinished", "== " + cookieStr2);
-//            if (!StringUtils.isEmpty(cookieStr2)){
-//                if (cookieStr2.contains("CASTGC") ){
-//                    String tgcw =  cookieStr2.substring(cookieStr2.indexOf("CASTGC=")+7);
-//                    tgc = tgcw.substring(0,tgcw.indexOf(";"));
-//                    if (tgc.equals(SPUtils.get(getApplication(), "ChangTgt", ""))){
-//
-//                        ChangeTgt = false;
-//                    }else {
-//                        ChangeTgt = true;
-//                        isFirst = true;
-//                    }
-//                    SPUtils.put(getApplication(),"ChangTgt",tgc);
-//                }
-//            }
-//
-//            if (ChangeTgt){
-//                if (!StringUtils.isEmpty(tgc)){
-//                    getUserId();
-//                }
-//            }
-
+            CookieManager cookieManager = CookieManager.getInstance();
+            if(Build.VERSION.SDK_INT>=21){
+                cookieManager.setAcceptThirdPartyCookies(view, true);
+            }
         }
 
         /**网址拦截*/

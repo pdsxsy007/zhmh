@@ -1,11 +1,13 @@
 package io.cordova.zhqy.activity;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -19,16 +21,19 @@ import com.scwang.smartrefresh.layout.api.RefreshLayout;
 import com.scwang.smartrefresh.layout.listener.OnLoadmoreListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.scwang.smartrefresh.layout.listener.OnRefreshLoadmoreListener;
+import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 
 import butterknife.BindView;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
+import io.cordova.zhqy.adapter.MyRefrshAdapter;
 import io.cordova.zhqy.adapter.RefreshAdapter;
 import io.cordova.zhqy.bean.SysMsgBean;
 import io.cordova.zhqy.utils.BaseActivity2;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.ToastUtils;
+import io.cordova.zhqy.utils.ViewUtils;
 
 
 /**
@@ -47,7 +52,7 @@ public class SystemMsgActivity extends BaseActivity2 {
     private LinearLayoutManager mLinearLayoutManager;
     int num = 1,pageSize = 20;
     String msgType;
-    private RefreshAdapter adapter;
+    private MyRefrshAdapter adapter;
     @Override
     protected int getResourceId() {
         return  R.layout.oa_msg_activity;
@@ -60,7 +65,13 @@ public class SystemMsgActivity extends BaseActivity2 {
         tvTitle.setText(msgType);
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayout.VERTICAL,false);
         rvMsgList.setLayoutManager(mLinearLayoutManager);
+        ViewUtils.createLoadingDialog(this);
         netWorkSysMsgList();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
 
     }
 
@@ -84,6 +95,7 @@ public class SystemMsgActivity extends BaseActivity2 {
     }
 
     private void netWorkSysMsgListOnLoadMore(final RefreshLayout refreshlayout) {
+
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.System_Msg_List)
                 .params("version","1.0")
                 .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -94,7 +106,7 @@ public class SystemMsgActivity extends BaseActivity2 {
                     public void onSuccess(Response<String> response) {
                         Log.e("SysMsg",response.body());
                         SysMsgBean sysMsgBean2 = JSON.parseObject(response.body(), SysMsgBean.class);
-
+                            ViewUtils.cancelLoadingDialog();
                         if (sysMsgBean2.getObj().size() > 0) {
                             Log.i("消息列表",response.body());
                             sysMsgBean.getObj().addAll(sysMsgBean2.getObj());
@@ -129,10 +141,11 @@ public class SystemMsgActivity extends BaseActivity2 {
 
                         if (sysMsgBean.isSuccess()) {
                             Log.i("消息列表",response.body());
-                            adapter = new RefreshAdapter(SystemMsgActivity.this,sysMsgBean.getObj());
+                            adapter = new MyRefrshAdapter(SystemMsgActivity.this,R.layout.item_to_do_my_msg,sysMsgBean.getObj());
                             rvMsgList.setAdapter(adapter);
                             num = 2;
                             refreshlayout.finishRefresh();
+
                         }else {
 
                         }
@@ -158,12 +171,13 @@ public class SystemMsgActivity extends BaseActivity2 {
                     public void onSuccess(Response<String> response) {
                         Log.e("SysMsg",response.body());
                         sysMsgBean = JSON.parseObject(response.body(), SysMsgBean.class);
-
+                        ViewUtils.cancelLoadingDialog();
                         if (sysMsgBean.isSuccess()) {
                             Log.i("消息列表",response.body());
-                            adapter = new RefreshAdapter(SystemMsgActivity.this,sysMsgBean.getObj());
+                            adapter = new MyRefrshAdapter(SystemMsgActivity.this,R.layout.item_to_do_my_msg,sysMsgBean.getObj());
                             rvMsgList.setAdapter(adapter);
                             num = 2;
+
                         }else {
 
                         }
@@ -171,7 +185,7 @@ public class SystemMsgActivity extends BaseActivity2 {
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-
+                        ViewUtils.cancelLoadingDialog();
                     }
                 });
     }

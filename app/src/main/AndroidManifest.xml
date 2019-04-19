@@ -94,10 +94,13 @@
 
         <activity
             android:name="io.cordova.zhqy.activity.LoginActivity"
+
             android:screenOrientation="portrait">
         </activity>
 
-        <activity android:name="io.cordova.zhqy.Main2Activity"></activity>
+        <activity android:name="io.cordova.zhqy.Main2Activity"
+
+            android:screenOrientation="portrait"/>
 
         <activity
             android:name="io.cordova.zhqy.activity.ZxingScanningActivity"

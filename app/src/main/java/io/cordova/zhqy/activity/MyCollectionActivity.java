@@ -1,7 +1,9 @@
 package io.cordova.zhqy.activity;
 
+import android.content.Intent;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -19,6 +21,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
+import io.cordova.zhqy.bean.BaseBean;
 import io.cordova.zhqy.bean.MyCollectionBean;
 import io.cordova.zhqy.utils.BaseActivity2;
 import io.cordova.zhqy.utils.CircleCrop;
@@ -26,6 +29,7 @@ import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.ViewUtils;
+import io.cordova.zhqy.web.BaseWebActivity;
 
 /**
  * Created by Administrator on 2018/11/22 0022.
@@ -90,9 +94,10 @@ public class MyCollectionActivity extends BaseActivity2 {
         rvMyCollection.setLayoutManager(new GridLayoutManager(getApplicationContext(), 4));
         adapter = new CommonAdapter<MyCollectionBean.ObjBean>(getApplicationContext(), R.layout.item_service_app, collectionBean.getObj()) {
             @Override
-            protected void convert(ViewHolder holder, MyCollectionBean.ObjBean objBean, int position) {
+            protected void convert(ViewHolder holder, final MyCollectionBean.ObjBean objBean, final int position) {
                 if (tvEdit.getText().equals("编辑")){
                     holder.setVisible(R.id.iv_lock_open,false);
+//                    holder.setVisible(R.id.iv_lock_close,true);
 
                              /*appIntranet  1 需要内网*/
                     if (objBean.getAppIntranet()==1){
@@ -105,26 +110,12 @@ public class MyCollectionActivity extends BaseActivity2 {
                         holder.setVisible(R.id.iv_del,false);
                     }
 
-                 /*appLoginFlag  0 需要登录*/
-                    if (objBean.getAppLoginFlag()==0){
-                        holder.setVisible(R.id.iv_lock_open,true);
-                        Glide.with(getApplicationContext())
-                                .load(R.mipmap.lock_icon)
-                                .error(R.color.white)
-                                .into((ImageView) holder.getView(R.id.iv_lock_open));
-                    }else {
-                        holder.setVisible(R.id.iv_lock_open,false);
-                    }
-
 
                 }else if(tvEdit.getText().equals("取消收藏")) {
-                    holder.setVisible(R.id.iv_lock_close,true);
+                    holder.setVisible(R.id.iv_lock_close,false);
                     holder.setVisible(R.id.iv_del,false);
-                    holder.setVisible(R.id.iv_lock_open,false);
-                    Glide.with(getApplicationContext())
-                            .load(R.mipmap.lock_icon)
-                            .transform(new CircleCrop(getApplicationContext()))
-                            .into((ImageView) holder.getView(R.id.iv_lock_close));
+                    holder.setVisible(R.id.iv_lock_open,true);
+
                 }
 //                holder.setVisible(R.id.iv_lock_open,true);
 //
@@ -146,14 +137,27 @@ public class MyCollectionActivity extends BaseActivity2 {
                             .error(R.mipmap.message_icon1)
                             .into((ImageView) holder.getView(R.id.iv_app_icon));
                 }
+
+                holder.setOnClickListener(R.id.ll_click, new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        netWorkAppClick(objBean.getAppId());
+                        Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
+                        intent.putExtra("appUrl",objBean.getAppUrl());
+                        intent.putExtra("appId",objBean.getAppId()+"");
+                        startActivity(intent);
+                    }
+                });
+
                 holder.setOnClickListener(R.id.iv_lock_open, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
                         //取消收藏
-
-                        netCancelCollection();
+                        netCancelCollection(objBean.getAppId());
                     }
                 });
+
+
             }
         };
         rvMyCollection.setAdapter(adapter);
@@ -171,11 +175,60 @@ public class MyCollectionActivity extends BaseActivity2 {
 
         adapter.notifyDataSetChanged();
     }
+    BaseBean baseBean;
+    private void netCancelCollection(int appId) {
+        OkGo.<String>post(UrlRes.HOME_URL+ UrlRes.Cancel_Collection)
+                .params( "version","1.0" )
+                .params( "collectionAppId",appId )
+                .params( "userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .execute(new StringCallback(){
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        //handleResponse(response);
+                        Log.e("tag",response.body());
+                        baseBean = JSON.parseObject(response.body(), BaseBean.class);
+                        if (baseBean.isSuccess()){
+                            netWorkMyCollection();
+                            T.showShort(MyApp.getInstance(),baseBean.getMsg());
+                        }else {
 
-    private void netCancelCollection() {
+                            T.showShort(MyApp.getInstance(),baseBean.getMsg());
+                        }
+                    }
 
-        T.showShort(MyApp.getInstance(),"删除失败");
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
 
+                    }
+                });
+
+    }
+
+    /**
+     * 记录该微应用的的访问量
+     * @param appId
+     *
+     * */
+    private void netWorkAppClick(int appId) {
+        OkGo.<String>get(UrlRes.HOME_URL +UrlRes.APP_Click_Number)
+
+                .params("appId",appId)
+                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("result1",response.body());
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        Log.e("错误",response.body());
+                    }
+                });
     }
 
 

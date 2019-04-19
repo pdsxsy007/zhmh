@@ -63,18 +63,9 @@ public class LoginActivity extends BaseActivity {
     @Override
     protected void initView() {
         super.initView();
-        userName = "admin";
-        passWord = "123456";
+
     }
-
-
-
     GetUserIdBean getUserIdBean;
-
-
-
-
-
 
     @OnClick({R.id.l_1, R.id.btn_login,R.id.btn_login_3,R.id.iv_close})
     public void onViewClicked(View view) {
@@ -110,8 +101,6 @@ public class LoginActivity extends BaseActivity {
     private void netWorkLogin() {
         try {
 //            URLEncoder.encode( ,"UTF-8")
-
-
             s1 = URLEncoder.encode(AesEncryptUtile.encrypt(StringUtils.getEditTextData(etPhoneNum),key),"UTF-8");
             s2 =  URLEncoder.encode(AesEncryptUtile.encrypt(StringUtils.getEditTextData(etPassword),key),"UTF-8");
 
@@ -138,10 +127,11 @@ public class LoginActivity extends BaseActivity {
                             try {
                                 String tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key) ;
                                 String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
+
+
                                 String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
-
-
                                 SPUtils.put(MyApp.getInstance(),"userId",userId);
+                                SPUtils.put(MyApp.getInstance(),"personName",userName);
 //                                SPUtils.put(MyApp.getInstance(),"tgt",tgt);
                                 SPUtils.put(getApplicationContext(),"TGC",tgt);
                                 SPUtils.put(getApplicationContext(),"username",s1);

@@ -182,14 +182,13 @@ public class AppSearchActivity extends BaseActivity2 {
                     Glide.with(getApplicationContext())
                             .load(UrlRes.HOME3_URL + listBean.getPortalAppIcon().getTempletAppImage())
                             .error(getResources().getColor(R.color.app_bg))
-                            .into((ImageView) holder.getView(R.id.iv_app_icon));
+                            .into((ImageView) holder.getView(R.id.iv_app_img));
                 }else {
                     Glide.with(getApplicationContext())
                             .load(UrlRes.HOME3_URL + listBean.getAppImages())
                             .error(getResources().getColor(R.color.app_bg))
-                            .into((ImageView) holder.getView(R.id.iv_app_icon));
+                            .into((ImageView) holder.getView(R.id.iv_app_img));
                 }
-
                 holder.setOnClickListener(R.id.ll_go, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {

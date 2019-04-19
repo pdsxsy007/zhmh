@@ -165,7 +165,7 @@
                         android:padding="@dimen/sp8"
                         android:textColor="@color/white"
                         android:textSize="@dimen/sp14"
-                        android:text="dafdsadsa"/>
+                        android:text=""/>
 
                 </RelativeLayout>
 

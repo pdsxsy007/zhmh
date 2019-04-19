@@ -15,6 +15,7 @@ import android.widget.RelativeLayout;
 import com.just.agentweb.IWebLayout;
 
 import io.cordova.zhqy.R;
+import io.cordova.zhqy.utils.CookieUtils;
 
 /**
  * Created by cenxiaozhong on 2017/7/1.
@@ -27,7 +28,7 @@ public class WebLayout implements IWebLayout {
     private final RelativeLayout mTwinklingRefreshLayout;
     private WebView mWebView = null;
 
-    public WebLayout(Activity activity, String tgc) {
+    public WebLayout(Activity activity) {
         this.mActivity = activity;
         mTwinklingRefreshLayout = (RelativeLayout) LayoutInflater.from(activity).inflate(R.layout.fragment_twk_web, null);
       //  mTwinklingRefreshLayout.setPureScrollModeOn();
@@ -36,19 +37,19 @@ public class WebLayout implements IWebLayout {
         if(Build.VERSION.SDK_INT>=21){
             cookieManager.setAcceptThirdPartyCookies(mWebView, true);
         }
-//        cookieManager.removeAllCookie();//移除
-        cookieManager.removeSessionCookie();//移除
-//        cookieManager.removeAllCookie();  +  ;Domain=http://kys.zzuli.edu.cn
-        cookieManager.setAcceptCookie(true);
-        String stgc = "CASTGC="+tgc;
-        Log.i("stgc",stgc);
-        cookieManager.setCookie("http://kys.zzuli.edu.cn",stgc);
-
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.getInstance().sync();
         } else {
             cookieManager.flush();
         }
+////        cookieManager.removeAllCookie();//移除
+//        cookieManager.removeSessionCookie();//移除
+////        cookieManager.removeAllCookie();  +  ;Domain=http://kys.zzuli.edu.cn
+//        cookieManager.setAcceptCookie(true);
+//        String stgc = "CASTGC="+tgc;
+//        Log.i("stgc",stgc);
+//        cookieManager.setCookie("http://kys.zzuli.edu.cn",stgc);
+
 //        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
 //            CookieSyncManager.createInstance(MyApp.getInstance());
 //        }

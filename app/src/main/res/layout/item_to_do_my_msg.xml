@@ -27,6 +27,7 @@
             android:paddingLeft="@dimen/sp12"
             android:padding="@dimen/sp8"
             android:textSize="@dimen/sp12"
+
             android:textColor="@color/black"
             android:text="1111"/>
 
@@ -39,6 +40,8 @@
             android:layout_marginBottom="@dimen/dp6"
             android:textSize="@dimen/sp12"
             android:textColor="@color/black"
+            android:maxLines="1"
+            android:ellipsize="end"
             android:text="1111"/>
 
     </RelativeLayout>

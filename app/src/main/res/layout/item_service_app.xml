@@ -22,15 +22,19 @@
         android:id="@+id/iv_del"
         android:layout_width="20dp"
         android:layout_height="20dp"
-
         android:layout_alignParentBottom="true" />
 
-    <ImageView
+
+    <TextView
         android:visibility="gone"
         android:id="@+id/iv_lock_open"
         android:layout_width="19dp"
         android:layout_height="19dp"
-
+        android:background="@color/red"
+        android:text="一"
+        android:gravity="center"
+        android:textColor="@color/white"
+        android:textSize="12dp"
         android:layout_alignParentRight="true"/>
 
     <ImageView

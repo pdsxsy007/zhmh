@@ -12,6 +12,7 @@ import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.webkit.CookieManager;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -22,6 +23,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.google.gson.Gson;
 import com.just.agentweb.AbsAgentWebSettings;
@@ -45,6 +47,12 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import gdut.bsx.share2.Share2;
 import gdut.bsx.share2.ShareContentType;
+import io.cordova.zhqy.activity.InfoDetailsActivity;
+import io.cordova.zhqy.activity.MyShenqingActivity;
+import io.cordova.zhqy.activity.OaMsgActivity;
+import io.cordova.zhqy.activity.SystemMsgActivity;
+import io.cordova.zhqy.utils.StringUtils;
+import io.cordova.zhqy.web.WebLayout;
 import io.reactivex.functions.Consumer;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.utils.BaseFragment;
@@ -69,6 +77,8 @@ public class HomePreFragment extends BaseFragment {
     TextView msgNum;
     @BindView(R.id.iv_back)
     ImageView ivBack;
+    @BindView(R.id.iv_qr)
+    ImageView iv_qr;
 
     @BindView(R.id.swipeLayout)
     SwipeRefreshLayout mSwipeRefreshLayout;
@@ -77,7 +87,7 @@ public class HomePreFragment extends BaseFragment {
     private LinearLayout mLinearLayout;
     private DownloadingService mDownloadingService;
     private Gson mGson = new Gson();
-    String tgc;
+    String tgc ,msgType;
     /**分享*/
     private static final int REQUEST_SHARE_FILE_CODE = 120;
 
@@ -92,9 +102,53 @@ public class HomePreFragment extends BaseFragment {
 //        mLinearLayout = (LinearLayout) view.findViewById(R.id.ll_refresh);
         mSwipeRefreshLayout.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
         tgc = (String) SPUtils.get(MyApp.getInstance(),"TGC","");
-        tvTitle.setText("主页");
+        msgType = (String) SPUtils.get(MyApp.getInstance(),"msgType","");
+        iv_qr.setVisibility(View.VISIBLE);
+        tvTitle.setText("首页");
 //         s1();
         setWeb();
+        setGoPushMsg();
+    }
+    /**
+     * 推送消息跳转
+     * msgType 消息类型(-1:删除，0:系统消息,1:待办,2:待阅,3:已办,4:已阅,5:我的申请)
+     *
+     * */
+    private void setGoPushMsg() {
+        if (!StringUtils.isEmpty(msgType)){
+            Intent intent;
+            if (msgType.equals("0")){
+                intent = new Intent(MyApp.getInstance(), SystemMsgActivity.class);
+                intent.putExtra("msgType","系统消息");
+                startActivity(intent);
+            }else if (msgType.equals("1")){
+                intent = new Intent(MyApp.getInstance(), OaMsgActivity.class);
+                intent.putExtra("type","db");
+                intent.putExtra("msgType","待办消息");
+                startActivity(intent);
+            }else if (msgType.equals("2")){
+                intent = new Intent(MyApp.getInstance(), OaMsgActivity.class);
+                intent.putExtra("type","dy");
+                intent.putExtra("msgType","待阅消息");
+                startActivity(intent);
+            }else if (msgType.equals("3")){
+                intent = new Intent(MyApp.getInstance(), OaMsgActivity.class);
+                intent.putExtra("type","yb");
+                intent.putExtra("msgType","已办消息");
+                startActivity(intent);
+            }else if (msgType.equals("4")){
+                intent = new Intent(MyApp.getInstance(), OaMsgActivity.class);
+                intent.putExtra("type","yy");
+                intent.putExtra("msgType","已阅消息");
+                startActivity(intent);
+            }else if (msgType.equals("5")){
+                intent = new Intent(MyApp.getInstance(), MyShenqingActivity.class);
+                intent.putExtra("type","sq");
+                intent.putExtra("msgType","我的申请");
+                startActivity(intent);
+            }
+            SPUtils.remove(MyApp.getInstance(),"msgType");
+        }
     }
 
     @Override
@@ -115,6 +169,7 @@ public class HomePreFragment extends BaseFragment {
                 .setWebChromeClient(mWebChromeClient) //WebChromeClient
                 .setPermissionInterceptor(mPermissionInterceptor) //权限拦截 2.0.0 加入。
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.DISALLOW)//打开其他页面时，弹窗质询用户前往其他应用 AgentWeb 3.0.0 加入。
+                .setWebLayout(new WebLayout(getActivity()))
                 .interceptUnkownUrl() //拦截找不到相关页面的Url AgentWeb 3.0.0 加入。
                 .createAgentWeb()//创建AgentWeb。
                 .ready()//设置 WebSettings。
@@ -132,8 +187,12 @@ public class HomePreFragment extends BaseFragment {
 
         @Override
         public void onPageFinished(WebView view, String url) {
-
             super.onPageFinished(view, url);
+            CookieManager cookieManager = CookieManager.getInstance();
+            if(Build.VERSION.SDK_INT>=21){
+                cookieManager.setAcceptThirdPartyCookies(view, true);
+            }
+
         }
 
         /**网址拦截*/
@@ -358,11 +417,22 @@ public class HomePreFragment extends BaseFragment {
         }
     };
 
-    @OnClick({R.id.msg_num, R.id.layout_msg})
+    @OnClick({R.id.msg_num, R.id.layout_msg,R.id.iv_qr})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.msg_num:
 //                netHomePageData();
+                break;
+            case R.id.iv_qr:
+//                netHomePageData();
+                setPermission();
+                if (allowedScan){
+                    onScanQR();
+                }else {
+                    Toast.makeText(getActivity(),"请允许权限后尝试",Toast.LENGTH_SHORT).show();
+                    setPermission();
+                }
+
                 break;
             case R.id.layout_msg:
 //                Intent intent = new Intent(MyApp.getInstance(), MyDataChangesActivity.class);
@@ -431,24 +501,28 @@ public class HomePreFragment extends BaseFragment {
         QRCodeManager.getInstance()
                 .with(getActivity())
                 .setReqeustType(0)
-//                .setRequestCode(1001)
+                .setRequestCode(55846)
                 .scanningQRCode(new OnQRCodeListener() {
                     @Override
                     public void onCompleted(String result) {
                         //controlLog.append("\n\n(结果)" + result);
-                        Log.e("Tag = ",result);
+                        Log.e("QRCodeManager = ",result);
+                        Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
+                        intent.putExtra("appUrl",result);
+//                    intent.putExtra("appId",listBean.getAppId()+"");
+                        startActivity(intent);
                     }
 
                     @Override
                     public void onError(Throwable errorMsg) {
                         //   controlLog.append("\n\n(错误)" + errorMsg.toString());
-                        Log.e("Tag = = ",errorMsg.toString());
+                        Log.e("QRCodeManager = = ",errorMsg.toString());
                     }
 
                     @Override
                     public void onCancel() {
                         //controlLog.append("\n\n(取消)扫描任务取消了");
-                        Log.e("Tag = = = ","扫描任务取消了");
+                        Log.e("QRCodeManager = = = ","扫描任务取消了");
                     }
 
                     /**
@@ -460,59 +534,22 @@ public class HomePreFragment extends BaseFragment {
                      */
                     @Override
                     public void onManual(int requestCode, int resultCode, Intent data) {
-                        Log.e("tag","点击了手动添加了");
+                        Log.e("QRCodeManager","点击了手动添加了");
                     }
                 });
 
     }
     /**二维码返回结果接收*/
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
         //注册onActivityResult
-        QRCodeManager.getInstance().with(getActivity()).onActivityResult(requestCode, resultCode, data);
+        if (requestCode == 55846){
+            QRCodeManager.getInstance().with(getActivity()).onActivityResult(requestCode, resultCode, intent);
+        }
+
     }
-    private void netHomePageData() {
-
-        QRCodeManager.getInstance()
-                .with(getActivity())
-                .setReqeustType(0)
-//                .setRequestCode(1001)
-                .scanningQRCode(new OnQRCodeListener() {
-                    @Override
-                    public void onCompleted(String result) {
-                        //controlLog.append("\n\n(结果)" + result);
-                        Log.e("Tag = ",result +"---");
-                    }
-
-                    @Override
-                    public void onError(Throwable errorMsg) {
-                        //   controlLog.append("\n\n(错误)" + errorMsg.toString());
-                        Log.e("Tag = = ",errorMsg.toString());
-                    }
-
-                    @Override
-                    public void onCancel() {
-                        //controlLog.append("\n\n(取消)扫描任务取消了");
-                        Log.e("Tag = = = ","扫描任务取消了");
-                    }
-
-                    /**
-                     * 当点击手动添加时回调
-                     *
-                     * @param requestCode
-                     * @param resultCode
-                     * @param data
-                     */
-                    @Override
-                    public void onManual(int requestCode, int resultCode, Intent data) {
-                        Log.e("tag","点击了手动添加了");
-                    }
-
-
-                });
-    }
-
+    boolean allowedScan = false;
     /**请求权限*/
     private void setPermission() {
         //同时请求多个权限
@@ -530,16 +567,18 @@ public class HomePreFragment extends BaseFragment {
                             Log.e("用户已经同意该权限", permission.name + " is granted.");
 //                            Intent intent = new Intent(MyApp.getInstance(), QRScanActivity.class);
 //                            startActivity(intent);
-                            onScanQR();
+                            allowedScan = true;
                             //   Log.d(TAG, permission.name + " is granted.");
                         } else if (permission.shouldShowRequestPermissionRationale) {
                             Log.e("用户拒绝了该权限", permission.name + " is denied. More info should be provided.");
                             // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
                             //   Log.d(TAG, permission.name + " is denied. More info should be provided.");
+                            allowedScan = false;
                         } else {
                             // 用户拒绝了该权限，并且选中『不再询问』
                             //   Log.d(TAG, permission.name + " is denied.");
                             Log.e("用户拒绝了该权限", permission.name + permission.name + " is denied.");
+                            allowedScan = true;
                         }
                     }
                 });

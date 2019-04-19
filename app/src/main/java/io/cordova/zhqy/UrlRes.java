@@ -72,6 +72,10 @@ public class UrlRes {
     public static String User_Msg ="/portal/mobile/casMember/getMemberByUsername";
 
     /**
+     * 获取用户头像
+     * */
+    public static String User_Head_Image="http://kys.zzuli.edu.cn/authentication/public/getHeadImg";
+    /**
      *  获取服务器返回的图片地址
      * portal/mobile/casMember/updateUserInfo\
      * portal/mobile/public/getUploadFileUrl
@@ -129,5 +133,8 @@ public class UrlRes {
      * 更新
      */
     public static String getNewVersionInfo="/portal/mobile/config/getNewVersionInfo";
-
+    /**
+     * 查看消息接口
+     */
+    public static String searchMessageById="/portal/mobile/weiMessage/getMessageIniDtoForCurrentUserByDetailId";
 }

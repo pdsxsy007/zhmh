@@ -46,6 +46,8 @@
         android:layout_width="wrap_content"
         android:layout_height="40dp"
         android:layout_centerHorizontal="true"
+        android:maxLines="1"
+        android:maxLength="6"
         android:textColor="@color/white"
         android:textSize="16sp"
         android:gravity="center"
@@ -91,6 +93,15 @@
         android:layout_alignParentEnd="true"
         android:layout_marginRight="@dimen/dp10"
         android:src="@mipmap/search_ing_b"
+        android:visibility="gone" />
+    <ImageView
+        android:id="@+id/iv_qr"
+        android:layout_width="20dp"
+        android:layout_height="25dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginRight="@dimen/dp10"
+        android:src="@mipmap/iv_qr"
         android:visibility="gone" />
 
     <RelativeLayout

@@ -182,7 +182,7 @@ public class MyToDoMsgActivity extends BaseActivity2 {
                         Log.e("s",response.toString());
                         CountBean countBean = JSON.parseObject(response.body(), CountBean.class);
                         //yy_msg_num.setText(countBean.getCount()+"");
-                        my_msg_present.setText("已申请"+countBean.getCount()+"条");
+                        my_msg_present.setText("我的申请共"+countBean.getCount()+"条");
                     }
 
                     @Override

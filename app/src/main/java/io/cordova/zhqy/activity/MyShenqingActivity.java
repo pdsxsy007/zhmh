@@ -24,6 +24,7 @@ import io.cordova.zhqy.utils.BaseActivity2;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.T;
+import io.cordova.zhqy.utils.ViewUtils;
 
 /**
  * Created by Administrator on 2019/2/22 0022.
@@ -59,6 +60,7 @@ public class MyShenqingActivity extends BaseActivity2  {
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayout.VERTICAL,false);
         rvMsgList.setLayoutManager(mLinearLayoutManager);
 
+        ViewUtils.createLoadingDialog(this);
         netWorkOaMsgList();
 
 
@@ -95,6 +97,7 @@ public class MyShenqingActivity extends BaseActivity2  {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("s",response.toString());
+                        ViewUtils.cancelLoadingDialog();
                         oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean.class);
                         if (oaMsgListBean.isSuccess()) {
                             Log.i("消息列表",response.body());
@@ -157,6 +160,7 @@ public class MyShenqingActivity extends BaseActivity2  {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("s",response.toString());
+                        ViewUtils.cancelLoadingDialog();
                         oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean.class);
                         if (oaMsgListBean.isSuccess()) {
                             adapter = new MyAdapter(MyShenqingActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean.getObj());
@@ -168,8 +172,8 @@ public class MyShenqingActivity extends BaseActivity2  {
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-
-
+                        T.showShort(MyApp.getInstance(), "没有数据");
+                        ViewUtils.cancelLoadingDialog();
                     }
                 });
     }

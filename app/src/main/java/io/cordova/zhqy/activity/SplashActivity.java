@@ -86,7 +86,7 @@ public class SplashActivity extends AppCompatActivity {
         @Override
         public void handleMessage(Message msg) {
             if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
-                Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                Intent intent = new Intent(getApplicationContext(),Main2Activity.class);
                 startActivity(intent);
                 finish();
             }else {
@@ -132,7 +132,6 @@ public class SplashActivity extends AppCompatActivity {
                             }
                         }else {
                             T.showShort(MyApp.getInstance(),loginBean.getMsg());
-
                         }
                     }
 
@@ -145,12 +144,11 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-
-
     /**华为 OPPO  Fac*/
     private static final String TAG = "HuaWei";
     /**消息Id**/
     private static final String KEY_MSGID = "msg_id";
+    private static final String KEY_TYPE = "msg_type";
     /**该通知的下发通道**/
     private static final String KEY_WHICH_PUSH_SDK = "rom_type";
     /**通知标题**/
@@ -183,6 +181,7 @@ public class SplashActivity extends AppCompatActivity {
         try {
             JSONObject jsonObject = new JSONObject(data);
             String msgId = jsonObject.optString(KEY_MSGID);
+            String msgType = jsonObject.optString(KEY_TYPE);
             byte whichPushSDK = (byte) jsonObject.optInt(KEY_WHICH_PUSH_SDK);
             String title = jsonObject.optString(KEY_TITLE);
             String content = jsonObject.optString(KEY_CONTENT);
@@ -194,8 +193,10 @@ public class SplashActivity extends AppCompatActivity {
                     Log.e("extras", extras);
                     Log.e("extraJson", extraJson.getString("messageId"));
                     msgId =  extraJson.getString("messageId");
+                    msgType =  extraJson.getString("messageType");
                     Log.e("msgId", msgId);
                     SPUtils.put(MyApp.getInstance(),"msgId",msgId);
+                    SPUtils.put(MyApp.getInstance(),"msgType",msgType);
                 }
             } catch (JSONException ignored) {
                 Log.e("JPush",ignored.getMessage());
@@ -227,7 +228,11 @@ public class SplashActivity extends AppCompatActivity {
 
     }
 
-    /**推送消息获取*/
+    /**
+     * 推送消息获取
+     * msgType 消息类型(-1:删除，0:系统消息,1:待办,2:待阅,3:已办,4:已阅,5:我的申请)
+     *
+     * */
     private void getMsg() {
         Intent intent = getIntent();
         if (null != intent) {
@@ -236,6 +241,7 @@ public class SplashActivity extends AppCompatActivity {
             String content = null;
             String extrasBean = null;
             String msgId = null;
+            String msgType = null;
             if(bundle!=null){
 
                 title = bundle.getString(JPushInterface.EXTRA_NOTIFICATION_TITLE);
@@ -248,15 +254,18 @@ public class SplashActivity extends AppCompatActivity {
                             Log.e("extras", extrasBean);
                             Log.e("extraJson", extraJson.getString("messageId"));
                             msgId =  extraJson.getString("messageId");
+                            msgType =  extraJson.getString("messageType");
                             Log.e("msgId", msgId);
                             SPUtils.put(MyApp.getInstance(),"msgId",msgId);
+                            SPUtils.put(MyApp.getInstance(),"msgType",msgType);
+
                         }
                     } catch (JSONException ignored) {
                         Log.e("JPush",ignored.getMessage());
                     }
                 }
             }
-            Log.e("JPush","Title : " + title + "  " + "Content : " + content + "   msgId  : " + msgId);
+            Log.e("JPush","Title : " + title + "  " + "Content : " + content + "   msgId  : " + msgId + "   msgType  : " + msgType);
 
 
         }

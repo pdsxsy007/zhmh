@@ -99,4 +99,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         finish();
     }
 
+    @Override
+    public void setRequestedOrientation(int requestedOrientation) {
+        super.setRequestedOrientation(requestedOrientation);
+        return ;
+    }
+
+
 }

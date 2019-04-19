@@ -3,6 +3,8 @@ package io.cordova.zhqy.fragment.home;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.net.Uri;
 import android.support.design.widget.TabLayout;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
@@ -11,6 +13,7 @@ import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -21,6 +24,8 @@ import com.lzy.okgo.model.Response;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
@@ -31,12 +36,15 @@ import io.cordova.zhqy.Main2Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.activity.AppSearchActivity;
+import io.cordova.zhqy.activity.LoginActivity;
 import io.cordova.zhqy.bean.AppListBean;
 import io.cordova.zhqy.bean.LoginBean;
 import io.cordova.zhqy.bean.ServiceAppListBean;
 import io.cordova.zhqy.bean.TestBean;
+import io.cordova.zhqy.bean.UserMsgBean;
 import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.BaseFragment;
+import io.cordova.zhqy.utils.CircleCrop;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.StringUtils;
@@ -87,28 +95,91 @@ public class ServicePreFragment extends BaseFragment {
     @Override
     public void initView(View view) {
         super.initView(view);
-        tvTitle.setText("应用中心");
+        tvTitle.setText("应用服务");
         ivBack.setVisibility(View.GONE);
         ivSearch.setVisibility(View.VISIBLE);
-        //计算内容块所在的高度，全屏高度-状态栏高度-tablayout的高度(这里固定高度50dp)，用于recyclerView的最后一个item view填充高度
-        initShowPage();
-
-    }
-
-    private void initShowPage() {
-        isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
         go_login.setVisibility(View.GONE);
-//            tvSearch.setVisibility(View.VISIBLE);
+        isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
+//        计算 高度
         int screenH = getScreenHeight();
         int statusBarH = getStatusBarHeight(getActivity());
         int tabH = 50 * 3;
         lastH = screenH - statusBarH - tabH;
+
+        initShowPage();
+    }
+
+    private void initShowPage() {
+//            tvSearch.setVisibility(View.VISIBLE);
 //        netWorkAPPList();
-        netWorkServiceAPPList();
+        ViewUtils.createLoadingDialog(getActivity());
+        if (isLogin){
+            if (!StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"rolecodes",""))){
+                netWorkServiceAPPList();
+            }else {
+                netWorkUserMsg();
+            }
+        }else {
+//            游客获取app列表
+            netWorkServiceAPPListYou();
+        }
+    }
+
+    private void netWorkServiceAPPListYou() {
+
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Service_APP_List)
+                .params("Version", "1.0")
+                .params("rolecodes","tourists")
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        ViewUtils.cancelLoadingDialog();
+                        serviceAppListBean = JSON.parseObject(response.body(),ServiceAppListBean.class);
+                        if (serviceAppListBean.isSuccess()){
+                            setTap(serviceAppListBean);
+                            setRvServiceList();
+
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        ViewUtils.cancelLoadingDialog();
+                    }
+                });
+    }
+
+
+    /**个人信息*/
+    UserMsgBean userMsgBean;
+    private void netWorkUserMsg() {
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.User_Msg)
+                .params("userId", (String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("result1",response.body()+"   --防空");
+                        userMsgBean = JSON.parseObject(response.body(), UserMsgBean.class);
+                        if (userMsgBean.isSuccess()) {
+
+                            StringBuilder sb = new StringBuilder();
+                            if (userMsgBean.getObj().getModules().getRolecodes().size() > 0){
+                                for (int i = 0; i < userMsgBean.getObj().getModules().getRolecodes().size(); i++) {
+                                    sb.append(userMsgBean.getObj().getModules().getRolecodes().get(i).getRoleCode()).append(",");
+                                }
+                            }
+                            String ss = sb.substring(0, sb.lastIndexOf(","));
+                            Log.e("TAG",ss);
+                            SPUtils.put(MyApp.getInstance(),"rolecodes",ss);
+                            netWorkServiceAPPList();
+                        }
+                    }
+                });
+
     }
 
     ServiceAppListBean serviceAppListBean;
-
     private void netWorkServiceAPPList() {
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Service_APP_List)
                 .params("Version", "1.0")
@@ -117,11 +188,19 @@ public class ServicePreFragment extends BaseFragment {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
+                        ViewUtils.cancelLoadingDialog();
                         serviceAppListBean = JSON.parseObject(response.body(),ServiceAppListBean.class);
                         if (serviceAppListBean.isSuccess()){
-                            setRvServiceList();
                             setTap(serviceAppListBean);
+                            setRvServiceList();
+
                         }
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        ViewUtils.cancelLoadingDialog();
                     }
                 });
 
@@ -135,6 +214,14 @@ public class ServicePreFragment extends BaseFragment {
         adapterSysApp = new CommonAdapter<ServiceAppListBean.ObjBean>(getActivity(),R.layout.itme_service_app_list,serviceAppListBean.getObj()) {
             @Override
             protected void convert(ViewHolder holder, ServiceAppListBean.ObjBean objBean, int position) {
+
+                if (position == serviceAppListBean.getObj().size()) {
+                    if (holder.getView(R.id.rv_app_list).getHeight() < lastH) {
+                        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT);
+                        params.height = lastH;
+                        holder.getView(R.id.ll_ce_tb).setLayoutParams(params);
+                    }
+                }
                 holder.setText(R.id.tv_content,objBean.getModulesName());
                 RecyclerView recyclerView = holder.getView(R.id.rv_app_list);
                 recyclerView.setLayoutManager(new GridLayoutManager(getContext(), 4));
@@ -169,19 +256,65 @@ public class ServicePreFragment extends BaseFragment {
                         /*appLoginFlag  0 需要登录*/
                         if (!isLogin) {
                             if (appsBean.getAppLoginFlag()==0){
-                                holder.setVisible(R.id.iv_lock_open,true);
+                                holder.setVisible(R.id.iv_lock_close,true);
                                 Glide.with(getActivity())
                                         .load(R.mipmap.lock_icon)
                                         .error(R.mipmap.lock_icon)
-                                        .into((ImageView) holder.getView(R.id.iv_lock_open));
+                                        .into((ImageView) holder.getView(R.id.iv_lock_close));
                             }else {
-                                holder.setVisible(R.id.iv_lock_open,false);
+                                holder.setVisible(R.id.iv_lock_close,false);
                             }
                         }
                         holder.setOnClickListener(R.id.ll_click, new View.OnClickListener() {
                             @Override
                             public void onClick(View v) {
-                                if (!appsBean.getAppUrl().isEmpty()){
+                                if (null != appsBean.getAppAndroidSchema()){
+                                    if (!isLogin){
+                                        Intent intent = new Intent(getActivity(),LoginActivity.class);
+                                        startActivity(intent);
+                                    }else {
+                                        String appUrl =  appsBean.getAppAndroidSchema()+"";
+                                        String intercept = appUrl.substring(0,appUrl.indexOf(":")+3);
+//                                    hasApplication(appUrl);
+                                        Log.e("TAG", hasApplication(intercept)+"");
+                                        if (hasApplication(intercept)){
+                                            try {
+                                                //直接根据Scheme打开软件  拼接参数
+                                                if (appUrl.contains("{memberid}")){
+                                                    String s1=  URLEncoder.encode((String) SPUtils.get(MyApp.getInstance(),"personName",""), "UTF-8");
+                                                    appUrl =  appUrl.replace("{memberid}", s1);
+                                                }
+                                                if (appUrl.contains("{memberAesEncrypt}")){
+                                                    String memberAesEncrypt = AesEncryptUtile.encrypt((String) SPUtils.get(MyApp.getInstance(),"personName",""), String.valueOf(appsBean.getAppSecret()));
+                                                    String s2=  URLEncoder.encode(memberAesEncrypt, "UTF-8");
+                                                    appUrl =  appUrl.replace("{memberAesEncrypt}", s2);
+//                                                 appUrl.substring(0,appUrl.indexOf("\"{memberAesEncrypt}\""));
+                                                }
+                                                if (appUrl.contains("{quicklyTicket}")){
+                                                    String s3 =  URLEncoder.encode((String) SPUtils.get(MyApp.getInstance(),"TGC",""), "UTF-8");
+                                                    appUrl = appUrl.replace("{quicklyTicket}",s3);
+                                                }
+                                                Log.e("TAG", appUrl+"");
+                                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(appUrl));
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                                                startActivity(intent);
+
+                                            } catch (Exception e) {
+                                                e.printStackTrace();
+                                            }
+                                        }else {
+                                            //获取下载地址 后跳到浏览器下载
+                                            if(null!= appsBean.getAppAndroidDownloadLink()){
+                                                String dwon = appsBean.getAppAndroidDownloadLink()+"";
+                                                Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse(dwon));
+                                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
+                                                startActivity(intent);
+                                            }
+                                        }
+                                    }
+
+
+                                }else if (!appsBean.getAppUrl().isEmpty()){
                                     netWorkAppClick(appsBean.getAppId());
                                     Log.e("url  ==",appsBean.getAppUrl() + "");
                                     Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
@@ -200,6 +333,19 @@ public class ServicePreFragment extends BaseFragment {
         };
         rvConent.setAdapter(adapterSysApp);
         adapterSysApp.notifyDataSetChanged();
+    }
+
+
+    /**
+     * 判断是否安装了应用
+     * @return true 为已经安装
+     */
+    private boolean hasApplication(String scheme) {
+        PackageManager manager = getActivity().getPackageManager();
+        Intent action = new Intent(Intent.ACTION_VIEW);
+        action.setData(Uri.parse(scheme));
+        List list = manager.queryIntentActivities(action, PackageManager.GET_RESOLVED_FILTER);
+        return list != null && list.size() > 0;
     }
 
     /**
@@ -238,7 +384,7 @@ public class ServicePreFragment extends BaseFragment {
             tablayout.removeAllTabs();
         }
         for (int i = 0; i < serviceAppListBean.getObj().size(); i++) {
-            tablayout.addTab(tablayout.newTab().setText(serviceAppListBean.getObj().get(i).getModulesName()),i);
+            tablayout.addTab(tablayout.newTab().setText(serviceAppListBean.getObj().get(i).getModulesName()));
         }
 
         rvConent.setOnTouchListener(new View.OnTouchListener() {
@@ -287,6 +433,7 @@ public class ServicePreFragment extends BaseFragment {
                 super.onScrolled(recyclerView, dx, dy);
                 if (isRecyclerScroll) {
                     //第一个可见的view的位置，即tablayou需定位的位置
+//                    int position = 0;
                     int position = manager.findFirstVisibleItemPosition();
                     if (lastPos != position) {
                         tablayout.setScrollPosition(position, 0, true);
@@ -299,22 +446,6 @@ public class ServicePreFragment extends BaseFragment {
     }
 
 
-    //recyclerview中的tablayout监听
-    private TabLayout.OnTabSelectedListener holderListener = new TabLayout.OnTabSelectedListener() {
-        @Override
-        public void onTabSelected(TabLayout.Tab tab) {
-            int position = tab.getPosition();
-            tablayout.getTabAt(position).select();
-        }
-
-        @Override
-        public void onTabUnselected(TabLayout.Tab tab) {
-        }
-
-        @Override
-        public void onTabReselected(TabLayout.Tab tab) {
-        }
-    };
 
     @OnClick(R.id.iv_searcch)
     public void onViewClicked() {
@@ -362,7 +493,8 @@ public class ServicePreFragment extends BaseFragment {
 
     @Override
     public void onResume() {
+//        initShowPage();
         super.onResume();
-        initShowPage();
+
     }
 }

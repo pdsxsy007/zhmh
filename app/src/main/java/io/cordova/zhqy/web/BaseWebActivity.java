@@ -2,11 +2,17 @@ package io.cordova.zhqy.web;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.media.AudioManager;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Looper;
+import android.os.Message;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -15,7 +21,9 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.DownloadListener;
+import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -43,6 +51,7 @@ import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 
 import java.io.File;
+import java.lang.ref.WeakReference;
 import java.util.Calendar;
 
 import butterknife.BindView;
@@ -55,8 +64,10 @@ import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.activity.LoginActivity;
 import io.cordova.zhqy.bean.BaseBean;
 import io.cordova.zhqy.utils.ActivityUtils;
+import io.cordova.zhqy.utils.CookieUtils;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
+import io.cordova.zhqy.utils.SoundPoolUtils;
 import io.cordova.zhqy.utils.StringUtils;
 import io.cordova.zhqy.utils.T;
 
@@ -75,9 +86,11 @@ public class BaseWebActivity extends AppCompatActivity {
     RelativeLayout rvClose;
     @BindView(R.id.rb_sc)
     CheckBox rbSc;
+     @BindView(R.id.tv_title)
+    TextView mTitleTextView;
+
     private LinearLayout mLinearLayout;
     private Toolbar mToolbar;
-    private TextView mTitleTextView;
     private AlertDialog mAlertDialog;
     String appServiceUrl, tgc,appId,search,oaMsg;
     private String time;
@@ -87,6 +100,7 @@ public class BaseWebActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
         ButterKnife.bind(this);
+
         mLinearLayout = (LinearLayout) this.findViewById(R.id.container);
         rvClose.setVisibility(View.VISIBLE);
 
@@ -100,6 +114,12 @@ public class BaseWebActivity extends AppCompatActivity {
         Log.i("tgc",tgc+" --无空");
         Log.i("appServiceUrl",appServiceUrl+" --无空");
         Log.i("tgcappId",appId +" --无空");
+        if (!StringUtils.isEmpty(oaMsg)){
+            if (!appServiceUrl.contains("fromnewcas=Y")){
+                appServiceUrl = appServiceUrl + "&fromnewcas=Y";
+            }
+            Log.i("oaMsgUrl",appServiceUrl+" --无空");
+        }
 
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(mLinearLayout, new LinearLayout.LayoutParams(-1, -1))
@@ -110,13 +130,14 @@ public class BaseWebActivity extends AppCompatActivity {
                 .setPermissionInterceptor(mPermissionInterceptor) //权限拦截 2.0.0 加入。
                 .setMainFrameErrorView(R.layout.agentweb_error_page, -1)
                 .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
-                .setWebLayout(new WebLayout(this,tgc))
+                .setWebLayout(new WebLayout(this))
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)//打开其他应用时，弹窗咨询用户是否前往其他应用
                 .interceptUnkownUrl() //拦截找不到相关页面的Scheme
                 .createAgentWeb()
                 .ready()
                 .go(appServiceUrl);
         mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);
+        mAgentWeb.getJsInterfaceHolder().addJavaObject("android",new AndroidInterface());
         if (StringUtils.isEmpty(appId)){
             rbSc.setVisibility(View.GONE);
         }else {
@@ -290,12 +311,6 @@ public class BaseWebActivity extends AppCompatActivity {
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
             Log.i("userAgent4",  view.getSettings().getUserAgentString());
-            String Ull = "http://kys.zzuli.edu.cn/cas/login?service=http%3A%2F%2Fiapp.zzuli.edu.cn%3A80%2Fportal%2Flogin%2FappLogin";
-//                    if (url.equals("http://iapp.zzuli.edu.cn/portal/portal-app/app-5/user.html")|| url.equals("http://iapp.zzuli.edu.cn/portal/portal-app/app-5/yingyong.html")){
-            CookieManager cookieManager2 = CookieManager.getInstance();
-            String cookieStr2 = cookieManager2.getCookie(Ull);
-            Log.i("onPageFinished", "== " + cookieStr2);
-
 
 
         }
@@ -307,39 +322,73 @@ public class BaseWebActivity extends AppCompatActivity {
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
                 url = request.getUrl().toString();
             }
-            String isapp = url.substring(url.indexOf("/") + 2, 11);
 
-            if (url.contains("method=caslogin")) {
+
+            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
                 if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
                     Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
                     startActivity(intent);
                     finish();
-                }
-                return true;
-            }
 
+                    return true;
+                }
+            }
+//            else if (url.contains("myoa.zzuli.edu.cn")) {
+//                if (!url.contains("fromnewcas=Y")){
+//                    url = url + "&fromnewcas=Y";
+//
+//                    view.loadUrl(url);
+//                    Log.i("url", "== " + url);
+//                    return true;
+//                }
+//                return false;
+//            }
+//            Log.i("url2", "== " + url);
             return super.shouldOverrideUrlLoading(view, request);
         }
 
         /**网址拦截*/
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            String isapp = url.substring(url.indexOf("/") + 2, 11);
-
-            if (url.contains("method=caslogin")) {
+            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
                 if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
                     Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
                     startActivity(intent);
                     finish();
-                }
-                return true;
-            }
 
+                    return true;
+                }
+            }
+//            else if (url.contains("myoa.zzuli.edu.cn")) {
+//                if (!url.contains("fromnewcas=Y")){
+//                    url = url + "&fromnewcas=Y";
+//
+//                    view.loadUrl(url);
+//                    Log.i("url", "== " + url);
+//                    return true;
+//                }
+//                return false;
+//            }
+//            Log.i("url2", "== " + url);
             return super.shouldOverrideUrlLoading(view, url);
         }
 
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+            CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgc,getApplication());
+//            CookieManager cookieManager = CookieManager.getInstance();
+//            if(Build.VERSION.SDK_INT>=21){
+//                cookieManager.setAcceptThirdPartyCookies(view, true);
+//            }
+//
+//            //        cookieManager.removeAllCookie();//移除
+//        cookieManager.removeSessionCookie();//移除
+////        cookieManager.removeAllCookie();  +  ;Domain=http://kys.zzuli.edu.cn
+//        cookieManager.setAcceptCookie(true);
+//        String stgc = "CASTGC="+tgc;
+//        Log.i("stgc",stgc);
+//        cookieManager.setCookie("http://kys.zzuli.edu.cn",stgc);
             //do you  work
             Log.i("Info", "BaseWebActivity onPageStarted");
             if (!StringUtils.isEmpty(appId)){
@@ -553,6 +602,125 @@ public class BaseWebActivity extends AppCompatActivity {
 
     private static final int REQUEST_SHARE_FILE_CODE = 120;
 
+
+
+    /**
+     * 清除 WebView 缓存
+     */
+    private void toCleanWebCache() {
+
+        if (this.mAgentWeb != null) {
+            //清理所有跟WebView相关的缓存 ，数据库， 历史记录 等。
+            this.mAgentWeb.clearWebCache();
+            Toast.makeText(getApplicationContext(), "已清理缓存", Toast.LENGTH_SHORT).show();
+            //清空所有 AgentWeb 硬盘缓存，包括 WebView 的缓存 , AgentWeb 下载的图片 ，视频 ，apk 等文件。
+//            AgentWebConfig.clearDiskCache(this.getContext());
+        }
+
+    }
+
+    /**震动响铃*/
+    private Handler handler = new MyHandler(this);
+    @SuppressLint("HandlerLeak")
+    public class MyHandler extends Handler {
+        private WeakReference<Context> reference;
+        public MyHandler(Context context) {
+            reference = new WeakReference<>(context);
+        }
+        @Override
+        public void handleMessage(Message msg) {
+            //关闭铃声
+            SoundPoolUtils.stopRing();
+            //关闭震动
+            SoundPoolUtils.virateCancle(BaseWebActivity.this);
+
+        }
+    }
+    /**Js调用内部类*/
+    public class AndroidInterface {
+        private Handler deliver = new Handler(Looper.getMainLooper());
+
+        /**震动响铃*/
+        @JavascriptInterface
+        public void playSoundAndVibration() {
+            deliver.post(new Runnable() {
+                @Override
+                public void run() {
+//                    Log.i("Info", "main Thread:" + Thread.currentThread());
+//                    Toast.makeText(context.getApplicationContext(), "" + msg, Toast.LENGTH_LONG).show();
+//                    handler.sendEmptyMessageDelayed(0, 5000);
+                    setAlarmParams();
+                    handler.sendEmptyMessageDelayed(0, 1100);
+                }
+            });
+            Log.i("Info", "Thread:" + Thread.currentThread());
+        }
+
+        /**清理缓存*/
+        @JavascriptInterface
+        public void cleanUpAppCache() {
+            deliver.post(new Runnable() {
+                @Override
+                public void run() {
+//                    Log.i("Info", "main Thread:" + Thread.currentThread());
+//                    Toast.makeText(context.getApplicationContext(), "" + msg, Toast.LENGTH_LONG).show();
+                    toCleanWebCache();
+                }
+            });
+            Log.i("Info", "Thread:" + Thread.currentThread());
+        }
+        /**返回上一页*/
+        @JavascriptInterface
+        public void backToLastUrl() {
+            deliver.post(new Runnable() {
+                @Override
+                public void run() {
+//                    Log.i("Info", "main Thread:" + Thread.currentThread());
+//                    Toast.makeText(context.getApplicationContext(), "" + msg, Toast.LENGTH_LONG).show();
+                    if (!mAgentWeb.back()){
+                        finish();
+                    }else {
+                        mAgentWeb.back();
+                    }
+
+                }
+            });
+            Log.i("Info", "Thread:" + Thread.currentThread());
+        }
+        /**关闭当前页面*/
+        @JavascriptInterface
+        public void closeCurrentPage() {
+            deliver.post(new Runnable() {
+                @Override
+                public void run() {
+//                    Log.i("Info", "main Thread:" + Thread.currentThread());
+//                    Toast.makeText(context.getApplicationContext(), "" + msg, Toast.LENGTH_LONG).show();
+                   finish();
+                }
+            });
+            Log.i("Info", "Thread:" + Thread.currentThread());
+        }
+
+    }
+    /** 响铃震动提示*/
+    private void setAlarmParams() {
+        //AudioManager provides access to volume and ringer mode control.
+        AudioManager volMgr = (AudioManager) getSystemService(Context.AUDIO_SERVICE);
+        switch (volMgr.getRingerMode()) {//获取系统设置的铃声模式
+            case AudioManager.RINGER_MODE_SILENT://静音模式，值为0，这时候不震动，不响铃
+                break;
+            case AudioManager.RINGER_MODE_VIBRATE://震动模式，值为1，这时候震动，不响铃
+                SoundPoolUtils.vibrate(this, new long[]{1000, 500, 1000, 500}, 0);
+                break;
+            case AudioManager.RINGER_MODE_NORMAL://常规模式，值为2，分两种情况：1_响铃但不震动，2_响铃+震动
+                SoundPoolUtils.playRing(this);
+                SoundPoolUtils.vibrate(this, new long[]{500, 1000, 500, 1000}, 0);
+                break;
+            default:
+                break;
+        }
+    }
+
     private void showDialog() {
 
         if (mAlertDialog == null) {
@@ -601,22 +769,6 @@ public class BaseWebActivity extends AppCompatActivity {
 
         mAgentWeb.getWebLifeCycle().onDestroy();
     }
-
-    /**
-     * 清除 WebView 缓存
-     */
-    private void toCleanWebCache() {
-
-        if (this.mAgentWeb != null) {
-            //清理所有跟WebView相关的缓存 ，数据库， 历史记录 等。
-            this.mAgentWeb.clearWebCache();
-            Toast.makeText(getApplicationContext(), "已清理缓存", Toast.LENGTH_SHORT).show();
-            //清空所有 AgentWeb 硬盘缓存，包括 WebView 的缓存 , AgentWeb 下载的图片 ，视频 ，apk 等文件。
-//            AgentWebConfig.clearDiskCache(this.getContext());
-        }
-
-    }
-
     /**
      * 点击2次退出
      */

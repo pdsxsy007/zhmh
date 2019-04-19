@@ -1,8 +1,11 @@
 package io.cordova.zhqy.utils;
 
 
+import android.content.Context;
+import android.os.Build;
 import android.text.TextUtils;
 import android.webkit.CookieManager;
+import android.webkit.CookieSyncManager;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
@@ -15,36 +18,21 @@ import io.cordova.zhqy.activity.LoginActivity;
 
 public class CookieUtils {
 
-    private static WebView webView;
 
-    public static void getCookie(LoginActivity activity, final String url,
-                                 final OnCookieLoadedListener cookieLoadedListener) {
-        webView = new WebView(activity);
-        webView.setWebViewClient(new WebViewClient() {
-            public void onPageFinished(WebView view, String url) {
-                super.onPageFinished(view, url);
-                if (cookieLoadedListener != null) {
-                    CookieManager cookieManager = CookieManager.getInstance();
-                    String cookie = cookieManager.getCookie(url);
-                    if (!TextUtils.isEmpty(cookie)) {
-                        webView.setWebViewClient(null);
-                        cookieLoadedListener.onCookieLoaded(cookie);
-                    }
-                }
-            }
-        });
-        webView.getSettings().setJavaScriptEnabled(true);
-        webView.loadUrl(url);
-    }
-
-
-
-    public interface OnCookieLoadedListener {
-        void onCookieLoaded(String cookie);
-    }
-
-    public static void webClose(){
-        webView.removeAllViews();
-        webView.destroy();
+    /**
+     * 将cookie同步到WebView
+     * @param url WebView要加载的url
+     * @param cookie 要同步的cookie
+     * @return true 同步cookie成功，false同步cookie失败
+     * @Author JPH
+     */
+    public static boolean syncCookie(String url,String cookie,Context context) {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
+            CookieSyncManager.createInstance(context);
+        }
+        CookieManager cookieManager = CookieManager.getInstance();
+        cookieManager.setCookie(url, cookie);//如果没有特殊需求，这里只需要将session id以"key=value"形式作为cookie即可
+        String newCookie = cookieManager.getCookie(url);
+        return TextUtils.isEmpty(newCookie)?false:true;
     }
 }

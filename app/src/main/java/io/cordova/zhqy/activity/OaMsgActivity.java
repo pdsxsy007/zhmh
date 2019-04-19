@@ -69,7 +69,7 @@ public class OaMsgActivity extends BaseActivity2  {
         tvTitle.setText(msgType);
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayout.VERTICAL,false);
         rvMsgList.setLayoutManager(mLinearLayoutManager);
-
+        ViewUtils.createLoadingDialog(this);
         netWorkOaMsgList();
 
 
@@ -142,6 +142,7 @@ public class OaMsgActivity extends BaseActivity2  {
                             Log.i("消息列表",response.body());
                             //setRvOAMsgList();
                             adapter = new MyAdapter(OaMsgActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean.getObj());
+
                             rvMsgList.setAdapter(adapter);
                             refreshlayout.finishRefresh();
                         }else {
@@ -169,6 +170,7 @@ public class OaMsgActivity extends BaseActivity2  {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("s",response.toString());
+                        ViewUtils.cancelLoadingDialog();
                         oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean.class);
                         if (oaMsgListBean.isSuccess()) {
                             Log.i("消息列表",response.body());
@@ -182,7 +184,8 @@ public class OaMsgActivity extends BaseActivity2  {
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-
+                        ViewUtils.cancelLoadingDialog();
+                        T.showShort(MyApp.getInstance(), "没有数据");
 
                     }
                 });
