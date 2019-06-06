@@ -34,20 +34,13 @@
 
         <ImageView
             android:id="@+id/iv_close"
-            android:layout_width="45dp"
-            android:layout_height="45dp"
-            android:padding="@dimen/sp14"
-
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="@dimen/dp5"
+            android:layout_marginTop="@dimen/dp5"
             android:src="@mipmap/cha" />
     </RelativeLayout>
 
-
-    <!--<ImageView-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="125dp"-->
-        <!--android:layout_marginTop="-85dp"-->
-        <!--android:src="@mipmap/login_logo"-->
-        <!--android:layout_gravity="center"/>-->
 <LinearLayout
     android:layout_width="match_parent"
     android:layout_height="0dp"
@@ -70,27 +63,29 @@
             android:textSize="@dimen/sp16"
             android:textColor="@color/white"
             android:padding="@dimen/sp12"
-            android:text="帐号"/>
+            android:text="用户名"/>
         <EditText
             android:id="@+id/et_phoneNum"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@null"
-            android:hint="帐号"
+            android:hint="用户名"
             android:textCursorDrawable="@null"
             android:padding="@dimen/dp12"
             android:singleLine="true"
             android:text=""
             android:textColor="@color/gray2"
-            android:textColorHint="@color/gray2"
             android:textSize="@dimen/sp13"
             android:gravity="center|start"/>
 
         <View
-            style="@style/view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp0.5"
             android:layout_marginLeft="@dimen/dp12"
             android:layout_marginRight="@dimen/dp12"
-            android:background="@color/white"/>
+            android:background="#ffffff"
+            android:alpha="0.5"
+            />
     </LinearLayout>
 
     <LinearLayout
@@ -118,15 +113,16 @@
             android:singleLine="true"
             android:text=""
             android:textColor="@color/gray2"
-            android:textColorHint="@color/gray2"
             android:textSize="@dimen/sp13"
             android:gravity="center|start"
             android:inputType="textPassword"/>
         <View
-            style="@style/view"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp0.5"
             android:layout_marginLeft="@dimen/dp12"
             android:layout_marginRight="@dimen/dp12"
-            android:background="@color/white"/>
+            android:background="#ffffff"
+            android:alpha="0.5"/>
     </LinearLayout>
 
     <LinearLayout
@@ -142,23 +138,124 @@
             android:padding="@dimen/sp12"
             android:gravity="center"
             android:textColor="@color/white"
+            android:text="请使用信息门户账号登录"
             />
 
         <Button
             style="@style/button2"
             android:id="@+id/btn_login"
             android:text="@string/login"
+            android:layout_marginLeft="40dp"
             android:layout_marginTop="@dimen/sp12"
-            android:textColor="@color/green" />
+            android:layout_marginRight="40dp"
+            android:textColor="@color/colorPrimary" />
         <Button
             android:visibility="gone"
             style="@style/button2"
             android:id="@+id/btn_login_3"
             android:text="@string/exit_out"
             android:layout_marginTop="@dimen/sp12"
-            android:textColor="@color/green" />
+            android:textColor="@color/colorPrimary" />
     </LinearLayout>
+
+    <TextView
+        android:id="@+id/tv_find_pwd"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="忘记密码?"
+        android:textColor="@color/white"
+        android:layout_marginLeft="@dimen/dp10"
+        android:layout_marginTop="@dimen/dp10"
+        android:visibility="gone"
+        android:layout_gravity="center_horizontal"
+
+        />
 </LinearLayout>
 
+    <LinearLayout
+        android:id="@+id/all_ll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#3299cc"
+        android:gravity="center"
+        android:orientation="horizontal"
+        android:padding="5dp">
+
+
+        <LinearLayout
+            android:id="@+id/wx_ll"
+            android:layout_width="0dp"
+
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="25dp"
+                android:layout_height="25dp"
+               />
+
+            <TextView
+                android:id="@+id/wx_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="微信登陆"
+                android:textColor="#fff" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/qq_ll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                />
+
+            <TextView
+                android:id="@+id/qq_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="QQ登陆"
+                android:textColor="#fff" />
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:id="@+id/sina_ll"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:gravity="center"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                />
+
+            <TextView
+                android:id="@+id/sign_login"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="5dp"
+                android:text="微博登陆"
+                android:textColor="#fff" />
+        </LinearLayout>
+    </LinearLayout>
+
+<WebView
+    android:visibility="gone"
+    android:id="@+id/webView"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"></WebView>
 
 </LinearLayout>

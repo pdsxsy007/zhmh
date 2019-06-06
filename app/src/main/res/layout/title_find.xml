@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout android:layout_width="match_parent"
+    android:layout_height="45dp"
+    android:background="@color/colorPrimary"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <TextView
+        android:id="@+id/toolbar_title"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:ellipsize="end"
+        android:lines="1"
+        android:textSize="@dimen/sp18"
+        android:textColor="@android:color/white"
+        android:text="综合信息"
+        android:layout_centerInParent="true"
+        />
+    <RelativeLayout
+        android:id="@+id/rl_msg_app1"
+        android:layout_alignParentRight="true"
+        android:layout_centerVertical="true"
+        android:layout_width="60dp"
+        android:layout_height="match_parent"
+        >
+        <ImageView
+            android:id="@+id/tv_app_msg"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@mipmap/msg_hint"
+            android:layout_centerInParent="true"
+            android:layout_marginRight="@dimen/dp10"
+            />
+
+    </RelativeLayout>
+    <ImageView
+        android:id="@+id/tv_app_setting"
+        android:layout_width="25dp"
+        android:layout_height="25dp"
+        android:src="@mipmap/app_setting"
+        android:layout_alignParentLeft="true"
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="@dimen/dp10"
+        android:visibility="gone"
+        />
+
+</RelativeLayout>

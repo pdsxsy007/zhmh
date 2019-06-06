@@ -2,31 +2,58 @@
 
 <LinearLayout
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="60dp"
     android:orientation="horizontal"
     android:layout_marginTop="@dimen/dp1"
     android:background="@color/white"
     android:id="@+id/ll_msg"
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-    <ImageView
+
+    <!--<ImageView
         android:id="@+id/oa_img"
+        android:visibility="gone"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:padding="@dimen/sp12"
-        android:layout_weight="1" />
+        android:layout_weight="1" />-->
+    <RelativeLayout
+        android:layout_width="50dp"
+        android:layout_height="50dp"
+        android:layout_marginLeft="@dimen/dp5"
+        android:layout_gravity="center_vertical"
+        >
+        <ImageView
+            android:id="@+id/oa_img"
+            android:visibility="visible"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:layout_centerInParent="true"
+
+           />
+        <RelativeLayout
+            android:id="@+id/rl_jiaobiao"
+            android:layout_width="5dp"
+            android:layout_height="5dp"
+            android:background="@drawable/shape_juxing_bg_red"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="@dimen/dp5"
+            android:layout_marginTop="5dp"
+            android:visibility="gone"
+            ></RelativeLayout>
+    </RelativeLayout>
     <RelativeLayout
         android:layout_width="0dp"
         android:layout_height="match_parent"
+        android:layout_gravity="center_vertical"
         android:layout_weight="3">
 
         <TextView
             android:id="@+id/tv_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/sp12"
-            android:padding="@dimen/sp8"
-            android:textSize="@dimen/sp12"
+            android:padding="@dimen/sp5"
+            android:textSize="14sp"
 
             android:textColor="@color/black"
             android:text="1111"/>
@@ -36,9 +63,8 @@
             android:id="@+id/tv_present"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:paddingLeft="@dimen/sp8"
-            android:layout_marginBottom="@dimen/dp6"
-            android:textSize="@dimen/sp12"
+            android:paddingLeft="@dimen/sp5"
+            android:textSize="14sp"
             android:textColor="@color/black"
             android:maxLines="1"
             android:ellipsize="end"
@@ -66,8 +92,8 @@
 
         <ImageView
             android:id="@+id/iv_next"
-            android:layout_width="18dp"
-            android:layout_height="18dp"
+            android:layout_width="10dp"
+            android:layout_height="10dp"
             android:layout_gravity="center_vertical"
             android:layout_marginRight="@dimen/dp12"
             android:layout_centerVertical="true"

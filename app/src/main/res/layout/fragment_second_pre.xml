@@ -3,17 +3,31 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
-    android:background="#F2F2F2"
-    >
+    android:background="@color/view2"
+    android:id="@+id/linearLayout"
+    android:orientation="vertical">
 
-    <include layout="@layout/layout_head_title_one"
-        android:id="@+id/id_title">
-    </include>
 
-    <View
-        style="@style/view2"/>
+   <include
+       layout="@layout/title_find"
+       />
 
+
+
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/swipeLayout"
+        android:visibility="visible"
+        app:srlAccentColor="@android:color/white"
+        app:srlEnablePreviewInEditMode="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
 
     <RelativeLayout
         android:id="@+id/rl_no"
@@ -60,27 +74,4 @@
     </RelativeLayout>
 
 
-    <android.support.design.widget.TabLayout
-        android:id="@+id/tablayout"
-        android:background="@color/white"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        app:tabIndicatorColor="@color/colorPrimary"
-        app:tabMode="scrollable"
-        app:tabSelectedTextColor="@color/colorPrimary"
-        app:tabTextAppearance="@style/TextAppearance.Holo.Medium"
-        />
-
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/rv_content"
-        android:visibility="gone"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-     />
-
-    <WebView
-        android:visibility="gone"
-        android:id="@+id/webView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"></WebView>
 </LinearLayout>

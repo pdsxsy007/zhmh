@@ -6,11 +6,6 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <!--<include layout="@layout/layout_head_title_one"
-        android:id="@+id/id_title">
-    </include>
--->
-
     <RelativeLayout
         android:background="@color/title_bar_bg"
         android:layout_width="match_parent"
@@ -55,10 +50,10 @@
             android:layout_height="40dp"
             android:layout_centerHorizontal="true"
             android:maxLines="1"
-            android:maxEms="10"
+            android:maxEms="6"
             android:ellipsize="end"
             android:textColor="@color/white"
-            android:textSize="@dimen/sp18"
+            android:textSize="@dimen/sp16"
             android:gravity="center"
             />
 
@@ -86,7 +81,7 @@
             android:layout_alignParentRight="true"
             android:layout_centerVertical="true"
             android:layout_marginRight="@dimen/dp12"
-            />
+           />
 
         <RelativeLayout
             android:id="@+id/layout_msg"
@@ -116,12 +111,6 @@
                 android:textSize="@dimen/sp8" />
         </RelativeLayout>
     </RelativeLayout>
-    <RelativeLayout
-        android:id="@+id/ll_shoushi"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerVertical="true"
-        ></RelativeLayout>
     <RelativeLayout
         android:id="@+id/rl_no"
         android:layout_width="match_parent"
@@ -165,5 +154,11 @@
             </RelativeLayout>
         </LinearLayout>
     </RelativeLayout>
+<WebView
+    android:id="@+id/webView"
+    android:visibility="gone"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"></WebView>
+
 
 </LinearLayout>

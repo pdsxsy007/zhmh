@@ -28,18 +28,43 @@
         android:inputType="text"
         android:maxLines="1"
         android:maxLength="40"
-        android:textSize="@dimen/sp12"
-        android:hint="请输入搜索关键词"/>
+        android:textSize="@dimen/sp14"
+        android:hint="搜索"/>
 
-    <TextView
-        android:id="@+id/tv_search_cache"
+    <RelativeLayout
+        android:id="@+id/rl_history"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@color/gray2"
-        android:padding="@dimen/sp12"
-        android:textStyle="bold"
-        android:textColor="@color/black"
-        android:text="搜索历史"/>
+        android:layout_height="30dp">
+        <TextView
+            android:id="@+id/tv_search_cache"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp12"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp10"
+            android:text="搜索历史"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_alignParentRight="true"
+            android:layout_centerVertical="true"
+            android:layout_marginRight="@dimen/dp10"
+            >
+            <TextView
+                android:id="@+id/tv_clear"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/black"
+                android:textSize="@dimen/sp12"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="@dimen/dp10"
+                android:text="清空"/>
+        </LinearLayout>
+    </RelativeLayout>
+
 
     <!--<menhu.jh.myapplication.common.FlowLayout-->
         <!--xmlns:android="http://schemas.android.com/apk/res/android"-->
@@ -53,14 +78,13 @@
         zhy:max_select="1"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:padding="20dp">
+        android:padding="10dp">
     </com.zhy.view.flowlayout.TagFlowLayout>
 
     <TextView
         android:id="@+id/tv_result"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:background="@color/gray2"
         android:padding="@dimen/sp12"
         android:textStyle="bold"
         android:textColor="@color/black"

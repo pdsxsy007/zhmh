@@ -16,9 +16,9 @@
         <ImageView
             android:id="@+id/iv_back"
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginLeft="@dimen/dp12"
-            android:padding="@dimen/dp5"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="@dimen/dp5"
             android:src="@mipmap/navibar_back" />
 
     </RelativeLayout>
@@ -39,7 +39,8 @@
             android:src="@mipmap/cha" />
 
     </RelativeLayout>
-
+<!--android:maxLength="6"
+        android:singleLine="true"-->
     <TextView
         android:layout_centerVertical="true"
         android:id="@+id/tv_title"
@@ -47,9 +48,10 @@
         android:layout_height="40dp"
         android:layout_centerHorizontal="true"
         android:maxLines="1"
-        android:maxLength="6"
+        android:maxEms="6"
+        android:ellipsize="end"
         android:textColor="@color/white"
-        android:textSize="16sp"
+        android:textSize="@dimen/sp18"
         android:gravity="center"
         />
 
@@ -65,7 +67,22 @@
         android:layout_marginRight="@dimen/dp12"
         android:text="@string/setting"
         />
-
+    <RelativeLayout
+        android:id="@+id/rl_find_msg_app"
+        android:visibility="gone"
+        android:layout_centerVertical="true"
+        android:layout_alignParentRight="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginRight="10dp"
+        >
+        <ImageView
+            android:id="@+id/tv_app_msg"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@mipmap/msg_hint"
+            />
+    </RelativeLayout>
 
     <CheckBox
         android:id="@+id/rb_sc"
@@ -87,21 +104,21 @@
 
     <ImageView
         android:id="@+id/iv_searcch"
-        android:layout_width="20dp"
+        android:layout_width="25dp"
         android:layout_height="25dp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="@dimen/dp10"
+        android:layout_marginRight="@dimen/dp20"
         android:src="@mipmap/search_ing_b"
         android:visibility="gone" />
+    <!--android:src="@mipmap/iv_qr"-->
     <ImageView
         android:id="@+id/iv_qr"
-        android:layout_width="20dp"
-        android:layout_height="25dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:layout_marginRight="@dimen/dp10"
-        android:src="@mipmap/iv_qr"
+        android:src="@mipmap/gl_sao"
         android:visibility="gone" />
 
     <RelativeLayout
@@ -119,6 +136,7 @@
             android:layout_height="wrap_content"
             android:layout_centerVertical="true"
             android:src="@mipmap/search_icon"
+            android:layout_marginRight="@dimen/dp10"
             android:visibility="visible" />
 
         <TextView

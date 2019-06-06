@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+   >
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/colorPrimary"
+        >
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textSize="@dimen/sp16"
+            android:textColor="@android:color/white"
+            android:text="修改密码"
+            android:layout_centerInParent="true"
+            />
+        <ImageView
+            android:id="@+id/tv_app_setting"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@mipmap/navibar_back"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            />
+    </RelativeLayout>
+
+    <android.support.v4.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fillViewport="true"
+        android:isScrollContainer="false"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+           <RelativeLayout
+               android:layout_width="match_parent"
+               android:layout_height="wrap_content">
+               <ImageView
+                   android:layout_width="120dp"
+                   android:layout_height="120dp"
+                   android:src="@mipmap/complete"
+                   android:layout_centerInParent="true"
+                   android:layout_marginTop="@dimen/dp40"
+                   android:layout_marginBottom="@dimen/dp20"
+                   />
+           </RelativeLayout>
+
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="密码找回成功!"
+                android:textSize="22sp"
+                android:textStyle="bold"
+                android:textColor="@color/black"
+                android:layout_gravity="center_horizontal"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="您可以点击下面的连接。返回登录页面"
+                android:textColor="#8f8f94"
+                android:layout_gravity="center_horizontal"
+                android:textSize="16sp"
+                android:layout_marginTop="@dimen/dp5"
+                />
+
+            <RelativeLayout
+                android:id="@+id/rl_next"
+                android:layout_width="120dp"
+                android:layout_height="50dp"
+                android:layout_marginTop="@dimen/dp40"
+                android:layout_gravity="center_horizontal"
+                android:background="@drawable/shape_button_blue_tianchong"
+                >
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="立即跳转"
+                    android:textColor="@color/white"
+                    android:layout_centerInParent="true"
+                    android:textSize="@dimen/sp16"
+                    />
+            </RelativeLayout>
+
+
+
+        </LinearLayout>
+
+    </android.support.v4.widget.NestedScrollView>
+
+
+</LinearLayout>
