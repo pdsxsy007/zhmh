@@ -12,6 +12,7 @@ import android.view.View;
 import android.view.inputmethod.EditorInfo;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -24,6 +25,10 @@ import com.zhy.adapter.recyclerview.base.ViewHolder;
 import com.zhy.view.flowlayout.TagAdapter;
 import com.zhy.view.flowlayout.TagFlowLayout;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
+
 import butterknife.BindView;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
@@ -35,6 +40,9 @@ import io.cordova.zhqy.utils.StringUtils;
 import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.ViewUtils;
 import io.cordova.zhqy.web.BaseWebActivity;
+import io.cordova.zhqy.web.BaseWebActivity2;
+import io.cordova.zhqy.web.BaseWebActivity3;
+import io.cordova.zhqy.web.BaseWebActivity4;
 
 /**
  * Created by Administrator on 2018/11/29 0029.
@@ -51,9 +59,17 @@ public class AppSearchActivity extends BaseActivity2 {
     EditText tvSearch;
     @BindView(R.id.search_result)
     RecyclerView searchResult;
+
+    @BindView(R.id.rl_history)
+    RelativeLayout rl_history;
+
+    @BindView(R.id.tv_clear)
+    TextView tv_clear;
+
     @BindView(R.id.mFlowLayout)
     TagFlowLayout flSearchCache;
-
+    boolean isLogin =false;
+    private int flag = 0;
     @Override
     protected int getResourceId() {
         return R.layout.app_search_activity;
@@ -61,12 +77,22 @@ public class AppSearchActivity extends BaseActivity2 {
 
     @Override
     protected void initView() {
+
         super.initView();
+        isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
         tvTitle.setText("应用搜索");
         tvResult.setVisibility(View.GONE);
-        tvSearchCache.setVisibility(View.GONE);
+        //tvSearchCache.setVisibility(View.GONE);
+        rl_history.setVisibility(View.GONE);
         setEditListener();
-
+        tv_clear.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                rl_history.setVisibility(View.GONE);
+                flSearchCache.setVisibility(View.GONE);
+                ViewUtils.clearSearchHistory(AppSearchActivity.this);
+            }
+        });
     }
 
     private void setEditListener() {
@@ -91,6 +117,9 @@ public class AppSearchActivity extends BaseActivity2 {
                     }else {
                         ViewUtils.saveSearchHistory(StringUtils.getEditTextData(tvSearch));
                         netWorkSearchApp();
+                        flag = 1;
+                        rl_history.setVisibility(View.GONE);
+                        flSearchCache.setVisibility(View.GONE);
                     }
 
                 }
@@ -108,7 +137,9 @@ public class AppSearchActivity extends BaseActivity2 {
                     }else {
                         ViewUtils.saveSearchHistory(StringUtils.getEditTextData(tvSearch));
                         netWorkSearchApp();
-
+                        flag = 1;
+                        rl_history.setVisibility(View.GONE);
+                        flSearchCache.setVisibility(View.GONE);
                     }
 
                     return true;
@@ -122,6 +153,7 @@ public class AppSearchActivity extends BaseActivity2 {
     /*搜索数据请求*/
     AppListBean allAppListBean;
     private void netWorkSearchApp() {
+        String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
         ViewUtils.createLoadingDialog(this);
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.APP_List)
                 .params("Version", "1.0")
@@ -130,6 +162,7 @@ public class AppSearchActivity extends BaseActivity2 {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
+                        Log.e("dsadadsad",response.body());
                         allAppListBean = JSON.parseObject(response.body(),AppListBean.class);
                         ViewUtils.cancelLoadingDialog();
                         if (allAppListBean.isSuccess()){
@@ -152,7 +185,7 @@ public class AppSearchActivity extends BaseActivity2 {
                         super.onError(response);
                         tvResult.setVisibility(View.GONE);
                         ViewUtils.cancelLoadingDialog();
-                        T.showShort(MyApp.getInstance(),"请求错误" );
+                        T.showShort(MyApp.getInstance(),"网络异常" );
                     }
                 });
     }
@@ -165,6 +198,31 @@ public class AppSearchActivity extends BaseActivity2 {
             protected void convert(ViewHolder holder, final AppListBean.ObjBean.ListBean listBean, int position) {
                 holder.setText(R.id.tv_app_name,listBean.getAppName());
                 holder.setText(R.id.tv_app_come,"来源 ：" +listBean.getSystemName());
+                holder.setVisible(R.id.iv_del,true);
+                if (listBean.getAppIntranet()==1){
+                    holder.setVisible(R.id.iv_del,true);
+                    Glide.with(AppSearchActivity.this)
+                            .load(R.mipmap.nei_icon)
+                            .error(R.mipmap.nei_icon)
+                            .into((ImageView) holder.getView(R.id.iv_del));
+                }else {
+                    holder.setVisible(R.id.iv_del,false);
+                }
+
+                if (!isLogin) {
+                    if (listBean.getAppLoginFlag()==0){
+                        holder.setVisible(R.id.iv_lock_close,true);
+                        Glide.with(AppSearchActivity.this)
+                                .load(R.mipmap.lock_icon)
+                                .error(R.mipmap.lock_icon)
+                                .into((ImageView) holder.getView(R.id.iv_lock_close));
+                    }else {
+                        holder.setVisible(R.id.iv_lock_close,false);
+                    }
+                }else {
+                    holder.setVisible(R.id.iv_lock_close,false);
+                }
+
 
 //                if (StringUtils.isEmpty(listBean.getAppImages()+"")){
 //                    Glide.with(getApplicationContext())
@@ -192,19 +250,75 @@ public class AppSearchActivity extends BaseActivity2 {
                 holder.setOnClickListener(R.id.ll_go, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
+                        Log.e("url",listBean.getAppUrl() + "");
                         if (!listBean.getAppUrl().isEmpty()){
-                            Log.e("url",listBean.getAppUrl() + "");
-                            Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
-                            intent.putExtra("appUrl",listBean.getAppUrl());
-                            intent.putExtra("search","1");
-                            startActivity(intent);
+                            if (!isLogin) {
+                                if(listBean.getAppLoginFlag()==0){
+                                    Intent intent = new Intent(AppSearchActivity.this,LoginActivity2.class);
+                                    startActivity(intent);
+                                }else {
+                                    Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
+                                    if (listBean.getAppUrl().contains("{memberid}")){
+                                        String appUrl = listBean.getAppUrl();
+                                        String s1= null;
+                                        try {
+                                            s1 = URLEncoder.encode((String) SPUtils.get(MyApp.getInstance(),"personName",""), "UTF-8");
+                                            appUrl =  appUrl.replace("{memberid}", s1);
+                                            intent.putExtra("appUrl",appUrl);
+                                        } catch (UnsupportedEncodingException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }else {
+                                        intent.putExtra("appUrl",listBean.getAppUrl());
+                                    }
+
+                                    //intent.putExtra("appUrl",listBean.getAppUrl());
+                                    intent.putExtra("appName",listBean.getAppName());
+                                    intent.putExtra("search","1");
+                                    startActivity(intent);
+                                }
+
+                            }else {
+                                if(listBean.getAppUrl().equals("http://iapp.zzuli.edu.cn/portal/app/mailbox/qqEmailLogin")){
+                                    Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
+                                    intent.putExtra("appUrl",listBean.getAppUrl());
+                                    intent.putExtra("appId",listBean.getAppId()+"");
+                                    intent.putExtra("appName",listBean.getAppName()+"");
+                                    startActivity(intent);
+                                }else {
+                                    Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
+                                    if (listBean.getAppUrl().contains("{memberid}")){
+                                        String appUrl = listBean.getAppUrl();
+                                        String s1= null;
+                                        try {
+                                            s1 = URLEncoder.encode((String) SPUtils.get(MyApp.getInstance(),"personName",""), "UTF-8");
+                                            appUrl =  appUrl.replace("{memberid}", s1);
+                                            intent.putExtra("appUrl",appUrl);
+                                        } catch (UnsupportedEncodingException e) {
+                                            e.printStackTrace();
+                                        }
+
+                                    }else {
+                                        intent.putExtra("appUrl",listBean.getAppUrl());
+                                    }
+                                    intent.putExtra("appName",listBean.getAppName());
+                                    intent.putExtra("search","1");
+                                    intent.putExtra("appId",listBean.getAppId()+"");
+                                    startActivity(intent);
+                                }
+
+
+                            }
+
+
                         }
                     }
                 });
             }
         };
         searchResult.setAdapter(searchResultListAdapter);
-        searchResultListAdapter.notifyDataSetChanged();
+        //searchResultListAdapter.notifyDataSetChanged();
 
     }
 
@@ -213,9 +327,29 @@ public class AppSearchActivity extends BaseActivity2 {
     @Override
     protected void onResume() {
         super.onResume();
-        setSearchCache();
-        flSearchCache.setVisibility(View.VISIBLE);
-        tvSearchCache.setVisibility(View.VISIBLE);
+        String trim = tvSearch.getText().toString().trim();
+        if(flag == 0){
+            setSearchCache();
+            List<String> searchHistory = ViewUtils.getSearchHistory();
+            if(searchHistory.size() > 0){
+                flSearchCache.setVisibility(View.VISIBLE);
+                //tvSearchCache.setVisibility(View.VISIBLE);
+                rl_history.setVisibility(View.VISIBLE);
+            }else {
+                rl_history.setVisibility(View.GONE);
+                flSearchCache.setVisibility(View.GONE);
+            }
+
+        }else {
+            isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
+            setSearchCache();
+            //tvSearchCache.setVisibility(View.GONE);
+            rl_history.setVisibility(View.GONE);
+            flSearchCache.setVisibility(View.GONE);
+            netWorkSearchApp();
+        }
+
+
     }
 
     /*历史记录数据填充*/
@@ -239,9 +373,11 @@ public class AppSearchActivity extends BaseActivity2 {
             @Override
             public boolean onTagClick(View view, int position, com.zhy.view.flowlayout.FlowLayout parent)
             {
-//                Toast.makeText(getApplicationContext(), ViewUtils.getSearchHistory().get(position), Toast.LENGTH_SHORT).show();
                 tvSearch.setText(ViewUtils.getSearchHistory().get(position));
-                //view.setVisibility(View.GONE);
+                netWorkSearchApp();
+                flag = 1;
+                rl_history.setVisibility(View.GONE);
+                flSearchCache.setVisibility(View.GONE);
                 return true;
             }
         });
