@@ -1,18 +1,21 @@
 package io.cordova.zhqy.fragment.home;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
+import android.net.http.SslError;
 import android.os.Build;
-import android.os.Handler;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.CookieManager;
+import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -23,8 +26,8 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
 import com.just.agentweb.AbsAgentWebSettings;
 import com.just.agentweb.AgentWeb;
@@ -38,6 +41,13 @@ import com.just.agentweb.download.DownloadListenerAdapter;
 import com.just.agentweb.download.DownloadingService;
 import com.jwsd.libzxing.OnQRCodeListener;
 import com.jwsd.libzxing.QRCodeManager;
+import com.lzy.okgo.OkGo;
+import com.lzy.okgo.callback.StringCallback;
+import com.lzy.okgo.model.Response;
+import com.scwang.smartrefresh.layout.SmartRefreshLayout;
+import com.scwang.smartrefresh.layout.api.RefreshLayout;
+import com.scwang.smartrefresh.layout.header.ClassicsHeader;
+import com.scwang.smartrefresh.layout.listener.OnRefreshListener;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -47,12 +57,20 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import gdut.bsx.share2.Share2;
 import gdut.bsx.share2.ShareContentType;
-import io.cordova.zhqy.activity.InfoDetailsActivity;
+
+import io.cordova.zhqy.UrlRes;
+import io.cordova.zhqy.activity.LoginActivity;
 import io.cordova.zhqy.activity.MyShenqingActivity;
 import io.cordova.zhqy.activity.OaMsgActivity;
 import io.cordova.zhqy.activity.SystemMsgActivity;
+import io.cordova.zhqy.bean.BaseBean;
+import io.cordova.zhqy.utils.LighterHelper;
+import io.cordova.zhqy.utils.MobileInfoUtils;
 import io.cordova.zhqy.utils.StringUtils;
-import io.cordova.zhqy.web.WebLayout;
+import io.cordova.zhqy.utils.ToastUtils;
+import io.cordova.zhqy.utils.netState;
+import io.cordova.zhqy.web.BaseWebActivity4;
+import io.cordova.zhqy.web.WebLayout2;
 import io.reactivex.functions.Consumer;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.utils.BaseFragment;
@@ -60,6 +78,15 @@ import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.web.BaseWebActivity;
 import io.cordova.zhqy.web.FileUtil;
+import me.samlss.lighter.Lighter;
+import me.samlss.lighter.interfaces.OnLighterListener;
+import me.samlss.lighter.parameter.Direction;
+import me.samlss.lighter.parameter.LighterParameter;
+import me.samlss.lighter.parameter.MarginOffset;
+import me.samlss.lighter.shape.CircleShape;
+import me.samlss.lighter.shape.RectShape;
+
+import static io.cordova.zhqy.utils.MyApp.getInstance;
 
 
 /**
@@ -73,6 +100,7 @@ public class HomePreFragment extends BaseFragment {
     TextView tvTitle;
     @BindView(R.id.layout_msg)
     RelativeLayout layoutMsg;
+
     @BindView(R.id.msg_num)
     TextView msgNum;
     @BindView(R.id.iv_back)
@@ -80,14 +108,21 @@ public class HomePreFragment extends BaseFragment {
     @BindView(R.id.iv_qr)
     ImageView iv_qr;
 
-    @BindView(R.id.swipeLayout)
-    SwipeRefreshLayout mSwipeRefreshLayout;
 
+
+    @BindView(R.id.swipeLayout)
+    SmartRefreshLayout mSwipeRefreshLayout;
+
+    @BindView(R.id.header)
+    ClassicsHeader header;
     protected AgentWeb mAgentWeb;
-    private LinearLayout mLinearLayout;
+
+    @BindView(R.id.linearLayout)
+    LinearLayout mLinearLayout;
     private DownloadingService mDownloadingService;
     private Gson mGson = new Gson();
     String tgc ,msgType;
+    boolean isLogin =false;
     /**分享*/
     private static final int REQUEST_SHARE_FILE_CODE = 120;
 
@@ -96,19 +131,67 @@ public class HomePreFragment extends BaseFragment {
         return R.layout.fragment_home_pre;
     }
 
+    @SuppressLint("WrongConstant")
     @Override
     public void initView(View view) {
         super.initView(view);
-//        mLinearLayout = (LinearLayout) view.findViewById(R.id.ll_refresh);
-        mSwipeRefreshLayout.setColorSchemeColors(Color.RED,Color.BLUE,Color.GREEN);
+
         tgc = (String) SPUtils.get(MyApp.getInstance(),"TGC","");
         msgType = (String) SPUtils.get(MyApp.getInstance(),"msgType","");
         iv_qr.setVisibility(View.VISIBLE);
         tvTitle.setText("首页");
-//         s1();
+
         setWeb();
         setGoPushMsg();
+        header.setEnableLastTime(false);
+        checkNetState();
+
+        String home01 = (String) SPUtils.get(MyApp.getInstance(), "home01", "");
+        if(home01.equals("")){
+            setGuideView();
+        }
+
     }
+
+    private void setGuideView() {
+        CircleShape circleShape = new CircleShape(10);
+        circleShape.setPaint(LighterHelper.getDashPaint()); //set custom paint
+        // 使用图片
+        Lighter.with(getActivity())
+                .setBackgroundColor(0xB9000000)
+                .setOnLighterListener(new OnLighterListener() {
+                    @Override
+                    public void onShow(int index) {
+
+
+                    }
+
+                    @Override
+                    public void onDismiss() {
+                        SPUtils.put(MyApp.getInstance(),"home01","1");
+                    }
+                })
+                .addHighlight(new LighterParameter.Builder()
+                        //.setHighlightedViewId(R.id.iv_qr)
+                        .setHighlightedView(iv_qr)
+                        .setTipLayoutId(R.layout.fragment_home_gl)
+                        //.setLighterShape(new RectShape(80, 80, 50))
+                        //.setLighterShape(circleShape)
+                        .setTipViewRelativeDirection(Direction.BOTTOM)
+                        .setTipViewRelativeOffset(new MarginOffset(150, 0, 30, 0))
+                        .build()).show();
+    }
+
+    private void checkNetState() {
+        if (!netState.isConnect(getActivity()) ){
+            ToastUtils.showToast(getActivity(),"网络连接异常!");
+
+        }else {
+
+
+        }
+    }
+
     /**
      * 推送消息跳转
      * msgType 消息类型(-1:删除，0:系统消息,1:待办,2:待阅,3:已办,4:已阅,5:我的申请)
@@ -154,9 +237,29 @@ public class HomePreFragment extends BaseFragment {
     @Override
     public void initListener() {
         super.initListener();
-        initPullRefresh();
+//        initPullRefresh();
+        mSwipeRefreshLayout.setOnRefreshListener(new OnRefreshListener() {
+            @Override
+            public void onRefresh(RefreshLayout refreshlayout) {
+                if (!netState.isConnect(getActivity()) ){
+                    ToastUtils.showToast(getActivity(),"网络连接异常!");
+                    refreshlayout.finishRefresh();
+                }else {
+                    if (mAgentWeb.getWebCreator().getWebView().getScrollY() == 0){
+                        refreshlayout.finishRefresh();
+                    }else {
+                        refreshlayout.finishRefresh();
+                    }
+                    setWeb();
+                }
+
+            }
+        });
+
     }
 
+
+    @SuppressLint("WrongConstant")
     private void setWeb() {
         layoutMsg.setVisibility(View.GONE);
         ivBack.setVisibility(View.GONE);
@@ -167,15 +270,19 @@ public class HomePreFragment extends BaseFragment {
                 .setAgentWebWebSettings(getSettings())//设置 IAgentWebSettings。
                 .setWebViewClient(mWebViewClient)//WebViewClient ， 与 WebView 使用一致 ，但是请勿获取WebView调用setWebViewClient(xx)方法了,会覆盖AgentWeb DefaultWebClient,同时相应的中间件也会失效。
                 .setWebChromeClient(mWebChromeClient) //WebChromeClient
+                .setMainFrameErrorView(R.layout.layout_no_net, 0)
                 .setPermissionInterceptor(mPermissionInterceptor) //权限拦截 2.0.0 加入。
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.DISALLOW)//打开其他页面时，弹窗质询用户前往其他应用 AgentWeb 3.0.0 加入。
-                .setWebLayout(new WebLayout(getActivity()))
+                .setWebLayout(new WebLayout2(getActivity()))
                 .interceptUnkownUrl() //拦截找不到相关页面的Url AgentWeb 3.0.0 加入。
                 .createAgentWeb()//创建AgentWeb。
                 .ready()//设置 WebSettings。
                 .go("http://www.zzuli.edu.cn/_t9/main.htm");
-        mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_IF_CONTENT_SCROLLS);
-//        addBGChild((FrameLayout) mAgentWeb.getWebCreator().getWebParentLayout()); // 得到 AgentWeb 最底层的控件
+
+
+        mAgentWeb.getAgentWebSettings().getWebSettings().setUseWideViewPort(true);
+        mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);
+
     }
 
     private WebViewClient mWebViewClient = new WebViewClient() {
@@ -185,15 +292,20 @@ public class HomePreFragment extends BaseFragment {
 
         }
 
+
         @Override
         public void onPageFinished(WebView view, String url) {
             super.onPageFinished(view, url);
+
+            //imgReset(view);
             CookieManager cookieManager = CookieManager.getInstance();
             if(Build.VERSION.SDK_INT>=21){
                 cookieManager.setAcceptThirdPartyCookies(view, true);
             }
 
         }
+
+
 
         /**网址拦截*/
         @Override
@@ -204,7 +316,7 @@ public class HomePreFragment extends BaseFragment {
             }
 
             if (!url.equals("http://www.zzuli.edu.cn/_t9/main.htm")){
-                Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
+                Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
                 intent.putExtra("appUrl",url);
 //                    intent.putExtra("appId",listBean.getAppId()+"");
                 startActivity(intent);
@@ -219,7 +331,7 @@ public class HomePreFragment extends BaseFragment {
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
             if (!url.equals("http://www.zzuli.edu.cn/_t9/main.htm")){
-                Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
+                Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
                 intent.putExtra("appUrl",url);
 //                    intent.putExtra("appId",listBean.getAppId()+"");
                 startActivity(intent);
@@ -235,6 +347,20 @@ public class HomePreFragment extends BaseFragment {
 
         }
     };
+
+    //此方法获取里面的img，设置img的高度100%,固定图片不能左右滑动
+    private void imgReset(WebView view) {
+        if(view!=null){
+            view.loadUrl("javascript:(function(){" +
+                    "var objs = document.getElementsByTagName('img'); " +
+                    "for(var i=0;i<objs.length;i++)  " +
+                    "{"
+                    + "var img = objs[i];   " +
+                    " img.style.maxWidth = '100%';img.style.height='auto';" +
+                    "}" +
+                    "})()");
+        }}
+
     private WebChromeClient mWebChromeClient = new WebChromeClient() {
         @Override
         public void onProgressChanged(WebView view, int newProgress) {
@@ -417,19 +543,19 @@ public class HomePreFragment extends BaseFragment {
         }
     };
 
+//    ,R.id.tv_result_net
     @OnClick({R.id.msg_num, R.id.layout_msg,R.id.iv_qr})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.msg_num:
 //                netHomePageData();
+
+
                 break;
             case R.id.iv_qr:
-//                netHomePageData();
-                setPermission();
                 if (allowedScan){
                     onScanQR();
                 }else {
-                    Toast.makeText(getActivity(),"请允许权限后尝试",Toast.LENGTH_SHORT).show();
                     setPermission();
                 }
 
@@ -442,51 +568,33 @@ public class HomePreFragment extends BaseFragment {
         }
     }
 
-    /**刷新*/
-    private void initPullRefresh() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            mAgentWeb.getWebCreator().getWebView().setOnScrollChangeListener(new View.OnScrollChangeListener() {
-                @Override
-                public void onScrollChange(View v, int scrollX, int scrollY, int oldScrollX, int oldScrollY) {
-                    if (mAgentWeb.getWebCreator().getWebView().getScrollY() == 0){
-                        mSwipeRefreshLayout.setEnabled(true);
-                    }else {
-                        mSwipeRefreshLayout.setEnabled(false);
-                    }
-                }
-            });
-        }
-        mSwipeRefreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                mAgentWeb.getUrlLoader().reload();
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        //刷新完成
-                        mSwipeRefreshLayout.setRefreshing(false);
-
-                    }
-                }, 3000);
-
-            }
-        });
-    }
     @Override
     public void onResume() {
-        mAgentWeb.getWebLifeCycle().onResume();//恢复
+        if (!netState.isConnect(getActivity())) {
+            ToastUtils.showToast(getActivity(),"网络连接异常!");
+        }
+        if(mAgentWeb != null){
+            mAgentWeb.getWebLifeCycle().onResume();//恢复
+        }
+
 //        setWeb();
         super.onResume();
     }
     @Override
     public void onPause() {
 
-        mAgentWeb.getWebLifeCycle().onPause(); //暂停应用内所有WebView ， 调用mWebView.resumeTimers();/mAgentWeb.getWebLifeCycle().onResume(); 恢复。
+        if(mAgentWeb != null){
+            mAgentWeb.getWebLifeCycle().onPause(); //暂停应用内所有WebView ， 调用mWebView.resumeTimers();/mAgentWeb.getWebLifeCycle().onResume(); 恢复。
+        }
+
         super.onPause();
     }
     @Override
     public void onDestroyView() {
-        mAgentWeb.getWebLifeCycle().onDestroy();
+        if(mAgentWeb != null){
+            mAgentWeb.getWebLifeCycle().onDestroy();
+        }
+
         super.onDestroyView();
     }
 
@@ -496,6 +604,7 @@ public class HomePreFragment extends BaseFragment {
      * @param
      */
     public void onScanQR() {
+        isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
 //        QRCodeManager.getInstance().with(getActivity()).scanningQRCode(1);
         Log.e("tag  = ","点击了");
         QRCodeManager.getInstance()
@@ -507,10 +616,19 @@ public class HomePreFragment extends BaseFragment {
                     public void onCompleted(String result) {
                         //controlLog.append("\n\n(结果)" + result);
                         Log.e("QRCodeManager = ",result);
-                        Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
-                        intent.putExtra("appUrl",result);
+                        if(!isLogin){
+                            Intent intent = new Intent(MyApp.getInstance(), LoginActivity.class);
+                            startActivity(intent);
+                        }else {
+
+                            Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
+                            intent.putExtra("appUrl",result);
+                            intent.putExtra("scan","scan");
+                            startActivity(intent);
+                        }
+
 //                    intent.putExtra("appId",listBean.getAppId()+"");
-                        startActivity(intent);
+
                     }
 
                     @Override
@@ -606,5 +724,48 @@ public class HomePreFragment extends BaseFragment {
         mFlp2.topMargin = (int) (15 * scale2 + 0.5f);
         mFlp2.leftMargin =  (55);
         frameLayout.addView(mTextView2, 0, mFlp2);
+    }
+
+
+
+    /*public void cancleSelect() {
+        //ToastUtils.showToast(getActivity(),"撒大声地静安寺刀剑三");
+        if (!mAgentWeb.back()) {
+            BaseWebActivity.this.;
+        }
+    }*/
+
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+        if(hidden){
+
+        }else {
+            netInsertPortal("1");
+        }
+    }
+
+    private void netInsertPortal(final String insertPortalAccessLog) {
+        String imei = MobileInfoUtils.getIMEI(getActivity());
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
+                .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
+                .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
+                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogVersionNumber", (String) SPUtils.get(getActivity(),"versionName", ""))//版本号
+                .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("sdsaas",response.body());
+
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+
+                    }
+                });
     }
 }

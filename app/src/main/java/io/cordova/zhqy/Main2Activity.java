@@ -2,70 +2,130 @@ package io.cordova.zhqy;
 
 
 import android.*;
+import android.Manifest;
+import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.content.BroadcastReceiver;
+import android.content.ComponentName;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.SharedPreferences;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.location.Address;
+import android.location.Criteria;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.os.StatFs;
 import android.provider.Settings;
+import android.support.annotation.NonNull;
 import android.support.annotation.RequiresApi;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.app.NotificationManagerCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AlertDialog;
+import android.text.TextUtils;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.KeyEvent;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
+import android.webkit.CookieManager;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONArray;
-import com.bumptech.glide.Glide;
 import com.jwsd.libzxing.QRCodeManager;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
-import com.ycbjie.ycupdatelib.PermissionUtils;
-import com.ycbjie.ycupdatelib.UpdateFragment;
+
+
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.net.URLEncoder;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Locale;
+
 
 import butterknife.BindView;
 import cn.jpush.android.api.JPushInterface;
-import io.cordova.zhqy.activity.LoginActivity;
+
+import io.cordova.zhqy.activity.InfoDetailsActivity;
+import io.cordova.zhqy.activity.LoginActivity2;
+import io.cordova.zhqy.activity.LoginActivity3;
+import io.cordova.zhqy.activity.SplashActivity;
 import io.cordova.zhqy.bean.BaseBean;
 import io.cordova.zhqy.bean.CountBean;
 import io.cordova.zhqy.bean.CurrencyBean;
+import io.cordova.zhqy.bean.DownLoadBean;
 import io.cordova.zhqy.bean.LoginBean;
 import io.cordova.zhqy.bean.UpdateBean;
-import io.cordova.zhqy.bean.UserMsgBean;
 import io.cordova.zhqy.fragment.home.FindPreFragment;
 import io.cordova.zhqy.fragment.home.HomePreFragment;
 import io.cordova.zhqy.fragment.home.MyPre2Fragment;
 
 import io.cordova.zhqy.fragment.home.ServicePreFragment;
 import io.cordova.zhqy.jpushutil.NotificationsUtils;
-import io.cordova.zhqy.utils.ActivityUtils;
-import io.cordova.zhqy.utils.BadgeView;
-import io.cordova.zhqy.utils.BaseActivity2;
 
-import io.cordova.zhqy.utils.CircleCrop;
+import io.cordova.zhqy.utils.ActivityUtils;
+import io.cordova.zhqy.utils.AesEncryptUtile;
+import io.cordova.zhqy.utils.BadgeView;
+import io.cordova.zhqy.utils.BaseActivity3;
+import io.cordova.zhqy.utils.CookieUtils;
+import io.cordova.zhqy.utils.DensityUtil;
+import io.cordova.zhqy.utils.GetAddressUtil;
+import io.cordova.zhqy.utils.JsonUtil;
 import io.cordova.zhqy.utils.MobileInfoUtils;
 import io.cordova.zhqy.utils.MyApp;
+import io.cordova.zhqy.utils.SPUtil;
 import io.cordova.zhqy.utils.SPUtils;
+import io.cordova.zhqy.utils.ScreenSizeUtils;
 import io.cordova.zhqy.utils.StringUtils;
+import io.cordova.zhqy.utils.SystemInfoUtils;
 import io.cordova.zhqy.utils.T;
-import io.cordova.zhqy.web.AgentWebFragment;
+import io.cordova.zhqy.utils.ToastUtils;
+import io.cordova.zhqy.utils.netState;
+
+import io.cordova.zhqy.widget.MyDialog;
+
+import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static io.cordova.zhqy.UrlRes.insertPortalPositionUrl;
+import static io.cordova.zhqy.activity.SplashActivity.getLocalVersionName;
+import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 
 import static io.cordova.zhqy.utils.MyApp.*;
 
 @TargetApi(Build.VERSION_CODES.KITKAT)
-public class Main2Activity extends BaseActivity2 {
+public class Main2Activity extends BaseActivity3 {
 
     @BindView(R.id.frameLayout)
     FrameLayout frameLayout;
@@ -73,15 +133,15 @@ public class Main2Activity extends BaseActivity2 {
      RadioButton rbMy;
 
     @BindView(R.id.main_radioGroup)
-    public  RadioGroup mainRadioGroup;
+    RadioGroup mainRadioGroup;
+
 
 
 
     boolean isFirst = true,isHome = true,isFind = true,isService = true, isMy = true,isFive = true,isLogin = false;
     String insertPortalAccessLog ;
     HomePreFragment homePreFragment;
-    AgentWebFragment mAgentWebFragment  ;
-    AgentWebFragment mAgentWebFragment2;
+
 
     FindPreFragment findPreFragment;
     ServicePreFragment servicePreFragment;
@@ -90,16 +150,18 @@ public class Main2Activity extends BaseActivity2 {
     private String registrationId;
     CurrencyBean currencyBean;
     //    boolean enabled = NotificationsUtils.isNotificationEnabled2(MyApp.getInstance());
-    //这个是你的包名
-    private static final String apkName = "io.cordova.zhqy";
-    private static final String firstUrl = "http://xxx/xxx/xxx.apk";
     private static final String[] mPermission = {android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             android.Manifest.permission.READ_EXTERNAL_STORAGE};
     private Button button4;
     private BadgeView badge1;
     int perTag;
+    private int flag = 0;
+    public static boolean isForeground = false;
+    String time;
+    @BindView(R.id.webView)
+    WebView webView;
 
-
+    private int quanxian = 0;
     @Override
     protected int getResourceId() {
         return R.layout.activity_main2;
@@ -110,66 +172,187 @@ public class Main2Activity extends BaseActivity2 {
     @Override
     protected void initView() {
         super.initView();
-        isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
-        if (isLogin){
-            if (StringUtils.isEmpty(MyApp.registrationId)){
-                MyApp.registrationId =  JPushInterface.getRegistrationID(this);
-            }
+        isrRunIng = "1";
 
-            SPUtils.put(this,"registrationId", MyApp.registrationId);
-            bindJpush();
-          /*悬浮窗权限检测*/
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                    if (!Settings.canDrawOverlays(this)) {
-                        //若未授权则请求权限
-                        perTag = 0;
-                        showDialog();
-                    }else if (!NotificationsUtils.isNotificationEnabled(getApplicationContext())){
-                        perTag = 1;
-                        showDialog();
-                    }
-                }
-            }
 
-        }
+
+        showState();
 
         button4 = (Button) findViewById(R.id.btn_my);
 //        提示消息
         badge1 = new BadgeView(this, button4);
         badge1.hide();
         Log.d("TAG", " registrationId : " + MyApp.registrationId);
-        setPer();
+
         mainRadioGroup.check(R.id.rb_home_page);
-        showFragment(0);
+        //showFragment(0);
         insertPortalAccessLog = "1";
         if (isHome){
             netInsertPortal(insertPortalAccessLog);
         }
         setPermission();//权限判断
         isOpen();//判断悬浮窗权限
-//     查询通知权限
 
-//        remind(button4);
-        //getUpdateInfo();
+
+        getUpdateInfo();
+        registerBoradcastReceiver();
+        addMobieInfo();
+        getDownLoadType();
+
 
     }
+
+    private void getDownLoadType() {
+        OkGo.<String>get(UrlRes.HOME_URL + UrlRes.getDownLoadTypeUrl)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("下载类型",response.body());
+                        SPUtils.put(Main2Activity.this,"downLoadType",response.body());
+                       /* DownLoadBean downLoadBean = JsonUtil.parseJson(response.body(),DownLoadBean.class);
+                        List<String> string = downLoadBean.getString();*/
+
+
+                    }
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+
+                    }
+                });
+    }
+
+    private void addMobieInfo() {
+
+        //获取运行内存的信息
+        ActivityManager manager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
+        ActivityManager.MemoryInfo info = new ActivityManager.MemoryInfo();
+        manager.getMemoryInfo(info);
+        long totalMem = info.totalMem;
+
+        final StatFs statFs = new StatFs(Environment.getDataDirectory().getPath());
+        long totalCounts = statFs.getBlockCountLong();//总共的block数
+        long size = statFs.getBlockSizeLong(); //每格所占的大小，一般是4KB==
+        long totalROMSize = totalCounts *size; //内部存储总大小
+
+
+        String imei = MobileInfoUtils.getIMEI(this);
+        String deviceModel = SystemInfoUtils.getDeviceModel();
+        String displayVersion = SystemInfoUtils.getDISPLAYVersion();
+        String deviceAndroidVersion = SystemInfoUtils.getDeviceAndroidVersion();
+        String deviceCpu = SystemInfoUtils.getDeviceCpu();
+        String s = totalMem / 1024/1024/1024 + "GB";
+        String s3 = totalROMSize / 1024/1024/1024 + "GB";
+        String s4 = SystemInfoUtils.getWindowWidth(this) + "X" + SystemInfoUtils.getWindowHeigh(this);
+
+        Log.e("s",s);
+        Log.e("s3",s3);
+        Log.e("s4",s4);
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.addMobileInfoUrl)
+                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .params("mobilePhoneModel", SystemInfoUtils.getDeviceModel())
+                .params("mobileVersion", SystemInfoUtils.getDISPLAYVersion())
+                .params("mobileSystemVersion", SystemInfoUtils.getDeviceAndroidVersion())
+                .params("mobileCpu", SystemInfoUtils.getDeviceCpu())
+                .params("mobileMemory", totalMem/1024+"GB")
+                .params("mobileStorageSpace", totalROMSize/1024+"GB")
+                .params("mobileScreen", SystemInfoUtils.getWindowWidth(this)+"X"+SystemInfoUtils.getWindowHeigh(this))
+                .params("mobileEquipmentId", imei)
+                .params("mobileSystemCategory", 1)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("SysMsg",response.body());
+
+
+                    }
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+
+                    }
+                });
+    }
+
+    private void showState() {
+        isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
+        if (isLogin){
+
+            if (StringUtils.isEmpty(MyApp.registrationId)){
+                MyApp.registrationId =  JPushInterface.getRegistrationID(this);
+            }
+
+            SPUtils.put(this,"registrationId", MyApp.registrationId);
+            bindJpush();
+            /*悬浮窗权限检测*/
+           /* if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                    if (!Settings.canDrawOverlays(this)) {
+                        //若未授权则请求权限
+
+                        if(perTag == 0){
+                            showDialog();
+                        }
+
+                    }else if (!NotificationsUtils.isNotificationEnabled(getApplicationContext())){
+                        perTag = 1;
+                        showDialog();
+                    }
+
+
+                }
+            }*/
+            NotificationManagerCompat manager = NotificationManagerCompat.from(getApplicationContext());
+            boolean isOpened = manager.areNotificationsEnabled();
+            if(!isOpened){
+                showDialogs();
+            }
+        }
+    }
+
+
     private void remind() { //BadgeView的具体使用
+        String count = (String) SPUtils.get(this, "count", "");
         // 创建一个BadgeView对象，view为你需要显示提醒的控件
-        badge1.setText(countBean2.getCount()+Integer.parseInt(countBean1.getObj())+countBean3.getCount()+""); // 需要显示的提醒类容
-        // 需要显示的提醒类容
-        badge1.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);// 显示的位置.右上角,BadgeView.POSITION_BOTTOM_LEFT,下左，还有其他几个属性
+        //badge1.setText(countBean2.getCount()+Integer.parseInt(countBean1.getObj())+countBean3.getCount()+""); // 需要显示的提醒类容
+        badge1.setText(count); // 需要显示的提醒类容
+
+        int i = countBean2.getCount() + Integer.parseInt(countBean1.getObj()) + countBean3.getCount();
+        if(i >9){
+            // 需要显示的提醒类容
+            badge1.setBadgePosition(BadgeView.POSITION_TOP_LEFT1);// 显示的位置.右上角,BadgeView.POSITION_BOTTOM_LEFT,下左，还有其他几个属性
+        }else {
+            badge1.setBadgePosition(BadgeView.POSITION_TOP_LEFT);// 显示的位置.右上角,BadgeView.POSITION_BOTTOM_LEFT,下左，还有其他几个属性
+        }
+
         badge1.setTextColor(Color.WHITE); // 文本颜色
         badge1.setBadgeBackgroundColor(Color.RED); // 提醒信息的背景颜色，自己设置
         //badge1.setBackgroundResource(R.mipmap.icon_message_png); //设置背景图片
         badge1.setTextSize(10); // 文本大小
-        badge1.setBadgeMargin(50, 5); // 水平和竖直方向的间距
-//        badge1.setBadgeMargin(5); //各边间隔
-        // badge1.toggle(); //显示效果，如果已经显示，则影藏，如果影藏，则显示
         badge1.show();// 只有显示
-        // badge1.hide();//影藏显示
+
     }
 
+
+
+
+    public void registerBoradcastReceiver() {
+        IntentFilter myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction("refresh2");
+        //注册广播
+        registerReceiver(broadcastReceiver, myIntentFilter);
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(action.equals("refresh2")){
+                showState();
+            }
+        }
+    };
     @Override
     protected void initListener() {
         super.initListener();
@@ -178,6 +361,7 @@ public class Main2Activity extends BaseActivity2 {
             public void onCheckedChanged(RadioGroup radioGroup, int checkedId) {
                 switch (checkedId) {
                     case R.id.rb_home_page:
+                        flag = 0;
                         showFragment(0);
 
                         insertPortalAccessLog = "5";
@@ -186,6 +370,7 @@ public class Main2Activity extends BaseActivity2 {
                         }
                         break;
                     case R.id.rb_recommend:
+                        flag = 1;
                         showFragment(1);
                         insertPortalAccessLog = "2";
                         if (isFind){
@@ -193,6 +378,7 @@ public class Main2Activity extends BaseActivity2 {
                         }
                         break;
                     case R.id.rb_shopping:
+                        flag = 2;
                         showFragment(2);
                         insertPortalAccessLog = "3";
                         if (isService){
@@ -200,16 +386,32 @@ public class Main2Activity extends BaseActivity2 {
                         }
                         break;
                     case R.id.rb_my:
-                        if (!StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
+                        //if (isLogin && netState.isConnect(getApplicationContext())){
+                        if (isLogin ){
                             showFragment(3);
+                            flag = 3;
                             insertPortalAccessLog = "4";
                             if (isMy){
                                 netInsertPortal(insertPortalAccessLog);
                             }
-                        }else {
-                            mainRadioGroup.check(R.id.rb_home_page);
-                            showFragment(0);
-                            Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                        }else{
+                            //mainRadioGroup.check(R.id.rb_home_page);
+                            switch (flag){
+                                case 0:
+                                    mainRadioGroup.check(R.id.rb_home_page);
+                                    break;
+                                case 1:
+                                    mainRadioGroup.check(R.id.rb_recommend);
+                                    break;
+                                case 2:
+                                    mainRadioGroup.check(R.id.rb_shopping);
+                                    break;
+                                case 3:
+                                    mainRadioGroup.check(R.id.rb_my);
+                                    break;
+                            }
+                            showFragment(flag);
+                            Intent intent = new Intent(getApplicationContext(),LoginActivity2.class);
                             startActivity(intent);
                         }
                         break;
@@ -239,6 +441,13 @@ public class Main2Activity extends BaseActivity2 {
                     findPreFragment = new FindPreFragment();
                     ft.add(R.id.frameLayout, findPreFragment);
                 }
+                //ft.replace(R.id.frameLayout, findPreFragment)
+
+              /*  if (null!= countBean2)
+                    if (countBean2.getCount() + Integer.parseInt(countBean1.getObj()) + countBean3.getCount() >= 0) {
+                        findPreFragment.setText1(countBean2.getCount() + Integer.parseInt(countBean1.getObj()) + countBean3.getCount() + "");
+                    }*/
+
                 break;
             case 2:
                 // 如果fragment1已经存在则将其显示出来
@@ -249,16 +458,36 @@ public class Main2Activity extends BaseActivity2 {
                     servicePreFragment = new ServicePreFragment();
                     ft.add(R.id.frameLayout, servicePreFragment);
                 }
+
                 break;
             case 3:
 
-              if ( myPre2Fragment!= null)
+              /*if ( myPre2Fragment!= null)
                     ft.show(myPre2Fragment);
 
-                else {
-                    myPre2Fragment = new MyPre2Fragment();
-                    ft.add(R.id.frameLayout, myPre2Fragment);
+            else {
+
+            }*/
+                if (!netState.isConnect(Main2Activity.this) ){
+                    if(myPre2Fragment != null){
+                        ft.show(myPre2Fragment);
+                    }else {
+                        myPre2Fragment = new MyPre2Fragment();
+                        ft.add(R.id.frameLayout, myPre2Fragment);
+                    }
+                    ToastUtils.showToast(Main2Activity.this,"网络连接异常!");
+                }else {
+                    if(myPre2Fragment != null){
+                        ft.show(myPre2Fragment);
+                    }else {
+                        myPre2Fragment = new MyPre2Fragment();
+                        ft.add(R.id.frameLayout, myPre2Fragment);
+                    }
+                   /* myPre2Fragment = new MyPre2Fragment();
+                    ft.add(R.id.frameLayout, myPre2Fragment);*/
+
                 }
+
                 break;
         }
         ft.commit();
@@ -281,14 +510,17 @@ public class Main2Activity extends BaseActivity2 {
      * @param insertPortalAccessLog*/
     BaseBean baseBean ;
     private void netInsertPortal(final String insertPortalAccessLog) {
+        String imei = MobileInfoUtils.getIMEI(this);
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
-                .params("portalAccessLogEquipmentId", MobileInfoUtils.getIMEI(getApplicationContext()))//设备ID
+                .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
+                .params("portalAccessLogEquipmentId",imei)//设备ID
                 .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
-                .params("portalAccessLogVersionNumber", (String) SPUtils.get(getApplicationContext(),"VersionName", ""))//版本号
+                .params("portalAccessLogVersionNumber", (String) SPUtils.get(getApplicationContext(),"versionName", ""))//版本号
+                .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        Log.e("result1",response.body()+"   --防空");
+                        Log.e("sdsaas",response.body());
                         if (null != response.body()){
                             baseBean = JSON.parseObject(response.body(),BaseBean.class);
                             if (baseBean.isSuccess()){
@@ -318,8 +550,6 @@ public class Main2Activity extends BaseActivity2 {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.e("Tag","走了这里了"+requestCode+"---"+resultCode);
-        //注册onActivityResult
         QRCodeManager.getInstance().with(this).onActivityResult(requestCode, resultCode, data);
     }
 
@@ -389,7 +619,12 @@ public class Main2Activity extends BaseActivity2 {
                             if (mAlertDialog != null) {
                                 mAlertDialog.dismiss();
                             }
-                            NotificationsUtils.gotoSet(getApplicationContext());
+                            //NotificationsUtils.gotoSet(getApplicationContext());
+                            Intent intent = new Intent();
+                            intent.setAction(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+                            Uri uri = Uri.fromParts("package", getApplicationContext().getPackageName(), null);
+                            intent.setData(uri);
+                            startActivity(intent);
                         }
                     }).create();
         }
@@ -399,26 +634,6 @@ public class Main2Activity extends BaseActivity2 {
     @Override
     protected void onNewIntent(Intent intent) {
         super.onNewIntent(intent);
-        Log.e("msgId","啦啦 我走过这里");
-//        initData();
-//        msgId = (String) SPUtils.get(getApplicationContext(),"msgId","");
-//        if (!StringUtils.isEmpty(msgId)){
-//            String lgUrl =UrlRes.HOME_URL+UrlRes.Redirect_Url+msgId+"&type=socket";
-//
-//            try {
-//                baseUrl = UrlRes.Login_Home+userName+"&password="+userPwd+"&loginUrl="+UrlRes.HOME_URL+ UrlRes.Login_Url+"&redirect="+ URLEncoder.encode(lgUrl, "UTF-8");
-//            } catch (UnsupportedEncodingException e) {
-//                e.printStackTrace();
-//            }
-//            SPUtils.remove(getApplicationContext(),"msgId");
-//        }else {
-//            baseUrl =UrlRes.Login_Home+userName+"&password="+userPwd+"&loginUrl="+UrlRes.HOME_URL+ UrlRes.Login_Url+"&redirect=http://iapp.zzuli.edu.cn/portal/";
-//        }
-//
-////            Log.e("TAGNewIntent",baseUrl);
-//        mAgentWeb.getWebCreator().getWebView().loadUrl(baseUrl);
-//        isYinDao = false;
-//        isYindao();
 
     }
 
@@ -428,7 +643,11 @@ public class Main2Activity extends BaseActivity2 {
     long waitTime = 2000;
     long touchTime = 0;
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+
+
+
         if (event.getAction() == KeyEvent.ACTION_DOWN && KeyEvent.KEYCODE_BACK == keyCode) {
+
             long currentTime = System.currentTimeMillis();
             if ((currentTime - touchTime) >= waitTime) {
                 T.showShort(Main2Activity.this, "再按一次退出");
@@ -436,66 +655,250 @@ public class Main2Activity extends BaseActivity2 {
             } else {
                 ActivityUtils.getActivityManager().finishAllActivity();
             }
+
             return true;
         }
         return super.onKeyDown(keyCode, event);
     }
 
     private void getUpdateInfo() {
-        PermissionUtils.init(this);
-        boolean granted = PermissionUtils.isGranted(mPermission);
-        if(!granted){
-            PermissionUtils permission = PermissionUtils.permission(mPermission);
-            permission.callback(new PermissionUtils.SimpleCallback() {
-                @Override
-                public void onGranted() {
 
-                }
-                @Override
-                public void onDenied() {
-                    PermissionUtils.openAppSettings();
-                    Toast.makeText(Main2Activity.this,"请允许权限",Toast.LENGTH_SHORT).show();
-                }
-            });
-            permission.request();
-        }
-
-        OkGo.<String>get("http://192.168.30.5:8080"+UrlRes.getNewVersionInfo)
+        OkGo.<String>get(UrlRes.HOME_URL+UrlRes.getNewVersionInfo)
                 .params("system","android")
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("ss",response.body());
+
                         UpdateBean updateBean = JSON.parseObject(response.body(),UpdateBean.class);
                         String portalVersionNumber = updateBean.getObj().getPortalVersionNumber();
                         int portalVersionUpdate = updateBean.getObj().getPortalVersionUpdate();
-                        if (portalVersionUpdate == 1) {//1代表强制更新
-                            UpdateFragment.showFragment(Main2Activity.this,
-                                    true,firstUrl,apkName,updateBean.getObj().getPortalVersionUpdateDescription(), BuildConfig.APPLICATION_ID);
-                        }else {//普通更新
-                            UpdateFragment.showFragment(Main2Activity.this,
-                                    false,firstUrl,apkName,updateBean.getObj().getPortalVersionUpdateDescription(), BuildConfig.APPLICATION_ID);
-                        }
+                        String portalVersionDownloadAdress = updateBean.getObj().getPortalVersionDownloadAdress();
+                        logShow(portalVersionUpdate,portalVersionDownloadAdress,portalVersionNumber);
+
                     }
                 });
 
     }
+    String localVersionName;
+    private MyDialog m_Dialog;
+    private int isUpdate = 0;
+    private void logShow(int portalVersionUpdate, final String portalVersionDownloadAdress, final String portalVersionNumber) {
+        localVersionName = getLocalVersionName(this);
+        m_Dialog = new MyDialog(this, R.style.dialogdialog);
+        Window window = m_Dialog.getWindow();
+        window.setGravity(Gravity.CENTER);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_update, null);
+        RelativeLayout rl_down = view.findViewById(R.id.rl_down);
+        RelativeLayout rl_down2 = view.findViewById(R.id.rl_down2);
+        TextView tv_version = view.findViewById(R.id.tv_version);
+        RelativeLayout rl_cancel = view.findViewById(R.id.rl_cancel);
+
+        int width = ScreenSizeUtils.getWidth(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width - DensityUtil.dip2px(this,24),
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        m_Dialog.setContentView(view, layoutParams);
+        tv_version.setText(portalVersionNumber);
+        rl_down2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SPUtils.put(MyApp.getInstance(),"update",portalVersionNumber);
+                m_Dialog.dismiss();
+            }
+        });
+        String update = (String) SPUtils.get(MyApp.getInstance(), "update", "");
+        Log.e("update",update);
+
+        if(localVersionName.equals(portalVersionNumber)){//最新版本
+
+        }else {
+            if(update.equals(portalVersionNumber)){
+
+
+            }else {
+                m_Dialog.show();
+                if (portalVersionUpdate == 1) {//1代表强制更新
+
+                    isUpdate = 1;
+                    m_Dialog.setCanceledOnTouchOutside(false);
+                    m_Dialog.setCancelable(false);
+                    rl_cancel.setVisibility(View.GONE);
+                    rl_down2.setVisibility(View.GONE);
+                }else {//普通更新
+                    m_Dialog.setCanceledOnTouchOutside(false);
+                    rl_cancel.setClickable(false);
+                    isUpdate = 0;
+
+                }
+            }
+
+        }
+
+        rl_down.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                m_Dialog.dismiss();
+                Intent intent = new Intent(Main2Activity.this,InfoDetailsActivity.class);
+                intent.putExtra("appUrl",portalVersionDownloadAdress);
+                intent.putExtra("title2","下载地址");
+                startActivity(intent);
+                if(isUpdate == 1){
+                    finish();
+                }
+
+            }
+        });
+        rl_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                m_Dialog.dismiss();
+
+            }
+        });
+
+
+    }
+
+    @Override
+    protected void onPause() {
+        isForeground = false;
+        super.onPause();
+    }
+
 
     @Override
     protected void onResume() {
         super.onResume();
-        if (!StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
-            netWorkSystemMsg();
+        getMyLocation();
+
+        String count = (String) SPUtils.get(this, "count", "");
+
+        isForeground = true;
+        showFragment(flag);
+        isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
+        Log.e("onResume","onResume");
+
+        if (isLogin){
+
+            time = (String) SPUtils.get(MyApp.getInstance(), "time", "");
+            if(time.equals("")){
+                time = Calendar.getInstance().getTimeInMillis()+"";
+            }
+            long nowTime = Calendar.getInstance().getTimeInMillis();
+            long l = nowTime - Long.parseLong(time);
+            long l1 = l / 1000 / 60 / 60;
+               if(l1>=3){
+                   netWorkLogin();
+                   /*Intent intent = new Intent(getApplicationContext(),LoginActivity2.class);
+                   startActivity(intent);*/
+               }else {
+                   webView.setWebViewClient(mWebViewClient);
+                   webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
+                   //netWorkSystemMsg();
+
+                   if(count.equals("")){
+                       netWorkSystemMsg();
+                   }else {
+                       //remind();
+                       netWorkSystemMsg();
+                   }
+                   /*Intent i = new Intent(Main2Activity.this, MyService.class);
+                   startService(i);*/
+                   //setIconBadgeNumManager = new IconBadgeNumManager();
+                   //sendIconNumNotification(count);
+
+
+
+               }
+
+
         }else {
             badge1.hide();
+           /* if (Build.MANUFACTURER.equalsIgnoreCase("huaWei")) {
+                addHuaWeiCut("0");
+            }else if(Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")){
+                xiaoMiShortCut("0");
+            }else if (Build.MANUFACTURER.equalsIgnoreCase("vivo")) {
+
+                vivoShortCut("0");
+            }*/
+
         }
 
+
     }
+
+
+
+    private String s1;
+    private String s2;
+    LoginBean loginBean;
+    String tgt;
+    private void netWorkLogin() {
+        try {
+            String phone = (String) SPUtils.get(MyApp.getInstance(), "phone", "");
+            String pwd = (String) SPUtils.get(MyApp.getInstance(), "pwd", "");
+
+//            URLEncoder.encode( ,"UTF-8")
+            s1 = URLEncoder.encode(AesEncryptUtile.encrypt(phone,key),"UTF-8");
+            s2 =  URLEncoder.encode(AesEncryptUtile.encrypt(pwd,key),"UTF-8");
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+        OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
+                .params("openid","123456")
+                .params("username",s1)
+                .params("password",s2)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("result1",response.body());
+
+                        loginBean = JSON.parseObject(response.body(),LoginBean.class);
+                        if (loginBean.isSuccess() ) {
+
+                            try {
+                                CookieManager cookieManager =  CookieManager.getInstance();
+                                cookieManager.removeAllCookie();
+
+                                tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
+                                String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
+
+
+                                String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
+                                SPUtils.put(MyApp.getInstance(),"time",Calendar.getInstance().getTimeInMillis()+"");
+                                SPUtils.put(MyApp.getInstance(),"userId",userId);
+                                SPUtils.put(MyApp.getInstance(),"personName",userName);
+                                SPUtils.put(getApplicationContext(),"TGC",tgt);
+                                SPUtils.put(getApplicationContext(),"username",s1);
+                                SPUtils.put(getApplicationContext(),"password",s2);
+                                webView.setWebViewClient(mWebViewClient);
+                                webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
+                                Intent intent = new Intent();
+                                intent.putExtra("refreshService","dongtai");
+                                intent.setAction("refresh2");
+                                sendBroadcast(intent);
+
+
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }else {
+                            SPUtils.put(getApplicationContext(),"username","");
+                        }
+                    }
+                });
+    }
+
     CountBean countBean1;
     /** 获取消息数量*/
 
     private void netWorkSystemMsg() {
-        String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_countUnreadMessagesForCurrentUser)
                 .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .execute(new StringCallback() {
@@ -518,41 +921,6 @@ public class Main2Activity extends BaseActivity2 {
     CountBean countBean2;
     /**OA消息列表*/
     private void netWorkOAToDoMsg() {
-       /* OkGo.<String>post(UrlRes.HOME_URL + UrlRes.OA_Msg_List)
-                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .params("platformtype", "H5手机端")
-                .params("sizes",5)
-                .params("type", "db")
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean.class);
-                        ViewUtils.cancelLoadingDialog();
-                        if (oaMsgListBean.isSuccess()) {
-                            Log.i("OA消息列表",response.body());
-                            if (!oaMsgListBean.getObj().isEmpty()){
-                                llOa.setVisibility(View.VISIBLE);
-                                synchronized (object) {
-                                        allMsgNum = allMsgNum + oaMsgListBean.getObj().size();
-                                    Log.e("allMsgNum",allMsgNum+"");
-                                }
-                                //tvMyToDoMsgNum.setText(oaMsgListBean.getObj().size()+"");
-                                setRvOAMsgList();
-                            }
-                        }else {
-                            llOa.setVisibility(View.GONE);
-                            T.showShort(MyApp.getInstance(), "没有数据");
-                        }
-                    }
-
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        llOa.setVisibility(View.GONE);
-                        ViewUtils.cancelLoadingDialog();
-                        T.showShort(MyApp.getInstance(), "没有数据");
-                    }
-                });*/
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
                 .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .params("type", "db")
@@ -569,7 +937,7 @@ public class Main2Activity extends BaseActivity2 {
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-
+                        Log.e("sssssss",response.toString());
                     }
                 });
     }
@@ -588,8 +956,30 @@ public class Main2Activity extends BaseActivity2 {
                         countBean3 = JSON.parseObject(response.body(), CountBean.class);
 
                         //tvMyToDoMsgNum.setText(countBean2.getCount()+Integer.parseInt(countBean1.getObj())+countBean3.getCount()+"");
+                        String s = countBean2.getCount() + Integer.parseInt(countBean1.getObj()) + countBean3.getCount() + "";
+
+                        if(null == s){
+                            s = "0";
+                        }
+                        SPUtils.put(MyApp.getInstance(),"count",s+"");
+                        String count = (String) SPUtils.get(MyApp.getInstance(), "count", "");
+                       /* if (Build.MANUFACTURER.equalsIgnoreCase("huaWei")) {
+
+                            addHuaWeiCut(count);
+
+                        }else if(Build.MANUFACTURER.equalsIgnoreCase("Xiaomi")){
+                            xiaoMiShortCut(count);
+                        }else if (Build.MANUFACTURER.equalsIgnoreCase("vivo")) {
+                            vivoShortCut(count);
+                        }*/
 
                         remind();
+                        if(s.equals("0")){
+
+                            badge1.hide();
+                        }else {
+                            badge1.show();
+                        }
                     }
 
                     @Override
@@ -600,21 +990,75 @@ public class Main2Activity extends BaseActivity2 {
                 });
     }
 
+    private void vivoShortCut(String count) {
+        Intent localIntent = new Intent("launcher.action.CHANGE_APPLICATION_NOTIFICATION_NUM");
+        localIntent.putExtra("packageName", "io.cordova.zhqy");
+        String launchClassName = getPackageManager().getLaunchIntentForPackage(getPackageName()).getComponent().getClassName();
+        localIntent.putExtra("className", launchClassName);
+        if (TextUtils.isEmpty(count)) {
+            count = "";
+        } else { int numInt = Integer.valueOf(count);
+            if (numInt > 0) { if (numInt > 99) { count = "99";
+            }
+            } else { count = "0";
+            }
+        }
+        localIntent.putExtra("notificationNum", Integer.parseInt(count));
+       sendBroadcast(localIntent);
+
+    }
+
+    private void xiaoMiShortCut(String count) {
+        int number = Integer.parseInt(count);
+        try {
+            Notification notification = new Notification();
+            Field field = notification.getClass().getDeclaredField("extraNotification");
+            Object extraNotification = field.get(notification);
+            Method method = extraNotification.getClass().getDeclaredMethod("setMessageCount", int.class);
+            method.invoke(extraNotification, number);
+        } catch (Exception e) {
+            e.printStackTrace();
+
+        }
+
+    }
+
+    private void addHuaWeiCut(String count) {
+        try {
+            if(count.equals("")){
+                count = "0";
+            }
+            int number = Integer.parseInt(count);
+            if (number < 0) {
+                number = 0;
+            }
+            Bundle bundle = new Bundle();
+            bundle.putString("package","io.cordova.zhqy");
+            String launchClassName = getPackageManager().getLaunchIntentForPackage(getPackageName()).getComponent().getClassName();
+            //bundle.putString("class", "io.cordova.zhqy.Main2Activity");
+            bundle.putString("class",launchClassName);
+            bundle.putInt("badgenumber", number);
+            getContentResolver().call(Uri.parse("content://com.huawei.android.launcher.settings/badge/"), "change_badge", null, bundle);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     //获去唯一标识CAMERA,WRITE_EXTERNAL_STORAGE
     private void setPermission() {
         //同时请求多个权限
         RxPermissions rxPermission = new RxPermissions(this);
         rxPermission
                 .requestEach(
-                        android.Manifest.permission.READ_PHONE_STATE,
-//                        ,
-                        android.Manifest.permission.SYSTEM_ALERT_WINDOW
-                        ,
-//               Manifest.permission.WRITE_EXTERNAL_STORAGE,
-//               Manifest.permission.CAMERA,
-                        android.Manifest.permission.READ_EXTERNAL_STORAGE,
-                        android.Manifest.permission.ACCESS_FINE_LOCATION,
-                        android.Manifest.permission. RECEIVE_WAP_PUSH
+                        Manifest.permission.READ_PHONE_STATE,
+                        //Manifest.permission.SYSTEM_ALERT_WINDOW,
+                        Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.ACCESS_FINE_LOCATION,
+                        Manifest.permission. RECEIVE_WAP_PUSH,
+                        Manifest.permission. MANAGE_DOCUMENTS,
+                        Manifest.permission. MEDIA_CONTENT_CONTROL
+
                 )
                 .subscribe(new io.reactivex.functions.Consumer<Permission>() {
                     @Override
@@ -622,27 +1066,149 @@ public class Main2Activity extends BaseActivity2 {
                         if (permission.granted) {
                             // 用户已经同意该权限
                             Log.e("用户已经同意该权限", permission.name + " is granted.");
-                            //   Log.d(TAG, permission.name + " is granted.");
+                            quanxian = 3;
+                            SPUtils.put(Main2Activity.this,"quanxian",3);
                         } else if (permission.shouldShowRequestPermissionRationale) {
 
                             Log.e("用户拒绝了该权限", permission.name + " is denied. More info should be provided.");
-                            // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
-                            //   Log.d(TAG, permission.name + " is denied. More info should be provided.");
+                            if(permission.name.contains(Manifest.permission.ACCESS_FINE_LOCATION)){
+                                quanxian = 1;
+                                SPUtils.put(Main2Activity.this,"quanxian",3);
+                            }
+
 
                         } else {
                             // 用户拒绝了该权限，并且选中『不再询问』
                             //   Log.d(TAG, permission.name + " is denied.");
                             Log.e("用户拒绝了该权限", permission.name + permission.name + " is denied.");
-//                            BaseWebActivity.this.finish();
+                            quanxian = 2;
                         }
                     }
                 });
     }
+    private LocationManager locationManager;
+    private String locationProvider;       //位置提供器
+    /**
+     * 获取我的经纬度
+     */
+    private void getMyLocation() {
+
+
+        //1.获取位置管理器
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        //2.获取位置提供器，GPS或是NetWork
+        List<String> providers = locationManager.getProviders(true);
+        locationProvider = LocationManager.GPS_PROVIDER;
+
+       /* if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+
+        }
+*/
+        if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) ==
+                PackageManager.PERMISSION_GRANTED &&
+                ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_COARSE_LOCATION) ==
+                        PackageManager.PERMISSION_GRANTED) {
+            //3.获取上次的位置，一般第一次运行，此值为null
+            Location location = locationManager.getLastKnownLocation(locationProvider);
+            if (location!=null){
+                //showLocation(location);
+                double latitude = location.getLatitude();//纬度
+                double longitude = location.getLongitude();//经度
+                SPUtils.put(Main2Activity.this,"latitude",latitude+"");
+                SPUtils.put(Main2Activity.this,"longitude",longitude+"");
+                Geocoder gc = new Geocoder(this, Locale.getDefault());
+                List<Address> locationList = null;
+                try {
+                    locationList = gc.getFromLocation(latitude, longitude, 1);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                if(locationList != null && locationList.size() > 0){
+                    Address address = locationList.get(0);//得到Address实例
+                    String countryName = address.getCountryName();//得到国家名称，比方：中国
+                    String locality = address.getLocality();//得到城市名称，比方：北京市
+                    for (int i = 0; address.getAddressLine(i) != null; i++) {
+                        String addressLine = address.getAddressLine(i);//得到周边信息。包含街道等。i=0，得到街道名称
+                        SPUtils.put(Main2Activity.this,"addressLine",addressLine);
+                    }
+                }else {
+                    SPUtils.put(Main2Activity.this,"latitude","");
+                    SPUtils.put(Main2Activity.this,"longitude","");
+                    SPUtils.put(Main2Activity.this,"addressLine","");
+                }
+
+            }else{
+                // 监视地理位置变化，第二个和第三个参数分别为更新的最短时间minTime和最短距离minDistace
+                locationManager.requestLocationUpdates(locationProvider, 300000, 0,mListener);
+            }
+            locationManager.requestLocationUpdates(locationProvider, 300000, 0,mListener);
+
+        } else {
+            SPUtils.put(Main2Activity.this,"latitude","");
+            SPUtils.put(Main2Activity.this,"longitude","");
+            SPUtils.put(Main2Activity.this,"addressLine","");
+        }
+
+    }
+
+    LocationListener mListener = new LocationListener() {
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+        }
+        @Override
+        public void onProviderEnabled(String provider) {
+        }
+        @Override
+        public void onProviderDisabled(String provider) {
+        }
+        // 如果位置发生变化，重新显示
+        @Override
+        public void onLocationChanged(Location location) {
+            //showLocation(location);
+
+            double latitude = location.getLatitude();//纬度
+            double longitude = location.getLongitude();//经度
+            SPUtils.put(Main2Activity.this,"latitude",latitude+"");
+            SPUtils.put(Main2Activity.this,"longitude",longitude+"");
+            Geocoder gc = new Geocoder(Main2Activity.this, Locale.getDefault());
+            List<Address> locationList = null;
+            try {
+                locationList = gc.getFromLocation(latitude, longitude, 1);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+            OkGo.<String>post(UrlRes.HOME_URL+insertPortalPositionUrl)
+                    .params("memberId", (String) SPUtils.get(MyApp.getInstance(), "userId", ""))
+                    .params("positionLongitude", longitude)
+                    .params("positionLatitude", latitude)
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            Log.e("s",response.toString());
+                           /* FaceBean2 faceBean2 = JsonUtil.parseJson(response.toString(),FaceBean2.class);
+
+                            boolean success = faceBean2.getSuccess();
+                            if(success == true){
+
+                            }*/
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            Log.e("s",response.toString());
+                        }
+                    });
+        }
+    };
+
 
     private void isOpen() {
         NotificationManagerCompat notificationManagerCompat = NotificationManagerCompat.from(getApplicationContext());
         boolean areNotificationsEnabled = notificationManagerCompat.areNotificationsEnabled();
         Log.e("isOpen",areNotificationsEnabled+"");
+
     }
 
     //请求悬浮窗权限
@@ -686,5 +1252,74 @@ public class Main2Activity extends BaseActivity2 {
 
         mAlertDialog.show();
     }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        isrRunIng = "0";
+        unregisterReceiver(broadcastReceiver);
+    }
+
+    private WebViewClient mWebViewClient = new WebViewClient() {
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            Log.i("userAgent4",  view.getSettings().getUserAgentString());
+
+
+        }
+
+        //        /**网址拦截*/
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            String url =  null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                url = request.getUrl().toString();
+            }
+
+
+            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
+                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
+                    Intent intent = new Intent(getApplicationContext(),LoginActivity2.class);
+                    startActivity(intent);
+                    finish();
+
+                    return true;
+                }
+            }
+            return super.shouldOverrideUrlLoading(view, request);
+        }
+
+        /**网址拦截*/
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
+                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
+                    Intent intent = new Intent(getApplicationContext(),LoginActivity2.class);
+                    startActivity(intent);
+                    finish();
+
+                    return true;
+                }
+            }
+
+            return super.shouldOverrideUrlLoading(view, url);
+        }
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+
+            String tgc = (String) SPUtils.get(Main2Activity.this, "TGC", "");
+            CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgc,getApplication());
+
+
+        }
+
+    };
+
+
+
 
 }

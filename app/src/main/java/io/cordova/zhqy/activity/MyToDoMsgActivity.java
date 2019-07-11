@@ -73,12 +73,7 @@ public class MyToDoMsgActivity extends BaseActivity2 {
     protected void initView() {
         super.initView();
         tvTitle.setText("消息中心");
-        netWorkSystemMsg();
-        netWorkDbMsg();
-        netWorkDyMsg();
-        netWorkYbMsg();
-        netWorkYyMsg();
-        netWorkSqMsg();
+
 //        netWorkYyMsg();
     }
 
@@ -136,16 +131,23 @@ public class MyToDoMsgActivity extends BaseActivity2 {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                      Log.e("s",response.toString());
+
                         CountBean countBean = JSON.parseObject(response.body(), CountBean.class);
+                        Log.e("系统消息数量",countBean.getObj());
                         //yy_msg_num.setText(countBean.getCount()+"");
-                        tv_msg_num.setText(countBean.getObj()+"");
-                        system_msg_present.setText("您还有"+countBean.getObj()+"条未读系统消息");
+                        if(countBean.getObj().equals("0")){
+                            system_msg_present.setText("您还有未读的系统消息");
+                            tv_msg_num.setText(countBean.getObj()+"");
+                        }else {
+                            tv_msg_num.setText(countBean.getObj()+"");
+                            system_msg_present.setText("您还有"+countBean.getObj()+"条未读系统消息");
+                        }
+
                     }
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-
+                        Log.e("s",response.toString());
                     }
                 });
     }
@@ -182,7 +184,7 @@ public class MyToDoMsgActivity extends BaseActivity2 {
                         Log.e("s",response.toString());
                         CountBean countBean = JSON.parseObject(response.body(), CountBean.class);
                         //yy_msg_num.setText(countBean.getCount()+"");
-                        my_msg_present.setText("我的申请共"+countBean.getCount()+"条");
+                        my_msg_present.setText("已申请"+countBean.getCount()+"条");
                     }
 
                     @Override
@@ -250,7 +252,7 @@ public class MyToDoMsgActivity extends BaseActivity2 {
                         if(countBean.getCount() == 0){
                             dy_msg_present.setText("您还没有待阅消息");
                         }else {
-                            dy_msg_present.setText("待阅消息"+countBean.getCount()+"条");
+                            dy_msg_present.setText("您还有待阅消息"+countBean.getCount()+"条");
                         }
 
                     }
@@ -274,9 +276,9 @@ public class MyToDoMsgActivity extends BaseActivity2 {
                         CountBean countBean = JSON.parseObject(response.body(), CountBean.class);
                         db_msg_num.setText(countBean.getCount()+"");
                         if(countBean.getCount() == 0){
-                            db_msg_present.setText("您还没有待办消息");
+                            db_msg_present.setText("您还有未处理读待办消息");
                         }else {
-                            db_msg_present.setText("待办消息"+countBean.getCount()+"条");
+                            db_msg_present.setText("您还有待办消息"+countBean.getCount()+"条");
                         }
                     }
 
@@ -286,5 +288,16 @@ public class MyToDoMsgActivity extends BaseActivity2 {
 
                     }
                 });
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        netWorkSystemMsg();
+        netWorkDbMsg();
+        netWorkDyMsg();
+        netWorkYbMsg();
+        netWorkYyMsg();
+        netWorkSqMsg();
     }
 }

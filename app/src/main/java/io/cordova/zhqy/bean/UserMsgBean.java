@@ -119,15 +119,15 @@ public class UserMsgBean {
             private String memberMailbox;
             private String memberSign;
             private String memberImage;
-            private Object memberOtherId;
-            private Object memberOtherSchoolNumber;
-            private Object memberOtherNation;
-            private Object memberOtherDepartment;
-            private Object memberOtherMajor;
-            private Object memberOtherGrade;
-            private Object memberOtherClass;
-            private Object memberOtherBirthday;
-            private Object memberOtherNative;
+            private String memberOtherId;
+            private String memberOtherSchoolNumber;
+            private String memberOtherNation;
+            private String memberOtherDepartment;
+            private String memberOtherMajor;
+            private String memberOtherGrade;
+            private String memberOtherClass;
+            private String memberOtherBirthday;
+            private String memberOtherNative;
             private long loginLogTime;
             private List<RolecodesBean> rolecodes;
 
@@ -235,75 +235,75 @@ public class UserMsgBean {
                 this.memberImage = memberImage;
             }
 
-            public Object getMemberOtherId() {
+            public String getMemberOtherId() {
                 return memberOtherId;
             }
 
-            public void setMemberOtherId(Object memberOtherId) {
+            public void setMemberOtherId(String memberOtherId) {
                 this.memberOtherId = memberOtherId;
             }
 
-            public Object getMemberOtherSchoolNumber() {
+            public String getMemberOtherSchoolNumber() {
                 return memberOtherSchoolNumber;
             }
 
-            public void setMemberOtherSchoolNumber(Object memberOtherSchoolNumber) {
+            public void setMemberOtherSchoolNumber(String memberOtherSchoolNumber) {
                 this.memberOtherSchoolNumber = memberOtherSchoolNumber;
             }
 
-            public Object getMemberOtherNation() {
+            public String getMemberOtherNation() {
                 return memberOtherNation;
             }
 
-            public void setMemberOtherNation(Object memberOtherNation) {
+            public void setMemberOtherNation(String memberOtherNation) {
                 this.memberOtherNation = memberOtherNation;
             }
 
-            public Object getMemberOtherDepartment() {
+            public String getMemberOtherDepartment() {
                 return memberOtherDepartment;
             }
 
-            public void setMemberOtherDepartment(Object memberOtherDepartment) {
+            public void setMemberOtherDepartment(String memberOtherDepartment) {
                 this.memberOtherDepartment = memberOtherDepartment;
             }
 
-            public Object getMemberOtherMajor() {
+            public String getMemberOtherMajor() {
                 return memberOtherMajor;
             }
 
-            public void setMemberOtherMajor(Object memberOtherMajor) {
+            public void setMemberOtherMajor(String memberOtherMajor) {
                 this.memberOtherMajor = memberOtherMajor;
             }
 
-            public Object getMemberOtherGrade() {
+            public String getMemberOtherGrade() {
                 return memberOtherGrade;
             }
 
-            public void setMemberOtherGrade(Object memberOtherGrade) {
+            public void setMemberOtherGrade(String memberOtherGrade) {
                 this.memberOtherGrade = memberOtherGrade;
             }
 
-            public Object getMemberOtherClass() {
+            public String getMemberOtherClass() {
                 return memberOtherClass;
             }
 
-            public void setMemberOtherClass(Object memberOtherClass) {
+            public void setMemberOtherClass(String memberOtherClass) {
                 this.memberOtherClass = memberOtherClass;
             }
 
-            public Object getMemberOtherBirthday() {
+            public String getMemberOtherBirthday() {
                 return memberOtherBirthday;
             }
 
-            public void setMemberOtherBirthday(Object memberOtherBirthday) {
+            public void setMemberOtherBirthday(String memberOtherBirthday) {
                 this.memberOtherBirthday = memberOtherBirthday;
             }
 
-            public Object getMemberOtherNative() {
+            public String getMemberOtherNative() {
                 return memberOtherNative;
             }
 
-            public void setMemberOtherNative(Object memberOtherNative) {
+            public void setMemberOtherNative(String memberOtherNative) {
                 this.memberOtherNative = memberOtherNative;
             }
 

@@ -9,6 +9,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -72,6 +73,49 @@ public class ViewUtils {
 
 
     /**
+     * 得到自定义的progressDialog
+     *
+     * @param context
+     * @param b
+     * @return
+     */
+    public static void createLoadingDialog2(Activity context, boolean b, String content) {
+        createLoadingDialog3(context, true,content);
+    }
+
+    public static void createLoadingDialog3(final Activity context, boolean flag,String content) {
+
+        if (context == null)
+            return;
+        LayoutInflater inflater = LayoutInflater.from(context);
+        View v = inflater.inflate(R.layout.view_loading_dialog, null);// 得到加载view
+        RelativeLayout layout = (RelativeLayout) v.findViewById(R.id.dialog_view);// 加载布局
+        TextView tv_text = v.findViewById(R.id.tv_text);
+        tv_text.setText(content);
+        // 加载动画
+        if (loadingDialog != null && loadingDialog.isShowing()) return;
+
+        if (context.getParent() != null)
+            loadingDialog = new Dialog(context.getParent(), R.style.loading_dialog);// 创建自定义样式dialog
+        else {
+            loadingDialog = new Dialog(context, R.style.loading_dialog);// 创建自定义样式dialog
+        }
+
+        loadingDialog.setCancelable(true);// 可以用“返回键”取消
+        loadingDialog.setCanceledOnTouchOutside(false);
+        loadingDialog.setContentView(layout, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT));// 设置布局
+
+        loadingDialog.setContentView(layout);
+
+
+        if (!context.isFinishing())
+            loadingDialog.show();
+    }
+
+
+    /**
      * 取消 ProgressBar
      */
     public static void cancelLoadingDialog() {
@@ -127,5 +171,14 @@ public class ViewUtils {
             historyList.clear();  //清空集合，这个很关键
         }
         return historyList;
+    }
+
+    public static void clearSearchHistory(Context context) {
+        SharedPreferences sp = context.getSharedPreferences(PREFERENCE_NAME,
+                Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putString(SEARCH_HISTORY, "");
+        editor.commit();
+
     }
 }

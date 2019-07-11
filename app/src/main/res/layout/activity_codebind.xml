@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+    <include layout="@layout/layout_head_title_one"
+        android:id="@+id/id_title">
+
+    </include>
+    <View
+        style="@style/view2"/>
+
+
+    <TextView
+        android:id="@+id/tv_phone"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="本次刷脸服务需要进行短信验证,已向(null)发送验证码"
+        android:padding="20dp"
+        />
+
+    <EditText
+        android:id="@+id/et_content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/dp20"
+        android:layout_marginRight="@dimen/dp20"
+        android:background="@null"
+        />
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp0.5"
+        android:background="#F3F5F9"
+        android:layout_marginRight="@dimen/dp20"
+        android:layout_marginLeft="@dimen/dp20"
+        android:layout_marginBottom="@dimen/dp20"
+        />
+
+    <Button
+        style="@style/button5"
+        android:id="@+id/btn_login"
+        android:text="确定"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="@dimen/sp12"
+        android:layout_marginRight="40dp"
+        android:textColor="@color/white"
+        android:background="@color/colorPrimary"
+
+        />
+
+    <WebView
+        android:visibility="gone"
+        android:id="@+id/webView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"></WebView>
+
+</LinearLayout>

@@ -44,24 +44,63 @@ public class MyRefrshAdapter extends CommonAdapter<SysMsgBean.ObjBean> {
     protected void convert(ViewHolder holder, final SysMsgBean.ObjBean s, int position) {
         String str= s.getMessageAppName();
         if(str != null){
-            holder.setText(R.id.tv_name,str);
+            holder.setText(R.id.tv_name,"["+str+"]");
         }else {
-            holder.setText(R.id.tv_name,"系统消息");
+            holder.setText(R.id.tv_name,"[系统消息]");
         }
         holder.setText(R.id.tv_present,s.getMessageTitle());
         ImageView imageView = holder.getConvertView().findViewById(R.id.oa_img);
-        Glide.with(mContext)
-                .load(R.mipmap.message_icon1)
-                .transform(new CircleCrop(mContext))
-                .into(imageView);
+
+        switch (position%6){
+            case 0:
+                Glide.with(context)
+                        .load(R.mipmap.message_icon2)
+                        //.transform(new CircleCrop(mContext))
+                        .into(imageView);
+                break;
+            case 1:
+                Glide.with(context)
+                        .load(R.mipmap.message_icon1)
+                        //.transform(new CircleCrop(mContext))
+                        .into(imageView);
+                break;
+            case 2:
+                Glide.with(context)
+                        .load(R.mipmap.message_icon2)
+                        //.transform(new CircleCrop(mContext))
+                        .into(imageView);
+                break;
+            case 3:
+                Glide.with(context)
+                        .load(R.mipmap.message_icon4)
+                        //.transform(new CircleCrop(mContext))
+                        .into(imageView);
+                break;
+            case 4:
+                Glide.with(context)
+                        .load(R.mipmap.message_icon3)
+                        //.transform(new CircleCrop(mContext))
+                        .into(imageView);
+                break;
+            case 5:
+                Glide.with(context)
+                        .load(R.mipmap.message_icon1)
+                        //.transform(new CircleCrop(mContext))
+                        .into(imageView);
+                break;
+
+        }
+
 
         Log.d("s", s.getMessageDetailId()+".");
         if(s.getMessageDetailState() == 0){//未读
             holder.setTextColor(R.id.tv_name,Color.parseColor("#000000"));
             holder.setTextColor(R.id.tv_present,Color.parseColor("#000000"));
+            holder.setVisible(R.id.rl_jiaobiao,true);
         }else {//已读
-            holder.setTextColor(R.id.tv_name,Color.parseColor("#e7e6e6"));
-            holder.setTextColor(R.id.tv_present,Color.parseColor("#e7e6e6"));
+            holder.setTextColor(R.id.tv_name,Color.parseColor("#707070"));
+            holder.setTextColor(R.id.tv_present,Color.parseColor("#707070"));
+            holder.setVisible(R.id.rl_jiaobiao,false);
         }
 
 
@@ -77,16 +116,37 @@ public class MyRefrshAdapter extends CommonAdapter<SysMsgBean.ObjBean> {
                                 Log.e("SysMsg",response.body());
                                 Intent intent = new Intent(MyApp.getInstance(), InfoDetailsActivity.class);
 
-                                intent.putExtra("title",s.getMessageTitle().toString());
-                                intent.putExtra("title2",s.getMessageAppName());
+                                intent.putExtra("title2",s.getMessageTitle().toString());
+                                intent.putExtra("time",s.getMessageSendTime()+"");
+                                intent.putExtra("msgsender",s.getMessageSender()+"");
+                                //intent.putExtra("title2",s.getMessageAppName());
+                                //null != s.getMessageUrl() ||
+                                if ("".equals(s.getMessageUrl())){
+                                    intent.putExtra("appUrl2",s.getMessageContent().toString());
 
-                                if (null != s.getMessageUrl()){
+                                }else if(null == s.getMessageUrl() ){
+                                    intent.putExtra("appUrl2",s.getMessageContent().toString());
+                                    //intent.putExtra("appUrl2","【轻院通知】您的成绩查询通知已发放，请使用“轻院服务门户”的用户名和密码点击进入<a href=\"http://xytz.zzuli.edu.cn:8080/result/inquiry\">点击查看</a>并在通知文末填写反馈。同时，请点击<a href=\"http://info.zzuli.edu.cn/_t598/2019/0124/c13520a193789/page.htm\">  此处</a>及时完成学生基本信息补录。（信息中心）");
+                                }else {
+                                    intent.putExtra("appUrl",s.getMessageUrl().toString());
+                                }
+
+                               /* if (!"".equals(s.getMessageUrl())){
                                     intent.putExtra("appUrl",s.getMessageUrl().toString());
                                }else {
-                                   intent.putExtra("appUrl2",s.getMessageContent().toString());
+                                    String s1 = s.getMessageContent().toString();
+                                    intent.putExtra("appUrl2",s.getMessageContent().toString());
                                    //intent.putExtra("appUrl2","【轻院通知】您的成绩查询通知已发放，请使用“轻院服务门户”的用户名和密码点击进入<a href=\"http://xytz.zzuli.edu.cn:8080/result/inquiry\">点击查看</a>并在通知文末填写反馈。同时，请点击<a href=\"http://info.zzuli.edu.cn/_t598/2019/0124/c13520a193789/page.htm\">  此处</a>及时完成学生基本信息补录。（信息中心）");
-                               }
+                               }*/
+
+
                                 context.startActivity(intent);
+
+                                Intent intent2 = new Intent();
+                                intent2.setAction("refreshMsg");
+                                intent2.putExtra("state",s.getMessageDetailState()+"");
+                                context.sendBroadcast(intent2);
+
                             }
                             @Override
                             public void onError(Response<String> response) {

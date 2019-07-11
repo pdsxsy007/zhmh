@@ -4,6 +4,8 @@
     <color name="colorPrimaryDark">#1d4481</color>
     <color name="colorAccent">#FF4081</color>
 
+    <color name="transparent">#00000000</color>
+    <color name="shadow">#cc222222</color>
     <color name="theme">#d51e36</color>
     <color name="theme1">#986d5d</color>
     <color name="theme2">#ed5634</color>
@@ -14,7 +16,7 @@
      <color name="login_bg">#1D2E63</color>
     <!--<color name="tab_bar_text_bg">#4B987C</color>-->
     <color name="tab_bar_text_bg">#1d4481</color>
-    <color name="view">#c6c5c5</color>
+    <color name="view">#F2F2F2</color>
 
     <color name="blue">#31b4e4</color>
     <color name="blue1">#7ECEF4</color>
@@ -32,6 +34,7 @@
     <color name="app_bg">#f2f2f2</color>
     <color name="rb_white">#00ffffff</color>
     <color name="black">#232323</color>
+    <color name="hintColor">#8f8f94</color>
     <color name="black1">#600d0c0c</color>
     <color name="black2">#dc1b1a1a</color>
     <color name="black3">#4d4c4d</color>
@@ -71,4 +74,9 @@
     <color name="no">#00918f8f</color>
     <color name="translucent">#85080707</color>
     <color name="blue3">#3B8BEE</color>
+    <color name="dialog_bg">#727e847e</color>
+    <color name="text_black_color">#404040</color>
+    <color name="text_gray_color">#6f6f6f</color>
+    <color name="app_theme_color">#0396ff</color>
+    <color name="vtran">#60000000</color>
 </resources>

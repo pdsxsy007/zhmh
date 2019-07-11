@@ -21,6 +21,9 @@ public class VersionMsgActivity extends BaseActivity2 {
     @BindView(R.id.tv_version_number)
     TextView tvVersionNumber;
 
+    @BindView(R.id.tv_title)
+    TextView tv_title;
+
     @Override
     protected int getResourceId() {
         return R.layout.activity_version_msg;
@@ -29,7 +32,7 @@ public class VersionMsgActivity extends BaseActivity2 {
     @Override
     protected void initView() {
         super.initView();
-
+        tv_title.setText("关于我们");
 //        getLocalVersion(this);
         getLocalVersionName(this);
 
@@ -66,7 +69,7 @@ public class VersionMsgActivity extends BaseActivity2 {
                     .getPackageInfo(ctx.getPackageName(), 0);
             localVersion = packageInfo.versionName;
             Log.d("TAG", "本软件的版本号。。" + localVersion);
-            tvVersionNumber.setText("Version ： "+localVersion);
+            tvVersionNumber.setText("Version  "+localVersion);
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }

@@ -5,7 +5,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.os.Build;
+import android.graphics.Bitmap;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,9 +14,10 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.View;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.ImageView;
-
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
 import com.lzy.okgo.OkGo;
@@ -30,18 +32,24 @@ import org.json.JSONObject;
 import java.lang.ref.WeakReference;
 import java.util.Calendar;
 
+import butterknife.BindView;
 import cn.jpush.android.api.JPushInterface;
 import io.cordova.zhqy.Main2Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
+import io.cordova.zhqy.bean.Constants;
 import io.cordova.zhqy.bean.LoginBean;
 import io.cordova.zhqy.utils.AesEncryptUtile;
+import io.cordova.zhqy.utils.CookieUtils;
 import io.cordova.zhqy.utils.MyApp;
+import io.cordova.zhqy.utils.SPUtil;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.StringUtils;
 import io.cordova.zhqy.utils.T;
+import io.cordova.zhqy.utils.ToastUtils;
 
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
+
 
 
 /**
@@ -55,16 +63,28 @@ public class SplashActivity extends AppCompatActivity {
     private String s2;
     private Handler handler = new MyHandler(this);
     private static String localVersionName;
-
+    @BindView(R.id.webView)
+    WebView webView;
+    public static final int PASSWORD_LOGIN_FLAG = 0x0004;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.splash_activity);
         imageView =  (ImageView) findViewById(R.id.iv_bg);
-        getLocalVersionName(getApplication());
-        getMsg();
-        handleOpenClick();
-        initView();
+
+            getLocalVersionName(getApplicationContext());
+            //getMsg();
+        String infoType = (String) SPUtils.get(MyApp.getInstance(), "InfoType", "");
+        //ToastUtils.showToast(this,infoType+"infoType");
+        if(infoType.equals("1")){
+            getMsg();
+            SPUtils.put(MyApp.getInstance(),"InfoType","");
+        }else {
+            handleOpenClick();
+        }
+
+            initView();
+
 
     }
 
@@ -90,12 +110,21 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }else {
-                netWorkLogin();
+
+                if (SPUtil.getInstance().getBoolean(Constants.SP_HAD_OPEN_FINGERPRINT_LOGIN)) {
+                   Intent intent = new Intent(SplashActivity.this,LoginActivity3.class);
+                   startActivity(intent);
+                   finish();
+                }else {
+                    netWorkLogin();
+                }
+                //netWorkLogin();
             }
         }
     }
 
     LoginBean loginBean;
+    String tgt;
     private void netWorkLogin() {
         s1 = (String) SPUtils.get(MyApp.getInstance(),"username","");
         s2 =  (String) SPUtils.get(MyApp.getInstance(),"password","");
@@ -108,11 +137,11 @@ public class SplashActivity extends AppCompatActivity {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        Log.e("result1",response.body());
                         loginBean = JSON.parseObject(response.body(),LoginBean.class);
                         if (loginBean.isSuccess() ) {
                             try {
-                                String tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key) ;
+
+                                tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
                                 String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
                                 String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
 
@@ -121,24 +150,33 @@ public class SplashActivity extends AppCompatActivity {
                                 SPUtils.put(getApplicationContext(),"TGC",tgt);
                                 SPUtils.put(getApplicationContext(),"username",s1);
                                 SPUtils.put(getApplicationContext(),"password",s2);
+                               /* webView.setWebViewClient(mWebViewClient);
+                                webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");*/
                                 Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
                                 intent.putExtra("userId",userName);
                                 startActivity(intent);
                                 finish();
-                                Log.e("cookie2", Calendar.getInstance().getTimeInMillis() + " -- 防空导弹--");
-                                Log.e("login","tgt = "+ tgt + "  ,userName  = " + userName);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
                         }else {
                             T.showShort(MyApp.getInstance(),loginBean.getMsg());
+                            SPUtils.put(getApplicationContext(),"username","");
+                            Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
+                            startActivity(intent);
+                            finish();
                         }
                     }
 
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
+//                        finish();
+                        Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
+                        startActivity(intent);
                         finish();
+
                     }
                 });
 
@@ -240,13 +278,17 @@ public class SplashActivity extends AppCompatActivity {
             String title = null;
             String content = null;
             String extrasBean = null;
+            String extrasBean2 = null;
             String msgId = null;
             String msgType = null;
             if(bundle!=null){
 
+                Log.e("bundle",bundle+"");
+               // ToastUtils.showToast(SplashActivity.this,bundle+"");
                 title = bundle.getString(JPushInterface.EXTRA_NOTIFICATION_TITLE);
                 content = bundle.getString(JPushInterface.EXTRA_ALERT);
                 extrasBean = bundle.getString(JPushInterface.EXTRA_EXTRA);
+                extrasBean2 = bundle.getString("JMessageExtra");
                 if(!StringUtils.isEmpty(extrasBean)){
                     try {
                         JSONObject extraJson = new JSONObject(extrasBean);
@@ -264,6 +306,28 @@ public class SplashActivity extends AppCompatActivity {
                         Log.e("JPush",ignored.getMessage());
                     }
                 }
+                /*else if(!StringUtils.isEmpty(extrasBean2)){
+
+                    try {
+
+                        JSONObject extraJson2 = null;
+                        extraJson2 = new JSONObject(extrasBean2);
+                       *//* Log.e("extras", extrasBean);
+                        Log.e("extraJson", extraJson.getString("messageId"));*//*
+                        String n_extras = extraJson2.getString("n_extras");
+                        JSONObject n_extras2 = new JSONObject(n_extras);
+                        msgId =  n_extras2.getString("messageId");
+                        msgType =  n_extras2.getString("messageType");
+                        Log.e("msgId", msgId);
+                        SPUtils.put(MyApp.getInstance(),"msgId",msgId);
+                        SPUtils.put(MyApp.getInstance(),"msgType",msgType);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+
+                }else {
+
+                }*/
             }
             Log.e("JPush","Title : " + title + "  " + "Content : " + content + "   msgId  : " + msgId + "   msgType  : " + msgType);
 
@@ -338,7 +402,61 @@ public class SplashActivity extends AppCompatActivity {
     }
 
 
+    private WebViewClient mWebViewClient = new WebViewClient() {
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            Log.i("userAgent4",  view.getSettings().getUserAgentString());
 
+
+        }
+
+        //        /**网址拦截*/
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            String url =  null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                url = request.getUrl().toString();
+            }
+
+
+            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
+                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
+                    Intent intent = new Intent(getApplicationContext(),LoginActivity2.class);
+                    startActivity(intent);
+                    finish();
+
+                    return true;
+                }
+            }
+            return super.shouldOverrideUrlLoading(view, request);
+        }
+
+        /**网址拦截*/
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
+                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
+                    Intent intent = new Intent(getApplicationContext(),LoginActivity2.class);
+                    startActivity(intent);
+                    finish();
+
+                    return true;
+                }
+            }
+
+            return super.shouldOverrideUrlLoading(view, url);
+        }
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+            CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgt,getApplication());
+
+
+        }
+
+    };
 
 
 }

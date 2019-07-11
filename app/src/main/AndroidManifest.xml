@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="io.cordova.zhqy">
 
     <uses-sdk android:minSdkVersion="9" android:targetSdkVersion="21" />
@@ -12,6 +13,8 @@
 
     <permission
         android:name="io.cordova.zhqy.permission.MIPUSH_RECEIVE" android:protectionLevel="signature"/>
+
+    <uses-permission android:name="android.permission.USE_FINGERPRINT" />
     <uses-permission android:name="io.cordova.zhqy.permission.MIPUSH_RECEIVE"/>
     <uses-permission android:name="io.cordova.zhqy.permission.JPUSH_MESSAGE"/>
     <!-- 声明权限 -->
@@ -50,26 +53,43 @@
     <uses-permission android:name="android.permission.PERMISSION_GRANTED" />
     <uses-permission android:name="android.permission.FLASHLIGHT" />
     <uses-permission android:name="android.permission.DISABLE_KEYGUARD"/>
+    <uses-permission android:name="android.permission.ACTI"/>
+
+  <!--  <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH"/>-->
+
     <uses-feature android:name="android.hardware.camera" />
     <uses-feature android:name="android.hardware.camera.autofocus" />
     <!--允许应用程序改变网络状态-->
     <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE"/>
     <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"/>
+    <uses-permission android:name="android.permission.MEDIA_CONTENT_CONTROL"/>
 
-<!--  android:allowBackup="true"-->
+    <!-- 设置华为角标的显示 -->
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+
+    <!-- Optional -->
+    <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW" /> <!-- 用于开启 debug 版本的应用在6.0 系统上 层叠窗口权限 -->
+    <uses-permission android:name="android.permission.SYSTEM_OVERLAY_WINDOW" />
+    <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
+    <uses-permission android:name="android.permission.CHANGE_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+
     <application
         android:name="io.cordova.zhqy.utils.MyApp"
         android:allowBackup="true"
-        android:icon="@mipmap/ic_launcher"
+        android:icon="@drawable/icon_logo"
         android:label="@string/app_name"
-        android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
+        android:roundIcon="@drawable/icon_logo"
+        tools:replace="android:allowBackup"
         android:theme="@style/AppTheme">
-
+        <meta-data android:name="android.max_aspect" android:value="2.1" />
         <activity android:name="io.cordova.zhqy.activity.SplashActivity"
             android:theme="@style/SplashTheme"
             android:screenOrientation="portrait"
-            android:launchMode="singleTask"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -97,11 +117,27 @@
 
             android:screenOrientation="portrait">
         </activity>
+        <activity
+            android:name="io.cordova.zhqy.activity.LoginActivity3"
+
+            android:screenOrientation="portrait">
+        </activity>
+        <activity
+            android:name="io.cordova.zhqy.activity.LoginActivity4"
+
+            android:screenOrientation="portrait">
+        </activity>
 
         <activity android:name="io.cordova.zhqy.Main2Activity"
+            android:exported="true"
+            android:screenOrientation="portrait">
+            <intent-filter>
+            <action android:name="android.intent.action.VIEW" />
+            <category android:name="android.intent.category.DEFAULT" />
 
-            android:screenOrientation="portrait"/>
+            </intent-filter>
 
+        </activity>
         <activity
             android:name="io.cordova.zhqy.activity.ZxingScanningActivity"
             android:screenOrientation="portrait" /><activity
@@ -109,6 +145,10 @@
             android:screenOrientation="portrait" />
 
         <activity android:name="io.cordova.zhqy.web.BaseWebActivity"
+            android:screenOrientation="portrait"
+            android:configChanges="screenSize|keyboardHidden|orientation"/>
+
+        <activity android:name="io.cordova.zhqy.web.BaseWebActivity2"
             android:screenOrientation="portrait"
             android:configChanges="screenSize|keyboardHidden|orientation"/>
 
@@ -140,6 +180,7 @@
         </activity>
 
         <activity android:name="io.cordova.zhqy.activity.InfoDetailsActivity"
+            android:configChanges="screenSize|keyboardHidden|orientation"
             android:screenOrientation="portrait"/>
 
         <activity android:name="io.cordova.zhqy.activity.OaMsgActivity"
@@ -152,6 +193,40 @@
             android:screenOrientation="portrait"/>
         <activity android:name="io.cordova.zhqy.activity.MyShenqingActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name="io.cordova.zhqy.activity.LoginActivity2"
+            android:screenOrientation="portrait"
+            android:windowSoftInputMode="adjustResize"
+            />
+        <activity android:name=".web.BaseWebActivity3"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".web.BaseWebActivity4"
+            android:screenOrientation="portrait"
+            android:configChanges="screenSize|keyboardHidden|orientation"
+            >
+           <intent-filter>
+                <action android:name="android.intent.action.OPEN_DOCUMENT"/>
+               <category android:name="android.intent.category.OPENABLE"/>
+            </intent-filter>
+        </activity>
+        <activity android:name=".activity.FindPwdActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.FindPwdNextActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.FindPwdCompleteActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.UpdatePwdInfoActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".web.CodeWebActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.ShengWuActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.CodeBindActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.NewLoginActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.FaceActivity"
+            android:screenOrientation="portrait"/>
         <!--&lt;!&ndash;通知activity&ndash;&gt;-->
         <!--<activity android:name=".activity.NoticeActivity"-->
             <!--android:launchMode="singleInstance"-->
@@ -160,6 +235,7 @@
             <!--android:theme="@android:style/Theme.Wallpaper.NoTitleBar"/>-->
 
         <service android:name="io.cordova.zhqy.utils.MyIntentService" />
+
 
         <receiver
             android:name=".jpushutil.JPushReceiver"
@@ -190,8 +266,108 @@
             android:grantUriPermissions="true" >
         </provider>
 
+        <activity android:name=".activity.OpenClickActivity"
+            android:theme="@style/OpenClick"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTask"
+            android:exported="true">
+
+            <intent-filter>
+
+                <action android:name="android.intent.action.VIEW"/>
+                <action android:name="io.cordova.zhqy.activity.OpenClickActivity"/>
+                <category android:name="android.intent.category.DEFAULT"/>
+
+            </intent-filter>
+
+        </activity>
 
 
+
+        <activity
+            android:name="com.umeng.socialize.media.WBShareCallBackActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:exported="false"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity android:name="com.sina.weibo.sdk.web.WeiboSdkWebActivity"
+            android:configChanges="keyboardHidden|orientation"
+            android:exported="false"
+            android:windowSoftInputMode="adjustResize"
+            >
+        </activity>
+        <activity
+            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"
+            android:launchMode="singleTask"
+            android:name="com.sina.weibo.sdk.share.WbShareTransActivity">
+            <intent-filter>
+                <action android:name="com.sina.weibo.sdk.action.ACTION_SDK_REQ_ACTIVITY" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
+        <activity
+            android:name=".wxapi.WXEntryActivity"
+            android:configChanges="keyboardHidden|orientation|screenSize"
+            android:exported="true"
+            android:screenOrientation="portrait"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+
+        <activity
+            android:name="com.tencent.tauth.AuthActivity"
+            android:launchMode="singleTask"
+            android:noHistory="true" >
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="tencent100424468" />
+            </intent-filter>
+        </activity>
+        <activity
+            tools:replace="android:configChanges"
+            android:name="com.tencent.connect.common.AssistActivity"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar"
+            android:configChanges="orientation|keyboardHidden|screenSize"/>
+
+        <meta-data
+            android:name="UMENG_APPKEY"
+            android:value="5cf7337d4ca357695c000e67" >
+        </meta-data>
+
+
+
+        <!--本机号码一键登录-->
+        <!-- since 2.0.0 optional 可选项，使用一键登录功能必须添加  -->
+        <!-- since 2.1.1 optional 可选项，通过screenOrientation设置授权页面横竖屏展示  -->
+        <activity
+            android:name="com.cmic.sso.sdk.activity.OAuthActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+        <!-- since 2.0.0 optional 可选项，使用一键登录功能必须添加  -->
+        <!-- since 2.1.1 optional 可选项，通过screenOrientation设置授权页面横竖屏展示  -->
+        <activity
+            android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
+            android:theme="@android:style/Theme.Holo.NoActionBar"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+        <!-- since 2.0.0 optional 可选项，使用一键登录功能必须添加  -->
+        <!-- since 2.1.1 optional 可选项，通过screenOrientation设置授权页面横竖屏展示  -->
+        <activity android:name="cn.jiguang.verifysdk.CtLoginActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:theme="@android:style/Theme.Holo.NoActionBar"
+            android:screenOrientation="portrait"
+            android:launchMode="singleTop">
+        </activity>
+
+        <!-- Required -->
+        <meta-data android:name="JPUSH_APPKEY" android:value="4d6db4a813a03158396e5061"/>
+        <meta-data android:name="JPUSH_CHANNEL" android:value="developer-default"/>
     </application>
 
 </manifest>

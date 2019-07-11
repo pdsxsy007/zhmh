@@ -14,6 +14,8 @@ import android.support.v4.app.NotificationManagerCompat;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import static android.content.Intent.FLAG_ACTIVITY_NEW_TASK;
+
 /**
  * Created by Administrator on 2019/1/14 0014.
  */
@@ -125,7 +127,7 @@ public class NotificationsUtils {
             intent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
             intent.setData(Uri.fromParts("package", context.getPackageName(), null));
         }
-        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.setFlags(FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(intent);
 
 //        /*跳转至通知渠道内的设置*/
@@ -172,7 +174,7 @@ public class NotificationsUtils {
             localIntent.setData(Uri.parse("package:" + context.getPackageName()));
         } else {
             ///< 4.4以下没有从app跳转到应用通知设置页面的Action，可考虑跳转到应用详情页面,
-            localIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            localIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
             if (Build.VERSION.SDK_INT >= 9) {
                 localIntent.setAction("android.settings.APPLICATION_DETAILS_SETTINGS");
                 localIntent.setData(Uri.fromParts("package", context.getPackageName(), null));
@@ -182,6 +184,7 @@ public class NotificationsUtils {
                 localIntent.putExtra("com.android.settings.ApplicationPkgName", context.getPackageName());
             }
         }
+        localIntent.addFlags(FLAG_ACTIVITY_NEW_TASK);
         context.startActivity(localIntent);
     }
 

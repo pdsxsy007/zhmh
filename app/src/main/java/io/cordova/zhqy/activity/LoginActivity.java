@@ -1,8 +1,13 @@
 package io.cordova.zhqy.activity;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.util.Log;
 import android.view.View;
+import android.webkit.CookieManager;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.Button;
 import android.widget.EditText;
 
@@ -23,6 +28,8 @@ import io.cordova.zhqy.bean.GetUserIdBean;
 import io.cordova.zhqy.bean.LoginBean;
 import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.BaseActivity;
+import io.cordova.zhqy.utils.CookieUtils;
+import io.cordova.zhqy.utils.FinishActivity;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.StringUtils;
@@ -45,6 +52,9 @@ public class LoginActivity extends BaseActivity {
     Button btnLogin;
     @BindView(R.id.btn_login_3)
     Button btnLogin3;
+
+    @BindView(R.id.webView)
+    WebView webView;
     private Object W;
     private String s1;
     private String s2;
@@ -75,18 +85,20 @@ public class LoginActivity extends BaseActivity {
             case R.id.btn_login:
 
                 if (StringUtils.getEditTextData(etPhoneNum).isEmpty() && StringUtils.getEditTextData(etPassword).isEmpty()){
-                    T.showShort(MyApp.getInstance(),"账号或密码为空........");
-                }else {
-                    netWorkLogin();
+                    T.showShort(MyApp.getInstance(),"请输入用户名或密码");
+                    return;
+                }
+                if(StringUtils.getEditTextData(etPhoneNum).isEmpty()){
+                    T.showShort(MyApp.getInstance(),"请输入用户名");
+                    return;
                 }
 
+                if(StringUtils.getEditTextData(etPassword).isEmpty()){
+                    T.showShort(MyApp.getInstance(),"请输入密码");
+                    return;
+                }
 
-
-//                if (StringUtils.getEditTextData(etPassword).isEmpty() && StringUtils.getEditTextData(etPhoneNum).isEmpty()){
-//                    T.showShort(MyApp.getInstance(),"账号或密码不能为空");
-//                }else {
-//                    netGetLt();
-//                }
+                netWorkLogin();
 
                 break;
             case R.id.btn_login_3:
@@ -98,6 +110,7 @@ public class LoginActivity extends BaseActivity {
         }
     }
     LoginBean loginBean;
+    String tgt;
     private void netWorkLogin() {
         try {
 //            URLEncoder.encode( ,"UTF-8")
@@ -112,7 +125,6 @@ public class LoginActivity extends BaseActivity {
 
 
         OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
-//        OkGo.<String>get("http://192.168.30.29:8080" +"/cas/casApiLoginController")
                 .params("openid","123456")
                 .params("username",s1)
                 .params("password",s2)
@@ -125,7 +137,9 @@ public class LoginActivity extends BaseActivity {
                         if (loginBean.isSuccess() ) {
 
                             try {
-                                String tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key) ;
+                                CookieManager cookieManager =  CookieManager.getInstance();
+                                cookieManager.removeAllCookie();
+                                tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
                                 String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
 
 
@@ -139,9 +153,11 @@ public class LoginActivity extends BaseActivity {
                                 Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
                                 intent.putExtra("userId",userName);
                                 startActivity(intent);
-
-                                Log.e("cookie2", Calendar.getInstance().getTimeInMillis() + " -- 防空导弹--");
+                                FinishActivity.addActivity(LoginActivity.this);
+                                webView.setWebViewClient(mWebViewClient);
+                                webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
                                 Log.e("login","tgt = "+ tgt + "  ,userName  = " + userName);
+
                             } catch (Exception e) {
                                 e.printStackTrace();
                             }
@@ -158,65 +174,70 @@ public class LoginActivity extends BaseActivity {
 
     }
 
-    //    Bean bean;
-//    private void netGetLt() {
-//        final String urlen = URLEncoder.encode( "http://keys.zzuli.edu.cn/authentication/login/casLogin");
-//        final List<String> list = new ArrayList<String>();
-//        list.add(urlen);
+    private WebViewClient mWebViewClient = new WebViewClient() {
+        @Override
+        public void onPageFinished(WebView view, String url) {
+            super.onPageFinished(view, url);
+            Log.i("userAgent4",  view.getSettings().getUserAgentString());
+
+
+        }
+
+        //        /**网址拦截*/
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
+            String url =  null;
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP) {
+                url = request.getUrl().toString();
+            }
+
+
+            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
+                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
+                    Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                    return true;
+                }
+            }
+//            else if (url.contains("myoa.zzuli.edu.cn")) {
+//                if (!url.contains("fromnewcas=Y")){
+//                    url = url + "&fromnewcas=Y";
 //
-//
-//        OkGo.<String>get(UrlRes.HOME2_URL + UrlRes.Get_Lt).execute(new StringCallback() {
-//            @Override
-//            public void onSuccess(Response<String> response) {
-//                Log.d("respones",response.body());
-//                String str = response.body();
-//                String result1 = str.substring(str.indexOf("{"), str.indexOf("}") + 1);
-//                bean = JSON.parseObject(result1, Bean.class);
-//                Log.e("lt",bean.getLt());
-//                Log.e("ex",bean.getExecution());
-//                OkGo.<String>post(UrlRes.HOME2_URL +UrlRes.From_Login )//
-//                        .params("username","2012016")
-//                        .params("password","nic@2017")
-//                        .params("lt",bean.getLt())
-//                        .params("execution",bean.getExecution())
-//                        .params("_eventId","submit")
-//                        .params("submit","login")
-//                        .execute(new StringCallback() {
-//                            @Override
-//                            public void onSuccess(Response<String> response) {
-//                                Log.d("respones",response.getRawResponse().header("Set-Cookie") );
-//                                final String cookie = response.getRawResponse().header("Set-Cookie");
-//                                final String result1 = cookie.substring(cookie.indexOf("=") + 1,cookie.lastIndexOf(";"));
-//                                SPUtils.put(getApplicationContext(),"TGC",cookie);
-//                                Log.e("cookie2", result1);
-//                                Log.e("cookie2", cookie);
-//                                SPUtils.put(MyApp.getInstance(),"cookies",result1);
-//                                OkGo.<String>post(UrlRes.HOME_URL +UrlRes.Get_UserId)
-//                                        .params("tgt",result1)
-//                                        .execute(new StringCallback() {
-//                                            @Override
-//                                            public void onSuccess(Response<String> response) {
-//                                                getUserIdBean = JSON.parseObject(response.body(),GetUserIdBean.class);
-//                                                if (getUserIdBean.isSuccess()){
-//                                                    String userId = getUserIdBean.getObj();
-//                                                    SPUtils.put(MyApp.getInstance(),"userId",userId);
-//                                                    Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
-//                                                    //    intent.putExtra("tgc",result1);
-//                                                    intent.putExtra("cookie2",cookie);
-//                                                    intent.putExtra("userId",userId);
-//                                                    startActivity(intent);
-//                                                }
-//                                            }
-//                                        });
-//
-//                            }
-//                            @Override
-//                            public void onError(Response<String> response) {
-//                            }
-//                        });
-//
+//                    view.loadUrl(url);
+//                    Log.i("url", "== " + url);
+//                    return true;
+//                }
+//                return false;
 //            }
-//        });
-//
-//
+//            Log.i("url2", "== " + url);
+            return super.shouldOverrideUrlLoading(view, request);
+        }
+
+        /**网址拦截*/
+        @Override
+        public boolean shouldOverrideUrlLoading(WebView view, String url) {
+            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
+                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
+                    Intent intent = new Intent(getApplicationContext(),LoginActivity.class);
+                    startActivity(intent);
+                    finish();
+
+                    return true;
+                }
+            }
+
+            return super.shouldOverrideUrlLoading(view, url);
+        }
+
+        @Override
+        public void onPageStarted(WebView view, String url, Bitmap favicon) {
+
+            CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgt,getApplication());
+
+
+        }
+
+    };
 }

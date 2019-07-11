@@ -1,15 +1,19 @@
 package io.cordova.zhqy.activity;
 
+import android.content.Context;
 import android.content.Intent;
+import android.os.Vibrator;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
+import com.cxz.swipelibrary.SwipeBackLayout;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
@@ -17,12 +21,17 @@ import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.MultiItemTypeAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.bean.BaseBean;
 import io.cordova.zhqy.bean.MyCollectionBean;
+import io.cordova.zhqy.utils.AesEncryptUtile;
+import io.cordova.zhqy.utils.BaseActivity;
 import io.cordova.zhqy.utils.BaseActivity2;
 import io.cordova.zhqy.utils.CircleCrop;
 import io.cordova.zhqy.utils.MyApp;
@@ -30,14 +39,15 @@ import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.ViewUtils;
 import io.cordova.zhqy.web.BaseWebActivity;
+import io.cordova.zhqy.web.BaseWebActivity2;
+import io.cordova.zhqy.web.BaseWebActivity4;
 
 /**
  * Created by Administrator on 2018/11/22 0022.
  */
 
 public class MyCollectionActivity extends BaseActivity2 {
-    @BindView(R.id.tv_title)
-    TextView tvTitle;
+
     @BindView(R.id.tv_edit)
     TextView tvEdit;
     @BindView(R.id.tv_cancel_collection)
@@ -45,7 +55,10 @@ public class MyCollectionActivity extends BaseActivity2 {
     @BindView(R.id.rv_my_collection)
     RecyclerView rvMyCollection;
 
+    @BindView(R.id.rl_empty)
+    RelativeLayout rl_empty;
     int edit = 0;
+    private SwipeBackLayout mSwipeBackLayout;
     @Override
     protected int getResourceId() {
         return R.layout.activity_my_collection;
@@ -54,24 +67,39 @@ public class MyCollectionActivity extends BaseActivity2 {
     @Override
     protected void initView() {
         super.initView();
-        tvTitle.setText("我的收藏");
-        //netWorkMyCollection();
+
+
+
+    }
+
+
+    @Override
+    protected void onResume() {
+        super.onResume();
         netWorkMyCollection();
     }
 
     MyCollectionBean collectionBean;
     private void netWorkMyCollection() {
 
-        ViewUtils.createLoadingDialog(this);
+        //ViewUtils.createLoadingDialog(this);
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.My_Collection)
                 .params("userId", (String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
                         collectionBean = JSON.parseObject(response.body(), MyCollectionBean.class);
-                        ViewUtils.cancelLoadingDialog();
+
                         if (collectionBean.isSuccess()) {
-                            setCollectionList();
+                            if(null != collectionBean.getObj()){
+                                rvMyCollection.setVisibility(View.VISIBLE);
+                                rl_empty.setVisibility(View.GONE);
+                                setCollectionList();
+                            }else {
+                                rvMyCollection.setVisibility(View.GONE);
+                                rl_empty.setVisibility(View.VISIBLE);
+                            }
+
                         } else {
 
                             T.showShort(MyApp.getInstance(), collectionBean.getMsg());
@@ -81,8 +109,8 @@ public class MyCollectionActivity extends BaseActivity2 {
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-                        ViewUtils.cancelLoadingDialog();
-                        T.showShort(MyApp.getInstance(), "没有数据");
+                        //ViewUtils.cancelLoadingDialog();
+
                     }
                 });
     }
@@ -111,7 +139,7 @@ public class MyCollectionActivity extends BaseActivity2 {
                     }
 
 
-                }else if(tvEdit.getText().equals("取消收藏")) {
+                }else if(tvEdit.getText().equals("完成")) {
                     holder.setVisible(R.id.iv_lock_close,false);
                     holder.setVisible(R.id.iv_del,false);
                     holder.setVisible(R.id.iv_lock_open,true);
@@ -142,10 +170,65 @@ public class MyCollectionActivity extends BaseActivity2 {
                     @Override
                     public void onClick(View v) {
                         netWorkAppClick(objBean.getAppId());
-                        Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
-                        intent.putExtra("appUrl",objBean.getAppUrl());
-                        intent.putExtra("appId",objBean.getAppId()+"");
-                        startActivity(intent);
+                        if(objBean.getAppUrl().equals("http://iapp.zzuli.edu.cn/portal/app/mailbox/qqEmailLogin")){
+                                           /* webView.setWebViewClient(mWebViewClient);
+                                            webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");*/
+                            Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
+                            intent.putExtra("appUrl",objBean.getAppUrl());
+                            intent.putExtra("appId",objBean.getAppId()+"");
+                            intent.putExtra("appName",objBean.getAppName()+"");
+                            startActivity(intent);
+                        }else {
+                            /*Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
+                            intent.putExtra("appUrl",objBean.getAppUrl());
+                            intent.putExtra("appId",objBean.getAppId()+"");
+                            intent.putExtra("appName",objBean.getAppName()+"");
+                            startActivity(intent);*/
+
+                            Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
+                            if (collectionBean.getObj().get(position).getAppUrl().contains("{memberid}")){
+                                String appUrl = collectionBean.getObj().get(position).getAppUrl();
+                                String s1= null;
+                                try {
+                                    s1 = URLEncoder.encode((String) SPUtils.get(MyApp.getInstance(),"personName",""), "UTF-8");
+                                    appUrl =  appUrl.replace("{memberid}", s1);
+                                    intent.putExtra("appUrl",appUrl);
+                                } catch (UnsupportedEncodingException e) {
+                                    e.printStackTrace();
+                                }
+
+                            }else if(collectionBean.getObj().get(position).getAppUrl().contains("{memberAesEncrypt}")){
+                                String appUrl = collectionBean.getObj().get(position).getAppUrl();
+                                try {
+                                    String memberAesEncrypt = AesEncryptUtile.encrypt((String) SPUtils.get(MyApp.getInstance(),"personName",""), String.valueOf(collectionBean.getObj().get(position).getAppSecret()));
+                                    String s2=  URLEncoder.encode(memberAesEncrypt, "UTF-8");
+                                    appUrl =  appUrl.replace("{memberAesEncrypt}", s2);
+                                    intent.putExtra("appUrl",appUrl);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else if(collectionBean.getObj().get(position).getAppUrl().contains("{quicklyTicket}")){
+                                String appUrl = collectionBean.getObj().get(position).getAppUrl();
+                                try {
+                                    String s3 =  URLEncoder.encode((String) SPUtils.get(MyApp.getInstance(),"TGC",""), "UTF-8");
+                                    appUrl = appUrl.replace("{quicklyTicket}",s3);
+                                    intent.putExtra("appUrl",appUrl);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                            else{
+                                intent.putExtra("appUrl",collectionBean.getObj().get(position).getAppUrl());
+                            }
+                            Log.e("url  ==",collectionBean.getObj().get(position).getAppUrl() + "");
+
+                            //intent.putExtra("appUrl",appsBean.getAppUrl());
+                            intent.putExtra("appId",collectionBean.getObj().get(position).getAppId()+"");
+                            intent.putExtra("appName",collectionBean.getObj().get(position).getAppName()+"");
+                            startActivity(intent);
+                        }
+
+
                     }
                 });
 
@@ -190,6 +273,10 @@ public class MyCollectionActivity extends BaseActivity2 {
                         if (baseBean.isSuccess()){
                             netWorkMyCollection();
                             T.showShort(MyApp.getInstance(),baseBean.getMsg());
+                            Intent intent = new Intent();
+                            intent.putExtra("refreshService","dongtai");
+                            intent.setAction("refresh2");
+                            sendBroadcast(intent);
                         }else {
 
                             T.showShort(MyApp.getInstance(),baseBean.getMsg());
@@ -199,7 +286,7 @@ public class MyCollectionActivity extends BaseActivity2 {
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-                        T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
+
 
                     }
                 });
@@ -241,7 +328,7 @@ public class MyCollectionActivity extends BaseActivity2 {
                     tvEdit.setText("编辑");
                 }else {
                     edit = 1;
-                    tvEdit.setText("取消收藏");
+                    tvEdit.setText("完成");
                 }
                 adapter.notifyDataSetChanged();
                 break;
@@ -250,6 +337,8 @@ public class MyCollectionActivity extends BaseActivity2 {
                 break;
         }
     }
+
+
 
 
 }

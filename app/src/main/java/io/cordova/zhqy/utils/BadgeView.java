@@ -28,6 +28,7 @@ import android.widget.TabWidget;
 public class BadgeView extends AppCompatTextView {
 
     public static final int POSITION_TOP_LEFT = 1;
+    public static final int POSITION_TOP_LEFT1 = 10;
     public static final int POSITION_TOP_RIGHT = 2;
     public static final int POSITION_BOTTOM_LEFT = 3;
     public static final int POSITION_BOTTOM_RIGHT = 4;
@@ -333,12 +334,23 @@ public class BadgeView extends AppCompatTextView {
 
         switch (badgePosition) {
             case POSITION_TOP_LEFT:
-                lp.gravity = Gravity.LEFT | Gravity.TOP;
-                lp.setMargins(badgeMarginH, badgeMarginV, 0, 0);
+//                lp.gravity = Gravity.LEFT | Gravity.TOP;
+                lp.gravity = Gravity.CENTER|Gravity.TOP;
+//                lp.setMargins(badgeMarginH, badgeMarginV, 0, 0);
+                lp.setMargins(20, 10,0 , 0);
+                break;
+            case POSITION_TOP_LEFT1:
+//                lp.gravity = Gravity.LEFT | Gravity.TOP;
+                lp.gravity = Gravity.CENTER|Gravity.TOP;
+//                lp.setMargins(badgeMarginH, badgeMarginV, 0, 0);
+                lp.setMargins(23, 10,0 , 0);
                 break;
             case POSITION_TOP_RIGHT:
-                lp.gravity = Gravity.RIGHT | Gravity.TOP;
-                lp.setMargins(0, badgeMarginV, badgeMarginH, 0);
+                lp.gravity = Gravity.CENTER|Gravity.TOP;
+//                lp.setMargins(badgeMarginH, badgeMarginV, 0, 0);
+                lp.setMargins(23, 20,0 , 0);
+              /*  lp.gravity = Gravity.RIGHT|Gravity.TOP;
+                lp.setMargins(0, 10, badgeMarginH, 0);*/
                 break;
             case POSITION_BOTTOM_LEFT:
                 lp.gravity = Gravity.LEFT | Gravity.BOTTOM;

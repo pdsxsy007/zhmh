@@ -29,6 +29,8 @@ import java.util.List;
 
 import butterknife.BindView;
 import butterknife.OnClick;
+import io.cordova.zhqy.utils.ToastUtils;
+import io.cordova.zhqy.widget.XCRoundImageView;
 import io.reactivex.functions.Consumer;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
@@ -53,7 +55,7 @@ import io.cordova.zhqy.utils.ViewUtils;
 public class MyDataActivity extends BaseActivity2 {
 
     @BindView(R.id.iv_user_head)
-    ImageView ivUserHead;
+    XCRoundImageView ivUserHead;
     @BindView(R.id.tv_user_name)
     TextView tvUserName;
     //    @BindView(R.id.tv_company)
@@ -80,10 +82,16 @@ public class MyDataActivity extends BaseActivity2 {
     TextView tvNativePlace;
     @BindView(R.id.tv_mobile)
     TextView tvMobile;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
+
 //    @BindView(R.id.rv_user_data)
 //    RecyclerView rvUserData;
+
+    @BindView(R.id.tv_type)
+    TextView tv_type;
+
+
+    @BindView(R.id.tv_app_setting)
+            ImageView tv_app_setting;
 
     String mMobile;
     boolean allowedScan = false;
@@ -98,13 +106,13 @@ public class MyDataActivity extends BaseActivity2 {
             case R.id.iv_user_head:
 
                 //打开相册选择图片
-//                setPermission();
-//                if (allowedScan){
-//                  selectImg();
-//                }else {
-//                    Toast.makeText(this,"请允许权限后尝试",Toast.LENGTH_SHORT).show();
-//                    setPermission();
-//                }
+                //setPermission();
+               /* if (allowedScan){
+                  selectImg();
+                }else {
+                    Toast.makeText(this,"请允许权限后尝试",Toast.LENGTH_SHORT).show();
+                    setPermission();
+                }*/
                 break;
             case R.id.ll_my_mobile:
                 //跳转至修改手机页面
@@ -121,18 +129,16 @@ public class MyDataActivity extends BaseActivity2 {
     @Override
     protected void initView() {
         super.initView();
-        setToolBarBack();
-        netWorkUserMsg();
-    }
-
-    private void setToolBarBack() {
-        toolbar.setNavigationOnClickListener(new View.OnClickListener() {
+        tv_app_setting.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v) {
+            public void onClick(View view) {
                 finish();
             }
         });
+        netWorkUserMsg();
     }
+
+
 
 
     UserMsgBean userMsgBean;
@@ -146,32 +152,37 @@ public class MyDataActivity extends BaseActivity2 {
                         userMsgBean = JSON.parseObject(response.body(), UserMsgBean.class);
                         ViewUtils.cancelLoadingDialog();
                         if (userMsgBean.isSuccess()) {
-                            tvUserName.setText(userMsgBean.getObj().getModules().getMemberNickname());
-//                            Glide.with(getApplication())
-//                                    .load(UrlRes.HOME3_URL + userMsgBean.getObj().getModules().getMemberImage())
-//                                    .transform(new CircleCrop(getApplicationContext()))
-//                                    .error(R.mipmap.tabbar_user_pre)
-//                                    .into(ivUserHead);
-                            // tvStudentNumber.setText(userMsgBean.getObj().getModules().getMemberAcademicNumber());
-                            tvStudentNumber.setText(userMsgBean.getObj().getModules().getMemberUsername());
-                            tvName.setText(userMsgBean.getObj().getModules().getMemberNickname());
-                            if (userMsgBean.getObj().getModules().getMemberSex() == 1) {
-                                tvSex.setText("男");
-                            } else {
-                                tvSex.setText("女");
+                            if(userMsgBean.getObj() != null){
+                                tvUserName.setText(userMsgBean.getObj().getModules().getMemberNickname());
+                                tvStudentNumber.setText(userMsgBean.getObj().getModules().getMemberUsername());
+                                tvName.setText(userMsgBean.getObj().getModules().getMemberNickname());
+                                if (userMsgBean.getObj().getModules().getMemberSex() == 1) {
+                                    tvSex.setText("男");
+                                } else {
+                                    tvSex.setText("女");
+                                }
+
+
+                                try{
+                                    tvNation.setText(userMsgBean.getObj().getModules().getMemberOtherNation());
+                                    tvDepartment.setText(userMsgBean.getObj().getModules().getMemberOtherDepartment());
+                                    tvMajor.setText(userMsgBean.getObj().getModules().getMemberOtherMajor());
+                                    tvGender.setText(userMsgBean.getObj().getModules().getMemberOtherGrade());
+                                    tvClass.setText(userMsgBean.getObj().getModules().getMemberOtherClass());
+                                    tvBirthday.setText(userMsgBean.getObj().getModules().getMemberOtherBirthday());
+                                    tvNativePlace.setText(userMsgBean.getObj().getModules().getMemberOtherNative());
+                                    tvMobile.setText(userMsgBean.getObj().getModules().getMemberPhone());
+                                }catch (Exception e){
+
+                                }
+
+                                mMobile = userMsgBean.getObj().getModules().getMemberPhone();
+                                netGetUserHead();
+                            }else {
+                                ToastUtils.showToast(MyDataActivity.this,"获取个人信息失败!");
+                                ViewUtils.cancelLoadingDialog();
                             }
 
-
-//                            tvNation.setText(userMsgBean.getObj().getModules().getMemberOtherNation());
-//                            tvDepartment.setText(userMsgBean.getObj().getModules().getMemberOtherDepartment());
-//                            tvMajor.setText(userMsgBean.getObj().getModules().getMemberOtherMajor());
-//                            tvGender.setText(userMsgBean.getObj().getModules().getMemberOtherGrade());
-//                            tvClass.setText(userMsgBean.getObj().getModules().getMemberOtherClass());
-//                            tvBirthday.setText(userMsgBean.getObj().getModules().getMemberOtherBirthday());
-//                            tvNativePlace.setText(userMsgBean.getObj().getModules().getMemberOtherNative());
-                            tvMobile.setText(userMsgBean.getObj().getModules().getMemberPhone());
-                            mMobile = userMsgBean.getObj().getModules().getMemberPhone();
-                            netGetUserHead();
                         }
                     }
 
@@ -192,9 +203,10 @@ public class MyDataActivity extends BaseActivity2 {
             String pwd = URLEncoder.encode(userMsgBean.getObj().getModules().getMemberPwd(),"UTF-8");
             String ingUrl =  "http://kys.zzuli.edu.cn/authentication/public/getHeadImg?memberId="+userMsgBean.getObj().getModules().getMemberUsername()+"&pwd="+pwd;
 
-            Glide.with(getApplicationContext())
+            Glide.with(this)
                     .load(ingUrl)
-                    .transform(new CircleCrop(getApplicationContext()))
+                    .asBitmap()
+                    //.transform(new CircleCrop(getApplicationContext()))
                     .error(R.mipmap.tabbar_user_pre)
                     .into(ivUserHead);
         } catch (UnsupportedEncodingException e) {

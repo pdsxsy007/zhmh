@@ -33,6 +33,8 @@ public class CookieUtils {
         CookieManager cookieManager = CookieManager.getInstance();
         cookieManager.setCookie(url, cookie);//如果没有特殊需求，这里只需要将session id以"key=value"形式作为cookie即可
         String newCookie = cookieManager.getCookie(url);
+
+        CookieSyncManager.getInstance().sync();
         return TextUtils.isEmpty(newCookie)?false:true;
     }
 }

@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    android:orientation="vertical">
+    <include layout="@layout/layout_head_title_one"
+        android:id="@+id/id_title">
+
+    </include>
+    <View
+        style="@style/view2"/>
+
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/ll_finger"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="指纹登录"
+            android:gravity="center|start"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp14"
+            android:padding="@dimen/sp12"/>
+
+
+       <!-- <Switch
+            android:id="@+id/msg_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:switchMinWidth="@dimen/dp12"
+            android:padding="@dimen/dp5"
+            android:layout_gravity="center"
+            android:textOn=""
+            android:textOff=""
+            android:thumb="@drawable/thumb"
+            android:track="@drawable/track" />-->
+        <ImageView
+            android:id="@+id/iv_fingerprint_login_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/dp5"
+            android:layout_marginLeft="16dp"
+            android:src="@mipmap/switch_close_icon"/>
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp12"></View>
+
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/ll_shengwu"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="刷脸上传图片"
+            android:gravity="center|start"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp14"
+            android:padding="@dimen/sp12"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@mipmap/iv_go"
+            android:padding="@dimen/sp12"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            />
+
+    </LinearLayout>
+
+
+</LinearLayout>

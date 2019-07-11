@@ -49,41 +49,54 @@ import io.cordova.zhqy.bean.MyCollectionBean;
 import io.cordova.zhqy.bean.OAMsgListBean;
 import io.cordova.zhqy.bean.ServiceAppListBean;
 import io.cordova.zhqy.bean.UserMsgBean;
+import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.BadgeHelper;
 import io.cordova.zhqy.utils.BadgeView;
 import io.cordova.zhqy.utils.BaseFragment;
 import io.cordova.zhqy.utils.CircleCrop;
+import io.cordova.zhqy.utils.FinishActivity;
+import io.cordova.zhqy.utils.LighterHelper;
+import io.cordova.zhqy.utils.MobileInfoUtils;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.StringUtils;
 import io.cordova.zhqy.utils.T;
+import io.cordova.zhqy.utils.ToastUtils;
 import io.cordova.zhqy.utils.ViewUtils;
+import io.cordova.zhqy.utils.netState;
 import io.cordova.zhqy.web.BaseWebActivity;
+import io.cordova.zhqy.web.BaseWebActivity2;
+import io.cordova.zhqy.web.BaseWebActivity3;
+import io.cordova.zhqy.web.BaseWebActivity4;
+import io.cordova.zhqy.widget.XCRoundImageView;
+import me.samlss.lighter.Lighter;
+import me.samlss.lighter.interfaces.OnLighterListener;
+import me.samlss.lighter.parameter.Direction;
+import me.samlss.lighter.parameter.LighterParameter;
+import me.samlss.lighter.parameter.MarginOffset;
+import me.samlss.lighter.shape.CircleShape;
+import me.samlss.lighter.shape.RectShape;
+
+import static io.cordova.zhqy.utils.MyApp.getInstance;
 
 /**
  * Created by Administrator on 2018/11/22 0022.
  */
 
 public class MyPre2Fragment extends BaseFragment {
-    @BindView(R.id.iv)
-    ImageView iv;
     @BindView(R.id.tv_app_msg)
     ImageView ivAppMsg;
     @BindView(R.id.iv_user_head)
-    ImageView ivUserHead;
+    XCRoundImageView ivUserHead;
     @BindView(R.id.tv_user_name)
     TextView tvUserName;
    @BindView(R.id.tv_zhuan_ye)
     TextView tvZhangye;
     @BindView(R.id.rv_user_data)
     RelativeLayout rvUserData;
-    @BindView(R.id.toolbar)
-    Toolbar toolbar;
-    @BindView(R.id.collapsing_toolbar_layout)
-    CollapsingToolbarLayout collapsingToolbarLayout;
     @BindView(R.id.tv_data_num)
     TextView tvDataNum;
-    @BindView(R.id.tv_app_setting)
+  //  @BindView(R.id.tv_app_setting1)
     ImageView tvAppSetting;
     @BindView(R.id.tv_my_collection_num)
     TextView tvMyCollectionNum;
@@ -103,10 +116,15 @@ public class MyPre2Fragment extends BaseFragment {
     LinearLayout llMyData;
     @BindView(R.id.rl_msg_app)
     RelativeLayout rlMsgApp;
+
+    @BindView(R.id.rl_title)
+    RelativeLayout rl_title;
+
     private static Object object = new Object();
     int allMsgNum = 0;
 
     boolean isLogin = false;
+    BadgeView badge1;
     @Override
     public int getLayoutResID() {
         return R.layout.fragment2_my_pre;
@@ -115,13 +133,71 @@ public class MyPre2Fragment extends BaseFragment {
     @Override
     public void initView(View view) {
         super.initView(view);
-        initLoadPage();
-        //情况C(默认情况)
+        count = (String) SPUtils.get(getActivity(), "count", "");
+        tvAppSetting = view.findViewById(R.id.tv_app_setting1);
+        badge1 = new BadgeView(getActivity(), rlMsgApp);
+        remind();
+        if(count != null){
+            if(count.equals("0")){
 
+                badge1.hide();
+            }else {
+                badge1.show();
+            }
+        }else {
+            badge1.hide();
+        }
+        tvMyToDoMsgNum.setText(count);
+        initLoadPage();
+
+        String home04 = (String) SPUtils.get(MyApp.getInstance(), "home04", "");
+        if(home04.equals("")){
+            setGuideView();
+        }
     }
-    private void remind(View view) { //BadgeView的具体使用
-        BadgeView badge1 = new BadgeView(getActivity(), view);// 创建一个BadgeView对象，view为你需要显示提醒的控件
-        badge1.setText(countBean2.getCount()+Integer.parseInt(countBean1.getObj())+countBean3.getCount()+""); // 需要显示的提醒类容
+
+    private void setGuideView() {
+        CircleShape circleShape = new CircleShape(10);
+        circleShape.setPaint(LighterHelper.getDashPaint()); //set custom paint
+        // 使用图片
+        Lighter.with(getActivity())
+                .setBackgroundColor(0xB9000000)
+                .setOnLighterListener(new OnLighterListener() {
+                    @Override
+                    public void onShow(int index) {
+
+
+                    }
+
+                    @Override
+                    public void onDismiss() {
+                        SPUtils.put(MyApp.getInstance(),"home04","1");
+                    }
+                })
+                .addHighlight(new LighterParameter.Builder()
+                        //.setHighlightedViewId(R.id.tv_app_setting1)
+                        .setHighlightedView(tvAppSetting)
+                        .setTipLayoutId(R.layout.fragment_home_gl5)
+                        //.setLighterShape(new RectShape(80, 80, 50))
+                        .setLighterShape(circleShape)
+                        .setTipViewRelativeDirection(Direction.BOTTOM)
+                        .setTipViewRelativeOffset(new MarginOffset(150, 0, 30, 0))
+                        .build(),
+                        new LighterParameter.Builder()
+                        //.setHighlightedViewId(R.id.tv_app_setting1)
+                        .setHighlightedView(rlMsgApp)
+                        .setTipLayoutId(R.layout.fragment_home_gl3)
+                        //.setLighterShape(new RectShape(80, 80, 50))
+                        .setLighterShape(circleShape)
+                        .setTipViewRelativeDirection(Direction.BOTTOM)
+                        .setTipViewRelativeOffset(new MarginOffset(150, 0, 30, 0))
+                        .build()).show();
+    }
+
+    private void remind() { //BadgeView的具体使用
+        // 创建一个BadgeView对象，view为你需要显示提醒的控件
+        badge1.setText(count); // 需要显示的提醒类容
+        SPUtils.put(getActivity(),"count",count+"");
         badge1.setBadgePosition(BadgeView.POSITION_TOP_RIGHT);// 显示的位置.右上角,BadgeView.POSITION_BOTTOM_LEFT,下左，还有其他几个属性
         badge1.setTextColor(Color.WHITE); // 文本颜色
         badge1.setBadgeBackgroundColor(Color.RED); // 提醒信息的背景颜色，自己设置
@@ -144,16 +220,14 @@ public class MyPre2Fragment extends BaseFragment {
         if (isLogin){
             netWorkUserMsg();
             netWorkSystemMsg();
-
             netWorkMyCollection();//我的收藏
-            netWorkMyData();//我的信息
-            dbDataList();
-            tvDataNum.setText("11");
-            //情况E(小红点与图片重叠)+ 数字模式
+
+            dbDataList();//OA待办消息
+//            tvDataNum.setText("11");
 
         }else {
-            ((Main2Activity)  getActivity()).mainRadioGroup.check(R.id.rb_home_page);
-            ((Main2Activity)  getActivity()).showFragment(0);
+           /* ((Main2Activity)  getActivity()).mainRadioGroup.check(R.id.rb_home_page);
+            ((Main2Activity)  getActivity()).showFragment(0);*/
         }
     }
 
@@ -161,6 +235,7 @@ public class MyPre2Fragment extends BaseFragment {
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_workFolwDbList)
                 .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .params("type","db")
+                .params("size", 15)
                 .params("workType","workdb")
                 .execute(new StringCallback() {
                     @Override
@@ -169,11 +244,18 @@ public class MyPre2Fragment extends BaseFragment {
                         oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean.class);
                         if (oaMsgListBean.isSuccess()) {
                             Log.i("消息列表",response.body());
-                            setRvOAMsgList();
+                            if(oaMsgListBean.getCount() > 0){
+                                setRvOAMsgList();
+                            }else {
+                                llOa.setVisibility(View.GONE);
+                            }
+
 
                         }else {
-                            T.showShort(MyApp.getInstance(), "没有数据");
+                            //T.showShort(MyApp.getInstance(), "没有数据");
+                            llOa.setVisibility(View.GONE);
                         }
+
                     }
                     @Override
                     public void onError(Response<String> response) {
@@ -185,7 +267,7 @@ public class MyPre2Fragment extends BaseFragment {
     }
 
     /**点击事件*/
-    @OnClick({R.id.rv_user_data, R.id.rv_my_collection, R.id.rv_my_to_do_msg, R.id.exit_login,R.id.tv_app_setting,R.id.tv_app_msg})
+    @OnClick({R.id.rv_user_data, R.id.rv_my_collection, R.id.rv_my_to_do_msg, R.id.exit_login,R.id.tv_app_setting1,R.id.tv_app_msg})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -208,10 +290,11 @@ public class MyPre2Fragment extends BaseFragment {
                     startActivity(intent);
                 }
                 break;
-            case R.id.tv_app_setting:
+            case R.id.tv_app_setting1:
                 if (isLogin){
                     intent = new Intent(MyApp.getInstance(), AppSetting.class);
                     startActivity(intent);
+                    //FinishActivity.addActivity(getActivity());
                 }
                 break;
             case R.id.exit_login:
@@ -222,35 +305,48 @@ public class MyPre2Fragment extends BaseFragment {
     /**个人信息*/
     UserMsgBean userMsgBean;
     private void netWorkUserMsg() {
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.User_Msg)
-                .params("userId", (String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        Log.e("result1",response.body()+"   --防空");
-                        userMsgBean = JSON.parseObject(response.body(), UserMsgBean.class);
-                        if (userMsgBean.isSuccess()) {
-                            if(null != userMsgBean.getObj().getModules().getMemberOtherDepartment()) {
-                                tvZhangye.setText(userMsgBean.getObj().getModules().getMemberOtherDepartment().toString());
-                            }
-                            tvUserName.setText(userMsgBean.getObj().getModules().getMemberNickname());
+        try {
+            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.User_Msg)
+                    .params("userId", (String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            Log.e("result1",response.body()+"   --防空");
+                            userMsgBean = JSON.parseObject(response.body(), UserMsgBean.class);
+                            if (userMsgBean.isSuccess()) {
+                                if(null != userMsgBean.getObj()) {
+                                    if(userMsgBean.getObj().getModules().getMemberOtherDepartment() != null){
+                                        tvZhangye.setText(userMsgBean.getObj().getModules().getMemberOtherDepartment());
+                                    }
 
-                            StringBuilder sb = new StringBuilder();
-                            if (userMsgBean.getObj().getModules().getRolecodes().size() > 0){
-                                for (int i = 0; i < userMsgBean.getObj().getModules().getRolecodes().size(); i++) {
-                                    sb.append(userMsgBean.getObj().getModules().getRolecodes().get(i).getRoleCode()).append(",");
+                                    tvUserName.setText(userMsgBean.getObj().getModules().getMemberNickname());
+
+                                    StringBuilder sb = new StringBuilder();
+                                    if (userMsgBean.getObj().getModules().getRolecodes().size() > 0){
+                                        for (int i = 0; i < userMsgBean.getObj().getModules().getRolecodes().size(); i++) {
+                                            sb.append(userMsgBean.getObj().getModules().getRolecodes().get(i).getRoleCode()).append(",");
+                                        }
+
+                                    }
+                                    String ss = sb.substring(0, sb.lastIndexOf(","));
+                                    Log.e("TAG",ss);
+                                    SPUtils.put(MyApp.getInstance(),"rolecodes",ss);
+                                     /*获取头像*/
+                                    netGetUserHead();
+                                    netWorkMyData();//我的信息
+                                }else {
+                                    llMyData.setVisibility(View.GONE);
                                 }
 
-                            }
-                            String ss = sb.substring(0, sb.lastIndexOf(","));
-                            Log.e("TAG",ss);
-                            SPUtils.put(MyApp.getInstance(),"rolecodes",ss);
 
-                            /*获取头像*/
-                            netGetUserHead();
+
+                            }
                         }
-                    }
-                });
+                    });
+        }catch (Exception e){
+
+        }
+
 
     }
 
@@ -260,10 +356,11 @@ public class MyPre2Fragment extends BaseFragment {
             String pwd = URLEncoder.encode(userMsgBean.getObj().getModules().getMemberPwd(),"UTF-8");
          String ingUrl =  "http://kys.zzuli.edu.cn/authentication/public/getHeadImg?memberId="+userMsgBean.getObj().getModules().getMemberUsername()+"&pwd="+pwd;
 
+            SPUtils.put(MyApp.getInstance(),"logoUrl",ingUrl);
             Glide.with(getActivity())
                     .load(ingUrl)
-                    .transform(new CircleCrop(getActivity()))
-                    .error(R.mipmap.tabbar_user_pre)
+                    .asBitmap()
+                    .placeholder(R.mipmap.tabbar_user_pre)
                     .into(ivUserHead);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
@@ -274,76 +371,86 @@ public class MyPre2Fragment extends BaseFragment {
     /**OA消息列表*/
     OAMsgListBean oaMsgListBean;
     private void netWorkOAToDoMsg() {
-       /* OkGo.<String>post(UrlRes.HOME_URL + UrlRes.OA_Msg_List)
-                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .params("platformtype", "H5手机端")
-                .params("sizes",5)
-                .params("type", "db")
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean.class);
-                        ViewUtils.cancelLoadingDialog();
-                        if (oaMsgListBean.isSuccess()) {
-                            Log.i("OA消息列表",response.body());
-                            if (!oaMsgListBean.getObj().isEmpty()){
-                                llOa.setVisibility(View.VISIBLE);
-                                synchronized (object) {
-                                        allMsgNum = allMsgNum + oaMsgListBean.getObj().size();
-                                    Log.e("allMsgNum",allMsgNum+"");
-                                }
-                                //tvMyToDoMsgNum.setText(oaMsgListBean.getObj().size()+"");
-                                setRvOAMsgList();
-                            }
-                        }else {
-                            llOa.setVisibility(View.GONE);
-                            T.showShort(MyApp.getInstance(), "没有数据");
+        try{
+            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
+                    .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                    .params("type", "db")
+                    .params("workType", "workdb")
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            Log.e("s",response.toString());
+
+                            countBean2 = JSON.parseObject(response.body(), CountBean.class);
+                            netWorkDyMsg();
                         }
-                    }
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        llOa.setVisibility(View.GONE);
-                        ViewUtils.cancelLoadingDialog();
-                        T.showShort(MyApp.getInstance(), "没有数据");
-                    }
-                });*/
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
-                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .params("type", "db")
-                .params("workType", "workdb")
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        Log.e("s",response.toString());
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
 
-                        countBean2 = JSON.parseObject(response.body(), CountBean.class);
-                        netWorkDyMsg();
-                    }
+                        }
+                    });
+        }catch (Exception e){
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
+        }
 
-                    }
-                });
     }
     /**OA消息列表填充*/
     CommonAdapter<OAMsgListBean.ObjBean> oaAdapter;
     private void setRvOAMsgList() {
         llOa.setVisibility(View.VISIBLE);
-        myOaToDoList.setLayoutManager(new LinearLayoutManager(getContext()));
+        myOaToDoList.setLayoutManager(new LinearLayoutManager(getContext()){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
         oaAdapter = new CommonAdapter<OAMsgListBean.ObjBean>(getContext(),R.layout.item_to_do_my_msg,oaMsgListBean.getObj()) {
             @Override
             protected void convert(ViewHolder holder, OAMsgListBean.ObjBean objBean, int position) {
                 holder.setVisible(R.id.tv_msg_num,false);
-                Glide.with(getActivity())
-                        .load(R.mipmap.message_icon1)
-                        .transform(new CircleCrop(getActivity()))
-                        .into((ImageView) holder.getView(R.id.oa_img));
-                holder.setText(R.id.tv_name,objBean.getTitle());
-                holder.setText(R.id.tv_present,objBean.getYwlx());
+                ImageView iv = holder.getConvertView().findViewById(R.id.oa_img);
+                switch (position%6){
+                    case 0:
+                        Glide.with(mContext)
+                                .load(R.mipmap.message_icon2)
+                                //.transform(new CircleCrop(mContext))
+                                .into(iv);
+                        break;
+                    case 1:
+                        Glide.with(mContext)
+                                .load(R.mipmap.message_icon1)
+                               // .transform(new CircleCrop(mContext))
+                                .into(iv);
+                        break;
+                    case 2:
+                        Glide.with(mContext)
+                                .load(R.mipmap.message_icon2)
+                                //.transform(new CircleCrop(mContext))
+                                .into(iv);
+                        break;
+                    case 3:
+                        Glide.with(mContext)
+                                .load(R.mipmap.message_icon4)
+                                //.transform(new CircleCrop(mContext))
+                                .into(iv);
+                        break;
+                    case 4:
+                        Glide.with(mContext)
+                                .load(R.mipmap.message_icon3)
+                                //.transform(new CircleCrop(mContext))
+                                .into(iv);
+                        break;
+                    case 5:
+                        Glide.with(mContext)
+                                .load(R.mipmap.message_icon5)
+                                //.transform(new CircleCrop(mContext))
+                                .into(iv);
+                        break;
+                }
+                holder.setText(R.id.tv_name,objBean.getYwlx());
+                holder.setText(R.id.tv_present,objBean.getTitle());
 
             }
         };
@@ -354,9 +461,12 @@ public class MyPre2Fragment extends BaseFragment {
                 if (!oaMsgListBean.getObj().get(position).getTodourl().isEmpty()){
                     Log.e("url  ==",oaMsgListBean.getObj().get(position).getTodourl()+ "");
                     if (null != oaMsgListBean.getObj().get(position).getTodourl()){
-                        Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
+                        Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
                         intent.putExtra("appUrl",oaMsgListBean.getObj().get(position).getTodourl());
                         intent.putExtra("oaMsg","oaMsg");
+                        intent.putExtra("appName",oaMsgListBean.getObj().get(position).getYwlx());
+                        intent.putExtra("scan","scan");
+                        //intent.putExtra("appName",oaMsgListBean.getObj().get(position).getAppName()+"");
 //                    intent.putExtra("appId",listBean.getAppId()+"");
                         startActivity(intent);
                     }
@@ -375,40 +485,57 @@ public class MyPre2Fragment extends BaseFragment {
     /**我的收藏列表*/
     MyCollectionBean collectionBean;
     private void netWorkMyCollection() {
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.My_Collection)
-                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
+        try {
+            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.My_Collection)
+                    .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            Log.e("s",response.toString());
+                            collectionBean = JSON.parseObject(response.body(), MyCollectionBean.class);
+                            if (collectionBean.isSuccess()) {
+                                if(collectionBean.getObj() != null){
+                                    if (collectionBean.getObj().size() > 0) {
+                                        llMyCollection.setVisibility(View.VISIBLE);
+                                        tvMyCollectionNum.setText(collectionBean.getObj().size() + "");
+                                        setCollectionList();
 
-                        collectionBean = JSON.parseObject(response.body(), MyCollectionBean.class);
-                        if (collectionBean.isSuccess()) {
-                            if (collectionBean.getObj().size() > 0) {
-                                llMyCollection.setVisibility(View.VISIBLE);
-                                tvMyCollectionNum.setText(collectionBean.getObj().size() + "");
-                                setCollectionList();
+                                    } else {
+                                        llMyCollection.setVisibility(View.GONE);
+
+                                    }
+                                }else {
+                                    llMyCollection.setVisibility(View.GONE);
+                                    tvMyCollectionNum.setText("0");
+                                }
 
                             } else {
                                 llMyCollection.setVisibility(View.GONE);
+//                            T.showShort(MyApp.getInstance(), collectionBean.getMsg());
                             }
-                        } else {
-                            llMyCollection.setVisibility(View.GONE);
-                            T.showShort(MyApp.getInstance(), collectionBean.getMsg());
                         }
-                    }
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        llMyCollection.setVisibility(View.GONE);
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            llMyCollection.setVisibility(View.GONE);
 
-                    }
-                });
+                        }
+                    });
+        }catch (Exception e){
+
+        }
+
     }
     /**我的收藏列表填充*/
     CommonAdapter<MyCollectionBean.ObjBean> collectionAdapter;
     private void setCollectionList() {
-        myCollectionList.setLayoutManager(new GridLayoutManager(getActivity(), 4));
+        myCollectionList.setLayoutManager(new GridLayoutManager(getActivity(), 4){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
         collectionAdapter = new CommonAdapter<MyCollectionBean.ObjBean>(getActivity(), R.layout.item_service_app, collectionBean.getObj()) {
             @Override
             protected void convert(ViewHolder holder, MyCollectionBean.ObjBean objBean, int position) {
@@ -427,16 +554,6 @@ public class MyPre2Fragment extends BaseFragment {
                     holder.setVisible(R.id.iv_del,false);
                 }
 
-//                 /*appLoginFlag  0 需要登录*/
-//                if (objBean.getAppLoginFlag()==0){
-//                    holder.setVisible(R.id.iv_lock_open,true);
-//                    Glide.with(getActivity())
-//                            .load(R.mipmap.lock_icon)
-//                            .error(R.color.white)
-//                            .into((ImageView) holder.getView(R.id.iv_lock_open));
-//                }else {
-//                    holder.setVisible(R.id.iv_lock_open,false);
-//                }
                 if (null != objBean.getPortalAppIcon() && null != objBean.getPortalAppIcon().getTempletAppImage()){
 
                     Glide.with(getActivity())
@@ -449,8 +566,6 @@ public class MyPre2Fragment extends BaseFragment {
                             .error(getResources().getColor(R.color.app_bg))
                             .into((ImageView) holder.getView(R.id.iv_app_icon));
                 }
-
-              
             }
         };
         myCollectionList.setAdapter(collectionAdapter);
@@ -458,11 +573,67 @@ public class MyPre2Fragment extends BaseFragment {
             @Override
             public void onItemClick(View view, RecyclerView.ViewHolder holder, int position) {
 //                collectionBean.getObj().get(position)
-                netWorkAppClick(collectionBean.getObj().get(position).getAppId());
-                Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
-                intent.putExtra("appUrl",collectionBean.getObj().get(position).getAppUrl());
-                intent.putExtra("appId",collectionBean.getObj().get(position).getAppId()+"");
-                startActivity(intent);
+                if (netState.isConnect(getActivity())){
+                    netWorkAppClick(collectionBean.getObj().get(position).getAppId());
+                }
+                if(collectionBean.getObj().get(position).getAppUrl().equals("http://iapp.zzuli.edu.cn/portal/app/mailbox/qqEmailLogin")){
+                                           /* webView.setWebViewClient(mWebViewClient);
+                                            webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");*/
+                    Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
+                    intent.putExtra("appUrl",collectionBean.getObj().get(position).getAppUrl());
+                    intent.putExtra("appId",collectionBean.getObj().get(position).getAppId()+"");
+                    intent.putExtra("appName",collectionBean.getObj().get(position).getAppName()+"");
+                    startActivity(intent);
+                }else {
+                   /* Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
+                    intent.putExtra("appUrl",collectionBean.getObj().get(position).getAppUrl());
+                    intent.putExtra("appId",collectionBean.getObj().get(position).getAppId()+"");
+                    intent.putExtra("appName",collectionBean.getObj().get(position).getAppName()+"");
+                    startActivity(intent);*/
+
+                    Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
+                    if (collectionBean.getObj().get(position).getAppUrl().contains("{memberid}")){
+                        String appUrl = collectionBean.getObj().get(position).getAppUrl();
+                        String s1= null;
+                        try {
+                            s1 = URLEncoder.encode((String) SPUtils.get(MyApp.getInstance(),"personName",""), "UTF-8");
+                            appUrl =  appUrl.replace("{memberid}", s1);
+                            intent.putExtra("appUrl",appUrl);
+                        } catch (UnsupportedEncodingException e) {
+                            e.printStackTrace();
+                        }
+
+                    }else if(collectionBean.getObj().get(position).getAppUrl().contains("{memberAesEncrypt}")){
+                        String appUrl = collectionBean.getObj().get(position).getAppUrl();
+                        try {
+                            String memberAesEncrypt = AesEncryptUtile.encrypt((String) SPUtils.get(MyApp.getInstance(),"personName",""), String.valueOf(collectionBean.getObj().get(position).getAppSecret()));
+                            String s2=  URLEncoder.encode(memberAesEncrypt, "UTF-8");
+                            appUrl =  appUrl.replace("{memberAesEncrypt}", s2);
+                            intent.putExtra("appUrl",appUrl);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }else if(collectionBean.getObj().get(position).getAppUrl().contains("{quicklyTicket}")){
+                        String appUrl = collectionBean.getObj().get(position).getAppUrl();
+                        try {
+                            String s3 =  URLEncoder.encode((String) SPUtils.get(MyApp.getInstance(),"TGC",""), "UTF-8");
+                            appUrl = appUrl.replace("{quicklyTicket}",s3);
+                            intent.putExtra("appUrl",appUrl);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    else{
+                        intent.putExtra("appUrl",collectionBean.getObj().get(position).getAppUrl());
+                    }
+                    Log.e("url  ==",collectionBean.getObj().get(position).getAppUrl() + "");
+
+                    //intent.putExtra("appUrl",appsBean.getAppUrl());
+                    intent.putExtra("appId",collectionBean.getObj().get(position).getAppId()+"");
+                    intent.putExtra("appName",collectionBean.getObj().get(position).getAppName()+"");
+                    startActivity(intent);
+                }
+
             }
 
             @Override
@@ -479,7 +650,7 @@ public class MyPre2Fragment extends BaseFragment {
 
     ServiceAppListBean allAppListBean;
     private void netWorkMyData() {
-        ViewUtils.createLoadingDialog(getActivity());
+        //ViewUtils.createLoadingDialog(getActivity());
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Service_APP_List)
                 .params("Version", "1.0")
                 .params("userId", (String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -487,8 +658,8 @@ public class MyPre2Fragment extends BaseFragment {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        ViewUtils.cancelLoadingDialog();
-                        Log.i("OA消息列表",response.body());
+                        //ViewUtils.cancelLoadingDialog();
+                        Log.e("OA消息列表",response.body());
                         allAppListBean = JSON.parseObject(response.body(),ServiceAppListBean.class);
                         if (allAppListBean.isSuccess()){
 
@@ -509,16 +680,14 @@ public class MyPre2Fragment extends BaseFragment {
 
                         }else {
                             llMyData.setVisibility(View.GONE);
-                            T.showShort(MyApp.getInstance(),allAppListBean.getMsg());
                         }
                     }
 
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-                        ViewUtils.cancelLoadingDialog();
+                        //ViewUtils.cancelLoadingDialog();
                         llMyData.setVisibility(View.GONE);
-//                        T.showShort(MyApp.getInstance(),allAppListBean.getMsg());
                     }
                 });
     }
@@ -527,7 +696,12 @@ public class MyPre2Fragment extends BaseFragment {
 
     private void setMyAppDataList(final List<ServiceAppListBean.ObjBean.AppsBean> appsBeans) {
         final CommonAdapter<ServiceAppListBean.ObjBean.AppsBean> myAppListAdapter;
-        myDataList.setLayoutManager(new GridLayoutManager(getActivity(),4));
+        myDataList.setLayoutManager(new GridLayoutManager(getActivity(),4){
+            @Override
+            public boolean canScrollVertically() {
+                return false;
+            }
+        });
         myAppListAdapter = new CommonAdapter<ServiceAppListBean.ObjBean.AppsBean>(getActivity(),R.layout.item_service_app,appsBeans) {
 
 
@@ -562,11 +736,14 @@ public class MyPre2Fragment extends BaseFragment {
                     @Override
                     public void onClick(View v) {
                         if (!appsBean.getAppUrl().isEmpty()){
-                            netWorkAppClick(appsBean.getAppId());
+                            if (netState.isConnect(getActivity())) {
+                                netWorkAppClick(appsBean.getAppId());
+                            }
                             Log.e("url  ==",appsBean.getAppUrl() + "");
-                            Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity.class);
+                            Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
                             intent.putExtra("appUrl",appsBean.getAppUrl());
                             intent.putExtra("appId",appsBean.getAppId()+"");
+                            intent.putExtra("appName",appsBean.getAppName()+"");
                             startActivity(intent);
                         }
                     }
@@ -603,8 +780,14 @@ public class MyPre2Fragment extends BaseFragment {
 
     @Override
     public void onResume() {
-        initLoadPage();
         super.onResume();
+
+        if (netState.isConnect(getActivity())){
+            //ToastUtils.showToast(getActivity(),"onResume");
+            initLoadPage();
+        }else {
+            ToastUtils.showToast(getActivity(),"网络连接异常");
+        }
 
     }
 
@@ -612,41 +795,117 @@ public class MyPre2Fragment extends BaseFragment {
     /** 获取消息数量*/
 
     private void netWorkSystemMsg() {
-        String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_countUnreadMessagesForCurrentUser)
-                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        Log.e("s",response.toString());
 
-                        countBean1 = JSON.parseObject(response.body(), CountBean.class);
-                        //yy_msg_num.setText(countBean.getCount()+"");
-                        netWorkOAToDoMsg();//OA待办
+        try {
+            String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_countUnreadMessagesForCurrentUser)
+                    .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            Log.e("s",response.toString());
 
-                    }
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
+                            countBean1 = JSON.parseObject(response.body(), CountBean.class);
+                            //yy_msg_num.setText(countBean.getCount()+"");
+                            netWorkOAToDoMsg();//OA待办
 
-                    }
-                });
+                        }
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+
+                        }
+                    });
+        }catch (Exception e){
+
+        }
+
     }
     CountBean countBean3;
+    String count;
     private void netWorkDyMsg() {
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
-                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .params("type", "dy")
-                .params("workType", "workdb")
+        try {
+            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
+                    .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                    .params("type", "dy")
+                    .params("workType", "workdb")
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            Log.e("s",response.toString());
+
+                            countBean3 = JSON.parseObject(response.body(), CountBean.class);
+
+
+                            count = countBean2.getCount() + Integer.parseInt(countBean1.getObj()) + countBean3.getCount() + "";
+                            if(null == count){
+                                count = "0";
+                            }
+
+                            SPUtils.put(MyApp.getInstance(),"count",count+"");
+                            if(!count.equals("") && !"0".equals(count)){
+                                remind();
+                                SPUtils.get(getActivity(),"count","");
+                            }else {
+                                badge1.hide();
+                            }
+                            tvMyToDoMsgNum.setText(count);
+                        /*tvMyToDoMsgNum.setText(count);
+                        remind();
+                        if(count.equals("0")){
+
+                            badge1.hide();
+                        }else {
+                            badge1.show();
+                        }*/
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+
+                        }
+                    });
+        }catch (Exception e){
+
+        }
+
+    }
+
+
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
+
+        isLogin = !StringUtils.isEmpty((String) SPUtils.get(MyApp.getInstance(),"username",""));
+
+        String count = (String) SPUtils.get(getActivity(),"count","");
+        Log.e("count-------",count);
+        //badge1.setText(count);
+
+        //ToastUtils.showToast(getActivity(),"onHiddenChanged");
+        if (!isLogin){
+            badge1.hide();
+        }else {
+            netWorkSystemMsg();
+            netInsertPortal("4");
+        }
+
+    }
+
+    private void netInsertPortal(final String insertPortalAccessLog) {
+        String imei = MobileInfoUtils.getIMEI(getActivity());
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
+                .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
+                .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
+                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogVersionNumber", (String) SPUtils.get(getActivity(),"versionName", ""))//版本号
+                .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        Log.e("s",response.toString());
+                        Log.e("sdsaas",response.body());
 
-                        countBean3 = JSON.parseObject(response.body(), CountBean.class);
-
-                        tvMyToDoMsgNum.setText(countBean2.getCount()+Integer.parseInt(countBean1.getObj())+countBean3.getCount()+"");
-                        remind(rlMsgApp);
                     }
 
                     @Override
@@ -656,6 +915,4 @@ public class MyPre2Fragment extends BaseFragment {
                     }
                 });
     }
-
-
 }

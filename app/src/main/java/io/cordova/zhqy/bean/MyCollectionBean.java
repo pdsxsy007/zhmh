@@ -113,6 +113,15 @@ public class MyCollectionBean {
         private Object systemName;
         private Object iconCount;
         private Object systemIdList;
+        private Object appSecret;
+
+        public Object getAppSecret() {
+            return appSecret;
+        }
+
+        public void setAppSecret(Object appSecret) {
+            this.appSecret = appSecret;
+        }
 
         public int getAppId() {
             return appId;

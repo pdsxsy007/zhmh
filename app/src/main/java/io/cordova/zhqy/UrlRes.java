@@ -16,7 +16,7 @@ public class UrlRes {
      */
     public static String HOME_URL ="http://iapp.zzuli.edu.cn";
 //    public static String HOME_URL ="http://192.168.30.30:8081";
-    public static String Native_URL ="http://192.168.30.30:8081";
+    //public static String HOME_URL ="http://192.168.30.30:8081";
     /*tgt  相关*/
     public static String HOME2_URL ="http://kys.zzuli.edu.cn";
     /*绑定极光*/
@@ -137,4 +137,65 @@ public class UrlRes {
      * 查看消息接口
      */
     public static String searchMessageById="/portal/mobile/weiMessage/getMessageIniDtoForCurrentUserByDetailId";
+
+    /**
+     * 上传手机信息
+     */
+    public static String addMobileInfoUrl="/portal/mobile/equipment/addMobile";
+
+    /**
+     * 输入账号获取邮箱或者手机号
+     */
+    public static String getUserInfoByMemberIdUrl="/authentication/api/casMember/getUserInfoByMemberId";
+
+
+    /**
+     * 获取验证码
+     */
+    public static String sendVerificationUrl="/authentication/api/verification/sendVerification";
+
+    /**
+     * 验证验证码
+     */
+    public static String verificationUrl="/authentication/api/verification/verification";
+
+    /**
+     * 修改密码
+     */
+    public static String updatePasswordUrl="/authentication/api/casMember/updatePassword";
+
+    /**
+     * 获取下载类型
+     */
+    public static String getDownLoadTypeUrl="/portal/mobile/config/getDownLoadType";
+
+    /**
+     * app授权接口
+     */
+    public static String functionInvocationLogUrl="/portal/mobile/functionInvocationLog/addInvocationLog";
+
+    /**
+     * 人脸识别
+     */
+    public static String getPassByFaceUrl="/authentication/api/face/getPassByFace";
+
+    /**
+     * 人脸识别上传图片
+     */
+    public static String addFaceUrl="/authentication/api/face/addFace";
+
+    /**
+     * 一键登录
+     */
+    public static String loginTokenVerifyUrl="/authentication/api/jgMessage/loginTokenVerify";
+
+    /**
+     * webview上传位置阅读时间等信息
+     */
+    public static String addPortalReadingAccessUrl="/portal/mobile/portalReadingAccess/addPortalReadingAccess";
+
+    /**
+     * 5分钟一次上传信息
+     */
+    public static String insertPortalPositionUrl="/portal/mobile/portalPosition/insertPortalPosition";
 }

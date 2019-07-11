@@ -10,5 +10,10 @@
     <string name="tab_home">首页</string>
     <string name="tab_service">应用服务</string>
     <string name="tab_find">综合信息</string>
-    <string name="tab_my">我的</string>
+    <string name="tab_my">个人中心</string>
+    <string name="find_pwd1">下一步，设置新密码</string>
+    <string name="find_pwd2">提交</string>
+    <string name="find_pwd3">上一步，信息验证</string>
+    <string name="fingerprint_account">Hello,%s</string>
+    <string name="fingerprintChangeTip">您设备的指纹发生了变化或系统出错,指纹登录已关闭.请使用其他方式登录后重新开启.</string>
 </resources>

@@ -3,6 +3,7 @@ package io.cordova.zhqy.utils;
 import android.annotation.SuppressLint;
 import android.content.Context;
 import android.telephony.TelephonyManager;
+import android.text.TextUtils;
 
 /**
  * Created by Administrator on 2019/1/3 0003.
@@ -34,23 +35,7 @@ public class MobileInfoUtils {
 
     }
 
-    /**
-     * 获取手机IMSI
-     */
-    public static String getIMSI(Context context){
-        try {
-            TelephonyManager telephonyManager=(TelephonyManager)context.getSystemService(Context.TELEPHONY_SERVICE);
-            //获取IMSI号
-            @SuppressLint("MissingPermission") String imsi=telephonyManager.getSubscriberId();
-            if(null==imsi){
-                imsi="";
-            }
-            return imsi;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return "";
-        }
-    }
+
 
 
 

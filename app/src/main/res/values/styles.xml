@@ -9,9 +9,10 @@
     </style>
 
     <style name="SplashTheme" parent="Theme.AppCompat.Light.DarkActionBar">
-        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowIsTranslucent">false</item>
         <item name="android:windowNoTitle">true</item>
         <item name="windowNoTitle">true</item>
+        <item name="android:windowDisablePreview">true</item>
     </style>
 
     <style name="radio_button">
@@ -19,7 +20,7 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:textColor">@drawable/rb_text_color</item>
-        <item name="android:textSize">@dimen/sp10</item>
+        <item name="android:textSize">@dimen/sp12</item>
         <item name="android:button">@null</item>
         <item name="android:padding">@dimen/dp6</item>
         <item name="android:gravity">center</item>
@@ -42,6 +43,28 @@
         <item name="android:layout_height">39dp</item>
         <item name="android:background">@drawable/shape_button_white</item>
         <item name="android:textColor">@color/gray3</item>
+        <item name="android:textSize">@dimen/sp15</item>
+        <item name="android:layout_marginLeft">@dimen/dp20</item>
+        <item name="android:layout_marginRight">@dimen/dp20</item>
+        <item name="android:layout_marginTop">@dimen/dp30</item>
+    </style>
+
+    <style name="button5">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">39dp</item>
+        <item name="android:background">@drawable/shape_button_blue</item>
+        <item name="android:textColor">@color/gray3</item>
+        <item name="android:textSize">@dimen/sp15</item>
+        <item name="android:layout_marginLeft">@dimen/dp20</item>
+        <item name="android:layout_marginRight">@dimen/dp20</item>
+        <item name="android:layout_marginTop">@dimen/dp30</item>
+    </style>
+
+    <style name="button3">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">39dp</item>
+        <item name="android:background">@drawable/shape_button_blue_tianchong</item>
+        <item name="android:textColor">@color/white</item>
         <item name="android:textSize">@dimen/sp15</item>
         <item name="android:layout_marginLeft">@dimen/dp20</item>
         <item name="android:layout_marginRight">@dimen/dp20</item>
@@ -82,7 +105,109 @@
         <item name="android:textSize">18sp</item>
     </style>
 
+
+    <style name="style_dialog" parent="@android:style/Theme.Dialog">
+        <item name="android:windowFrame">@null</item>
+        <!-- 边框 -->
+        <item name="android:windowIsFloating">true</item>
+        <!-- 是否浮现在activity之上 -->
+        <item name="android:windowIsTranslucent">true</item>
+        <!-- 半透明 -->
+        <item name="android:windowNoTitle">true</item>
+        <!-- 无标题 -->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!-- 模糊 -->
+        <item name="android:backgroundDimAmount">0.7</item>
+        <!-- 背景透明 -->
+        <item name="android:windowBackground">@android:color/transparent</item>
+    </style>
+
+    <style name="dialogdialog" parent="style_dialog">
+        <item name="android:background">@android:color/transparent</item>
+    </style>
+
+    <style name="TextAppearance.Holo.Medium" parent="TextAppearance.AppCompat.Widget.ActionBar.Title">
+        <item name="android:textSize">@dimen/sp16</item>
+    </style>
+
+    <style name="OpenClick">
+        <item name="android:windowBackground">@android:color/transparent</item>
+
+    </style>
     <!--沉浸式布局-->
 
    <!-- ********************************************************************** -->
+
+    <style name="TransparentDialogStyle" parent="commonTipDialogStyle">
+
+        <!-- 是否浮在activity之上 -->
+        <item name="android:windowIsFloating">false</item>
+        <!-- 设置自定义布局的背景半透明 -->
+        <item name="android:background">#50000000</item>
+
+        <!--<item name="android:windowBackground">@android:color/transparent</item>-->
+    </style>
+
+
+    <!-- 自定义对话框风格 -->
+    <style name="commonTipDialogStyle" parent="android:Theme.Dialog">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowFrame">@null</item>
+        <!--无边框 -->
+        <item name="android:windowNoTitle">true</item>
+        <!--没有标题-->
+        <item name="android:windowIsFloating">true</item>
+        <!--是否浮在activity之上-->
+        <item name="android:windowIsTranslucent">false</item>
+        <!--背景是否半透明-->
+        <item name="android:windowContentOverlay">@null</item>
+        <!--对话框是否有遮盖 -->
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <!--动画样式-->
+        <item name="android:backgroundDimEnabled">false</item>
+        <!--背景是否模糊-->
+
+    </style>
+
+    <style name="dialogWindowAnim" mce_bogus="1" parent="android:Animation">
+        <item name="android:windowEnterAnimation">@anim/fade_in</item>
+        <item name="android:windowExitAnimation">@anim/fade_out</item>
+    </style>
+
+    <style name="custom_bottom_dialog" parent="@android:style/Theme.Dialog">
+        <!--Dialog的windowFrame框为无-->
+        <item name="android:windowFrame">@null</item>
+        <!--是否显示title-->
+        <item name="android:windowNoTitle">true</item>
+        <!--是否浮现在activity之上-->
+        <item name="android:windowIsFloating">true</item>
+        <!--是否半透明-->
+        <item name="android:windowIsTranslucent">true</item>
+        <!--是否有覆盖-->
+        <item name="android:windowContentOverlay">@null</item>
+        <!--dialog的背景是否昏暗-->
+        <item name="android:backgroundDimEnabled">true</item>
+        <!--窗口背景色-->
+        <item name="android:windowBackground">@color/vtran</item>
+
+
+
+    </style>
+
+    <!--弹窗动画-->
+    <style name="PopupWindow">
+        <item name="android:windowEnterAnimation">@anim/window_in</item>
+        <item name="android:windowExitAnimation">@anim/window_out</item>
+    </style>
+
+
+    <style name="Widget.CameraView" parent="android:Widget">
+        <item name="android:adjustViewBounds">false</item>
+        <item name="facing">back</item>
+        <item name="aspectRatio">4:3</item>
+        <item name="autoFocus">true</item>
+        <item name="flash">auto</item>
+    </style>
+
+
 </resources>

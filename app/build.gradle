@@ -1,10 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
+
     compileSdkVersion 27
+    buildToolsVersion '27.0.3'
     defaultConfig {
         applicationId "io.cordova.zhqy"
-        minSdkVersion 17
+        minSdkVersion 22
         targetSdkVersion 27
 
         versionCode 3
@@ -13,14 +15,14 @@ android {
 
         ndk {
             //选择要添加的对应cpu类型的.so库。
-            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a'
+            abiFilters 'armeabi', 'armeabi-v7a', 'arm64-v8a','x86', 'x86_64', 'mips', 'mips64'
             // 还可以添加 'x86', 'x86_64', 'mips', 'mips64'
         }
 
         manifestPlaceholders = [
                 JPUSH_PKGNAME : applicationId, //JPush上注册的包名.
                 JPUSH_APPKEY : "4d6db4a813a03158396e5061", //JPush上注册的包名对应的appkey.
-                JPUSH_CHANNEL : "消息提示", //暂时填写默认值即可.
+                //JPUSH_CHANNEL : "消息提示", //暂时填写默认值即可.
                 JPUSH_CHANNEL : "developer-default", //暂时填写默认值即可.
                 HUAWEI_APPID:"100674355",//华为平台注册的appid
                 XIAOMI_APPKEY:"MI-5561796626085",//小米平台注册的appkey
@@ -32,6 +34,7 @@ android {
                 OPPO_APPKEY : "OP-242b921fb27143399f054d567aaf3c7e", // OPPO平台注册的appkey
                 OPPO_APPID : "OP-3737700", // OPPO平台注册的appid
                 OPPO_APPSECRET: "OP-84d55d6aa8fc420ea2701105286a7bb5",//OPPO平台注册的appsecret
+                qqappid: "tencent101590782",
         ]
         multiDexEnabled true
     }
@@ -40,8 +43,40 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
+
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file('jh_qingyuan.jks')
+            storePassword "123456"
+            keyAlias "jh_qingyuan"
+            keyPassword "123456"
+        }
+    }
+
+
+    lintOptions {
+        checkReleaseBuilds false
+        abortOnError false
+    }
+
+    splits {
+        abi {
+            enable true
+            reset()
+            include 'armeabi' //根据需求自己修改
+            universalApk true
+        }
+    }
+
+}
+repositories {
+    flatDir {
+        dirs 'libs'
     }
 }
+
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
@@ -50,62 +85,103 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+
     /*网络框架*/
     implementation 'com.lzy.net:okgo:3.0.4'
     implementation 'com.android.support:design:27.1.1'
+
     /*注解*/
     implementation 'com.jakewharton:butterknife:8.4.0'
     annotationProcessor 'com.jakewharton:butterknife-compiler:8.4.0'
+
     //阿里巴巴解析框架
     implementation 'com.alibaba:fastjson:1.2.41'
+
     /*gson 解析*/
     implementation 'com.google.code.gson:gson:2.8.0'
+
     /*通用adapter*/
     implementation 'com.zhy:base-rvadapter:3.0.3'
+
     //轮播图
     implementation 'com.youth.banner:banner:1.4.10'
 
     //RxPermissions
     implementation 'com.tbruyelle.rxpermissions2:rxpermissions:0.9.4@aar'
+
     //RxJava2
     implementation 'io.reactivex.rxjava2:rxjava:2.0.0'
 
     //图片加载
     implementation 'com.github.bumptech.glide:glide:3.7.0'
+
     //知乎图片选择器
     implementation 'com.zhihu.android:matisse:0.5.0-alpha4'
+
     //webview
     implementation 'com.just.agentweb:agentweb:4.0.2'
+
     // (必选)
     implementation 'com.just.agentweb:download:4.0.2'
+
     // (可选)
     implementation 'com.just.agentweb:filechooser:4.0.2'
+
     // (可选)
     implementation 'gdut.bsx:share2:0.9.3'
-     implementation 'com.hyman:flowlayout-lib:1.1.2'
-    /*极光推送*/
+    implementation 'com.hyman:flowlayout-lib:1.1.2'
 
+    /*极光推送*/
     implementation 'cn.jiguang.sdk:jpush:3.2.0'
-    implementation 'cn.jiguang.sdk:jcore:1.2.6'  // 此处以JCore 1.2.1 版本为例。
+    implementation 'cn.jiguang.sdk:jcore:1.2.6'
+
+    // 此处以JCore 1.2.1 版本为例。
+
     /*华为*/
     implementation 'cn.jiguang.sdk.plugin:huawei:3.2.0'
+
     /*小米*/
     implementation 'cn.jiguang.sdk.plugin:xiaomi:3.2.0'
+
     /*魅族*/
     implementation 'cn.jiguang.sdk.plugin:meizu:3.2.0'
+
     /*OPPO*/
     implementation 'cn.jiguang.sdk.plugin:oppo:3.2.0'
+
     /*Vivo*/
     implementation 'cn.jiguang.sdk.plugin:vivo:3.2.0'
 
     //定位功能
+
     // implementation 'com.amap.api:location:latest.integration'
     implementation project(path: ':treerecycle')
-//    implementation files('libs/BASE64Encoder.jar')
-    implementation project(':libzxing')
-    implementation project(':YCUpdateLib')
 
+    //    implementation files('libs/BASE64Encoder.jar')
+    implementation project(':libzxing')
+    implementation project(':swipebacklibrary')
+    implementation project(':ShortcutBadger')
     implementation 'com.github.CymChad:BaseRecyclerViewAdapterHelper:2.9.46'
     implementation 'com.scwang.smartrefresh:SmartRefreshLayout:1.0.3'
     implementation 'com.scwang.smartrefresh:SmartRefreshHeader:1.0.3'
+    implementation 'me.samlss:lighter:1.0.3'
+
+    //友盟统计
+    compile 'com.umeng.sdk:common:1.5.1'
+    compile 'com.umeng.sdk:analytics:7.5.0'
+
+    //友盟社会化分享
+    compile 'com.umeng.sdk:share-core:6.9.1'
+    compile 'com.umeng.sdk:share-qq:6.9.1.1'
+    compile 'com.umeng.sdk:share-wechat:6.9.1'
+    compile 'com.umeng.sdk:share-sina:6.9.1'
+
+    //分享面板
+    compile 'com.umeng.sdk:shareboard-widget:6.9.1'
+
+
+    //compile 'com.sina.weibo.sdk:core:4.3.8:openDefaultRelease-4.3.9.aar'
+    compile 'com.lovedise:permissiongen:0.0.6'
+    implementation files('libs/jverification-android-release-2.3.0.jar')
+    implementation files('libs/jcore-android-2.0.1.jar')
 }

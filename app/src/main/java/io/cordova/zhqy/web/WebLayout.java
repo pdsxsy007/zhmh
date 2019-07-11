@@ -9,13 +9,18 @@ import android.view.LayoutInflater;
 import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.CookieSyncManager;
+import android.webkit.WebResourceRequest;
+import android.webkit.WebSettings;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 import android.widget.RelativeLayout;
 
 import com.just.agentweb.IWebLayout;
 
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.utils.CookieUtils;
+import io.cordova.zhqy.utils.MyApp;
+import io.cordova.zhqy.utils.SPUtils;
 
 /**
  * Created by cenxiaozhong on 2017/7/1.
@@ -28,7 +33,7 @@ public class WebLayout implements IWebLayout {
     private final RelativeLayout mTwinklingRefreshLayout;
     private WebView mWebView = null;
 
-    public WebLayout(Activity activity) {
+    public WebLayout(final Activity activity) {
         this.mActivity = activity;
         mTwinklingRefreshLayout = (RelativeLayout) LayoutInflater.from(activity).inflate(R.layout.fragment_twk_web, null);
       //  mTwinklingRefreshLayout.setPureScrollModeOn();
@@ -37,11 +42,24 @@ public class WebLayout implements IWebLayout {
         if(Build.VERSION.SDK_INT>=21){
             cookieManager.setAcceptThirdPartyCookies(mWebView, true);
         }
+
+        String tgc = (String) SPUtils.get(MyApp.getInstance(),"TGC","");
+                cookieManager.removeSessionCookie();//移除
+//        cookieManager.removeAllCookie();  +  ;Domain=http://kys.zzuli.edu.cn
+        cookieManager.setAcceptCookie(true);
+        String stgc = "CASTGC="+tgc;
+        Log.i("stgc",stgc);
+        cookieManager.setCookie("http://kys.zzuli.edu.cn",stgc);
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP) {
             CookieSyncManager.getInstance().sync();
         } else {
             cookieManager.flush();
         }
+//        WebSettings setting = mWebView.getSettings();
+//        setting.setLayoutAlgorithm(WebSettings.LayoutAlgorithm.SINGLE_COLUMN);
+//        setting.setUseWideViewPort(true);
+//        setting.setLoadWithOverviewMode(true);
+//        setting.setDomStorageEnabled(true);
 ////        cookieManager.removeAllCookie();//移除
 //        cookieManager.removeSessionCookie();//移除
 ////        cookieManager.removeAllCookie();  +  ;Domain=http://kys.zzuli.edu.cn

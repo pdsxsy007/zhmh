@@ -18,7 +18,7 @@ import butterknife.ButterKnife;
  * @author wangdh
  */
 public abstract class BaseFragment extends Fragment {
-
+    public int netStateType = 0;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = View.inflate(getActivity(), getLayoutResID(), null);
@@ -26,6 +26,10 @@ public abstract class BaseFragment extends Fragment {
         initView(view);
         initData();
         initListener();
+        /*if (!netState.isConnect(getActivity()) ){
+            ToastUtils.showToast(getActivity(),"网络异常!");
+            netStateType = 1;
+        }*/
         return view;
     }
 
@@ -67,5 +71,9 @@ public abstract class BaseFragment extends Fragment {
 
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        super.onHiddenChanged(hidden);
 
+    }
 }
