@@ -1,1 +1,1 @@
-include ':app', ':treerecycle', ':libzxing'
+include ':app', ':treerecycle', ':libzxing', ':swipebacklibrary', ':ShortcutBadger'
