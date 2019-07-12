@@ -199,7 +199,7 @@ public class Main2Activity extends BaseActivity3 {
         addMobieInfo();
         getDownLoadType();
 
-
+        logOut();
     }
 
     private void getDownLoadType() {
@@ -657,6 +657,7 @@ public class Main2Activity extends BaseActivity3 {
             }
 
             return true;
+
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -1319,6 +1320,45 @@ public class Main2Activity extends BaseActivity3 {
 
     };
 
+
+    private MyDialog m_Dialog2;
+
+    private void logOut() {
+        m_Dialog2 = new MyDialog(this, R.style.dialogdialog);
+        Window window = m_Dialog2.getWindow();
+        window.setGravity(Gravity.CENTER);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_new_student, null);
+        RelativeLayout rl_sure = view.findViewById(R.id.rl_sure);
+
+        //int width = ScreenSizeUtils.getWidth(getActivity());
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(-1,-1);
+        m_Dialog2.setContentView(view, layoutParams);
+        m_Dialog2.show();
+        m_Dialog2.setCanceledOnTouchOutside(false);
+
+        rl_sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                m_Dialog2.dismiss();
+
+
+            }
+        });
+
+        m_Dialog2.setOnKeyListener(new DialogInterface.OnKeyListener() {
+            @Override
+            public boolean onKey(DialogInterface dialogInterface, int keyCode, KeyEvent keyEvent) {
+                if (keyCode==KeyEvent.KEYCODE_BACK && keyEvent.getRepeatCount()==0)
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
+        });
+    }
 
 
 

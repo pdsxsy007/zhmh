@@ -71,7 +71,7 @@ public class UpdateFaceActivity extends BaseActivity {
 
             Matrix matrix = new Matrix();
             matrix.setScale(0.5f, 0.5f);
-            Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),bitmap.getHeight(), matrix, true);
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
 
 
 

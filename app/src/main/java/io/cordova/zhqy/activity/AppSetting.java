@@ -368,6 +368,7 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
                         SPUtils.put(getApplicationContext(),"rolecodes","");
                         SPUtils.put(getApplicationContext(),"count","0");
                         SPUtils.put(getApplicationContext(),"bitmap","");
+                        SPUtils.put(getApplicationContext(),"bitmap2","");
                         String ss = portalVersionNumber;
                         if(!update.equals("")){
                             SPUtils.put(MyApp.getInstance(),"update",portalVersionNumber);

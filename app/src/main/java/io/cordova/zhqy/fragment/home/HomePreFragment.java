@@ -12,8 +12,10 @@ import android.os.Build;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.webkit.CookieManager;
 import android.webkit.SslErrorHandler;
 import android.webkit.WebChromeClient;
@@ -64,13 +66,17 @@ import io.cordova.zhqy.activity.MyShenqingActivity;
 import io.cordova.zhqy.activity.OaMsgActivity;
 import io.cordova.zhqy.activity.SystemMsgActivity;
 import io.cordova.zhqy.bean.BaseBean;
+import io.cordova.zhqy.utils.DensityUtil;
 import io.cordova.zhqy.utils.LighterHelper;
 import io.cordova.zhqy.utils.MobileInfoUtils;
+import io.cordova.zhqy.utils.ScreenSizeUtils;
 import io.cordova.zhqy.utils.StringUtils;
 import io.cordova.zhqy.utils.ToastUtils;
 import io.cordova.zhqy.utils.netState;
 import io.cordova.zhqy.web.BaseWebActivity4;
+import io.cordova.zhqy.web.WebLayout;
 import io.cordova.zhqy.web.WebLayout2;
+import io.cordova.zhqy.widget.MyDialog;
 import io.reactivex.functions.Consumer;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.utils.BaseFragment;
@@ -152,6 +158,9 @@ public class HomePreFragment extends BaseFragment {
         }
 
     }
+
+
+
 
     private void setGuideView() {
         CircleShape circleShape = new CircleShape(10);
@@ -768,4 +777,6 @@ public class HomePreFragment extends BaseFragment {
                     }
                 });
     }
+
+
 }

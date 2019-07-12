@@ -99,8 +99,15 @@ public class FaceActivity extends BaseActivity {
 
             Matrix matrix = new Matrix();
             matrix.setScale(0.5f, 0.5f);
-            Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),bitmap.getHeight(), matrix, true);
+            //Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),bitmap.getHeight(), matrix, true);
+            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
+            Log.e("wechat", "压缩前图片的大小"+ (bitmap.getByteCount() / 1024/ 1024)
 
+                    + "M宽度为"+ bitmap.getWidth() + "高度为"+ bitmap.getHeight());
+
+            Log.e("wechat", "压缩后图片的大小"+ (scaledBitmap.getByteCount() / 1024/ 1024)
+
+                    + "M宽度为"+ scaledBitmap.getWidth() + "高度为"+ scaledBitmap.getHeight());
 
 
             //Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 480, windowHeigh/i, true);
