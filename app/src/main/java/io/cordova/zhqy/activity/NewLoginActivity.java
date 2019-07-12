@@ -18,11 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import butterknife.BindView;
-import cn.jiguang.verifysdk.api.JVerificationInterface;
-import cn.jiguang.verifysdk.api.JVerifyUIClickCallback;
-import cn.jiguang.verifysdk.api.JVerifyUIConfig;
-import cn.jiguang.verifysdk.api.PreLoginListener;
-import cn.jiguang.verifysdk.api.VerifyListener;
+
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.utils.BaseActivity;
 
@@ -72,10 +68,10 @@ public class NewLoginActivity extends BaseActivity implements View.OnClickListen
         btnPreLogin.setOnClickListener(this);
         findViewById(R.id.cb_auto_finish).setOnClickListener(this);
 
-        preLogin();
+        //preLogin();
 
 
-        btn_go.setOnClickListener(new View.OnClickListener() {
+       /* btn_go.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 JVerifyUIConfig uiConfig = new JVerifyUIConfig.Builder()
@@ -120,13 +116,13 @@ public class NewLoginActivity extends BaseActivity implements View.OnClickListen
                     }
                 });
             }
-        });
+        });*/
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
-            case R.id.btn_validate:
+            /*case R.id.btn_validate:
                 verifyNumber();
                 break;
             case R.id.btn_get_token:
@@ -137,7 +133,7 @@ public class NewLoginActivity extends BaseActivity implements View.OnClickListen
                 break;
             case R.id.btn_login:
                 loginAuth();
-                break;
+                break;*/
             case R.id.cb_auto_finish:
                 autoFinish = ((CheckBox)view).isChecked();
         }
@@ -145,7 +141,7 @@ public class NewLoginActivity extends BaseActivity implements View.OnClickListen
 
     private String token;
 
-    private void getToken() {
+  /*  private void getToken() {
         boolean verifyEnable = JVerificationInterface.checkVerifyEnable(this);
         if(!verifyEnable){
             tvLog.setText("[2016],msg = 当前网络环境不支持认证");
@@ -213,8 +209,8 @@ public class NewLoginActivity extends BaseActivity implements View.OnClickListen
                 tvLog.post(new Runnable() {
                     @Override
                     public void run() {
-                        /*Log.d(TAG,"[" + code + "]message=" +  content );
-                        tvLog.setText("[" + code + "]message=" +  content );*/
+                        *//*Log.d(TAG,"[" + code + "]message=" +  content );
+                        tvLog.setText("[" + code + "]message=" +  content );*//*
                         dismissLoadingDialog();
                     }
                 });
@@ -271,7 +267,7 @@ public class NewLoginActivity extends BaseActivity implements View.OnClickListen
                 });
             }
         });
-    }
+    }*/
 
     private void submit() {
         // validate

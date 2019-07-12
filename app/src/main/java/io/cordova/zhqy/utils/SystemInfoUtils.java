@@ -46,7 +46,7 @@ public class SystemInfoUtils {
 
 
     public static int getWindowWidth(Context context){
-// 获取屏幕分辨率
+    // 获取屏幕分辨率
         WindowManager wm = (WindowManager) (context.getSystemService(Context.WINDOW_SERVICE));
         DisplayMetrics dm = new DisplayMetrics();
         wm.getDefaultDisplay().getMetrics(dm);

@@ -19,7 +19,7 @@ import com.umeng.socialize.UMShareConfig;
 import java.util.ArrayList;
 import java.util.List;
 
-import cn.jiguang.verifysdk.api.JVerificationInterface;
+
 import cn.jpush.android.api.JPushInterface;
 import io.cordova.zhqy.AppException;
 import io.cordova.zhqy.bean.Constants;
@@ -72,8 +72,8 @@ public class MyApp extends Application {
         AligreenSdkManager.getInstance().init(instance);*/
 
         //本机号码一键登录
-        JVerificationInterface.setDebugMode(true);
-        JVerificationInterface.init(instance);
+       /* JVerificationInterface.setDebugMode(true);
+        JVerificationInterface.init(instance);*/
         //AllowX509TrustManager.allowAllSSL();
     }
 

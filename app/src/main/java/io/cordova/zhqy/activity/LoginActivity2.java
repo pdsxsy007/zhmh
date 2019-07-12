@@ -55,9 +55,7 @@ import java.util.Map;
 
 import butterknife.BindView;
 import butterknife.OnClick;
-import cn.jiguang.verifysdk.api.JVerificationInterface;
-import cn.jiguang.verifysdk.api.JVerifyUIConfig;
-import cn.jiguang.verifysdk.api.VerifyListener;
+
 import io.cordova.zhqy.Main2Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
@@ -633,7 +631,7 @@ public class LoginActivity2 extends BaseActivity {
         showLoadingDialog();
 
 
-        JVerifyUIConfig uiConfig = new JVerifyUIConfig.Builder()
+       /* JVerifyUIConfig uiConfig = new JVerifyUIConfig.Builder()
                 .setAuthBGImgPath("main_bg")
                 .setNavColor(0xff1d4481)
                 .setNavText("登录")
@@ -677,7 +675,7 @@ public class LoginActivity2 extends BaseActivity {
                 }
 
             }
-        });
+        });*/
     }
 
     private void checkYiJianData(String content) {
@@ -884,6 +882,7 @@ public class LoginActivity2 extends BaseActivity {
                 try {
                     String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
                     OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.getPassByFaceUrl)
+                    //OkGo.<String>post("http://192.168.30.28:8090"+ UrlRes.getPassByFaceUrl)
                             .params( "openId","123456")
                             .params( "secret",secret)
                             .params( "img",bitmap )

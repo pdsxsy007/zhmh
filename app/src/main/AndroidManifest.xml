@@ -227,6 +227,9 @@
 
         <activity android:name=".activity.FaceActivity"
             android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.UpdateFaceActivity"
+            android:screenOrientation="portrait"/>
         <!--&lt;!&ndash;通知activity&ndash;&gt;-->
         <!--<activity android:name=".activity.NoticeActivity"-->
             <!--android:launchMode="singleInstance"-->

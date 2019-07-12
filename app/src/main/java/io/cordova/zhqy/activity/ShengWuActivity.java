@@ -3,8 +3,11 @@ package io.cordova.zhqy.activity;
 import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.net.Uri;
@@ -30,6 +33,7 @@ import android.widget.Toast;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
+import com.lzy.okgo.request.base.Request;
 import com.tbruyelle.rxpermissions2.Permission;
 import com.tbruyelle.rxpermissions2.RxPermissions;
 
@@ -37,6 +41,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Calendar;
 
 import butterknife.BindView;
 import io.cordova.zhqy.R;
@@ -45,9 +50,11 @@ import io.cordova.zhqy.bean.AddFaceBean;
 import io.cordova.zhqy.bean.Constants;
 import io.cordova.zhqy.bean.FaceBean;
 import io.cordova.zhqy.fingerprint.FingerprintHelper;
+import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.BaseActivity2;
 import io.cordova.zhqy.utils.BaseActivity3;
 import io.cordova.zhqy.utils.BitmapHelper;
+import io.cordova.zhqy.utils.FinishActivity;
 import io.cordova.zhqy.utils.JsonUtil;
 import io.cordova.zhqy.utils.LQRPhotoSelectUtils;
 import io.cordova.zhqy.utils.MyApp;
@@ -63,6 +70,8 @@ import io.reactivex.functions.Consumer;
 import kr.co.namee.permissiongen.PermissionFail;
 import kr.co.namee.permissiongen.PermissionGen;
 import kr.co.namee.permissiongen.PermissionSuccess;
+
+import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 
 /**
  * Created by Administrator on 2019/6/19 0019.
@@ -139,14 +148,50 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
         }, true);
 
 
+//        ll_shengwu.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                openPopupWindow(view);
+//            }
+//        });
+
         ll_shengwu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openPopupWindow(view);
+                Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
+
+               startActivity(intent);
             }
         });
     }
+    @Override
+    protected void onResume() {
+        super.onResume();
+        registerBoradcastReceiver();
 
+    }
+
+
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            Log.e("走到我了",action);
+            if(action.equals("facedata")){
+                String bitmap  = (String) SPUtils.get(ShengWuActivity.this, "bitmap2", "");;
+                upToServer(bitmap);
+            }
+        }
+    };
+
+    public void registerBoradcastReceiver() {
+        IntentFilter myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction("facedata");
+        //注册广播
+        registerReceiver(broadcastReceiver, myIntentFilter);
+    }
     private void setSwitchStatus() {
         iv_fingerprint_login_switch.setImageResource(isOpen ? R.mipmap.switch_open_icon : R.mipmap.switch_close_icon);
     }
@@ -384,18 +429,21 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
                 case CAMERA_REQUEST_CODE:       // 照相机返回结果
                     File file = composBitmap(mTempCameraFile);
                     //sendImage(file);
-                    upToServer(file);
+//                    upToServer(file);
                     //ToastUtils.showToast(ShengWuActivity.this,file+"");
                     break;
                 case ALBUM_REQUEST_CODE:        // 相册返回结果
                     Uri uri = data.getData();
                     File file2 = BitmapHelper.decodeUriAsFile(ShengWuActivity.this, uri);
                     file = composBitmap(file2);
-                    upToServer(file);
+//                    upToServer(file);
                     break;
             }
         }
-
+     if(resultCode == 1){
+            String imageData = data.getStringExtra("data");
+            upToServer(imageData);
+     }
     }
 
     public void showDialog() {
@@ -559,8 +607,8 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
     }
 
 
-    public void upToServer(File file){
-        String sresult = imageToBase64(file.getAbsolutePath());
+    public void upToServer(String sresult){
+//        String sresult = imageToBase64(file.getAbsolutePath());
         ViewUtils.createLoadingDialog(ShengWuActivity.this);
         OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.addFaceUrl)
                 .params( "openId","123456")

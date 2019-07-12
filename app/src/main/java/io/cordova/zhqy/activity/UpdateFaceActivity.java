@@ -12,58 +12,30 @@ import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
-import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
-import android.webkit.CookieManager;
 import android.widget.ImageView;
 
-import com.alibaba.fastjson.JSON;
-import com.lzy.okgo.OkGo;
-import com.lzy.okgo.callback.StringCallback;
-import com.lzy.okgo.model.Response;
-import com.lzy.okgo.request.base.Request;
-
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.URLEncoder;
-import java.util.Calendar;
 import java.util.List;
 
 import butterknife.BindView;
 import io.cordova.zhqy.R;
-import io.cordova.zhqy.UrlRes;
-import io.cordova.zhqy.bean.Constants;
-import io.cordova.zhqy.bean.FaceBean;
-import io.cordova.zhqy.bean.LoginBean;
 import io.cordova.zhqy.face.AspectRatio;
 import io.cordova.zhqy.face.CameraView;
 import io.cordova.zhqy.face.FaceSDK;
 import io.cordova.zhqy.face.view.RefreshProgress;
-import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.BaseActivity;
-import io.cordova.zhqy.utils.FinishActivity;
-import io.cordova.zhqy.utils.JsonUtil;
-import io.cordova.zhqy.utils.MyApp;
-import io.cordova.zhqy.utils.SPUtil;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.SystemInfoUtils;
-import io.cordova.zhqy.utils.T;
-import io.cordova.zhqy.utils.ToastUtils;
-import io.cordova.zhqy.utils.ViewUtils;
-import io.cordova.zhqy.utils.fingerUtil.MD5Util;
-
-import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 
 /**
  * Created by Administrator on 2019/7/4 0004.
  */
 
-public class FaceActivity extends BaseActivity {
+public class UpdateFaceActivity extends BaseActivity {
 
     private static final int REQUEST_CAMERA_PERMISSION = 1;
     private static final String TAG = "FaceActivity";
@@ -92,8 +64,8 @@ public class FaceActivity extends BaseActivity {
             super.handleMessage(msg);
             byte[] data = (byte[]) msg.obj;
             Bitmap bitmap= BitmapFactory.decodeByteArray(data, 0, data.length);
-            int windowWidth = SystemInfoUtils.getWindowWidth(FaceActivity.this);
-            int windowHeigh = SystemInfoUtils.getWindowHeigh(FaceActivity.this);
+            int windowWidth = SystemInfoUtils.getWindowWidth(UpdateFaceActivity.this);
+            int windowHeigh = SystemInfoUtils.getWindowHeigh(UpdateFaceActivity.this);
             int i = windowWidth / 480;
 
 
@@ -108,10 +80,11 @@ public class FaceActivity extends BaseActivity {
             String s = bitmapToBase64(scaledBitmap);
             Log.e("bitmap",s);
             Log.e("人脸",s+"");
-            SPUtils.put(FaceActivity.this,"bitmap",s);
+            SPUtils.put(UpdateFaceActivity.this,"bitmap2",s);
             Intent intent = new Intent();
-            intent.setAction("facerefresh");
+            intent.setAction("facedata");
             sendBroadcast(intent);
+
 
         }
     };

@@ -220,6 +220,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
                 .setWebLayout(new WebLayout4(this))
                 .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)//打开其他应用时，弹窗咨询用户是否前往其他应用
                 .interceptUnkownUrl() //拦截找不到相关页面的Scheme
+                .setAgentWebWebSettings(getSettings())//设置 IAgentWebSettings。
                 .createAgentWeb()
                 .ready()
                 .go(appServiceUrl);
@@ -758,7 +759,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
                         .setWebLayout(new WebLayout(BaseWebActivity4.this))
                         .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)//打开其他应用时，弹窗咨询用户是否前往其他应用
                         .interceptUnkownUrl() //拦截找不到相关页面的Scheme
-                        .setAgentWebWebSettings(getSettings())//设置 IAgentWebSettings。
+                        .setAgentWebWebSettings( getSettings())//设置 IAgentWebSettings。
                         .createAgentWeb()
                         .ready()
                         .go(urldown);
@@ -821,7 +822,6 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
     }
 
     private Gson mGson = new Gson();
-    private DownloadingService mDownloadingService;
 
     /**
      * 更新于 AgentWeb  4.0.0
@@ -856,30 +856,6 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
             return false;
         }
 
-        /**
-         *
-         * 不需要暂停或者停止下载该方法可以不必实现
-         * @param url
-         * @param downloadingService  用户可以通过 DownloadingService#shutdownNow 终止下载
-         */
-        @Override
-        public void onBindService(String url, DownloadingService downloadingService) {
-            super.onBindService(url, downloadingService);
-            mDownloadingService = downloadingService;
-            Log.i("停止下载", "onBindService:" + url + "  DownloadingService:" + downloadingService);
-        }
-
-        /**
-         * 回调onUnbindService方法，让用户释放掉 DownloadingService。
-         * @param url
-         * @param downloadingService
-         */
-        @Override
-        public void onUnbindService(String url, DownloadingService downloadingService) {
-            super.onUnbindService(url, downloadingService);
-            mDownloadingService = null;
-            Log.i("回调onUnbindService方法", "onUnbindService:" + url);
-        }
 
 
 
@@ -944,10 +920,22 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
             @Override
             public WebListenerManager setDownloader(WebView webView, DownloadListener downloadListener) {
 
+              /*  return super.setDownloader(webView,
+                        DefaultDownloadImpl
+                                .create((Activity) webView.getContext(),
+                                        webView,
+                                        mDownloadListenerAdapter,
+                                        mDownloadListenerAdapter,
+                                        this.mAgentWeb.getPermissionInterceptor()));*/
+
+
                 if(tag == 0){
+                    Log.e("tag---------","111111");
                     return super.setDownloader(webView,downloadListener);
+
                 }else {
                     tag = 0;
+                    Log.e("tag---------","222222");
                     return super.setDownloader(webView,
                             DefaultDownloadImpl
                                     .create((Activity) webView.getContext(),
@@ -956,6 +944,8 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
                                             null,
                                             this.mAgentWeb.getPermissionInterceptor()));
                 }
+
+                //return super.setDownloader(webView,downloadListener);
             }
 
 
