@@ -2,10 +2,15 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/ShortcutBadger/ShortcutBadger.iml" filepath="$PROJECT_DIR$/ShortcutBadger/ShortcutBadger.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://D:\mypro\zhqy2\app\app.iml" filepath="D:\mypro\zhqy2\app\app.iml" />
       <module fileurl="file://$PROJECT_DIR$/libzxing/libzxing.iml" filepath="$PROJECT_DIR$/libzxing/libzxing.iml" />
-      <module fileurl="file://$PROJECT_DIR$/menhu.iml" filepath="$PROJECT_DIR$/menhu.iml" />
+      <module fileurl="file://D:\mypro\zhqy2\menhu.iml" filepath="D:\mypro\zhqy2\menhu.iml" />
+      <module fileurl="file://$PROJECT_DIR$/swipebacklibrary/swipebacklibrary.iml" filepath="$PROJECT_DIR$/swipebacklibrary/swipebacklibrary.iml" />
       <module fileurl="file://$PROJECT_DIR$/treerecycle/treerecycle.iml" filepath="$PROJECT_DIR$/treerecycle/treerecycle.iml" />
+      <module fileurl="file://D:\mypro\zhqy2\treerecycle\treerecycle.iml" filepath="D:\mypro\zhqy2\treerecycle\treerecycle.iml" />
+      <module fileurl="file://$PROJECT_DIR$/zhqy2.iml" filepath="$PROJECT_DIR$/zhqy2.iml" />
     </modules>
   </component>
 </project>
