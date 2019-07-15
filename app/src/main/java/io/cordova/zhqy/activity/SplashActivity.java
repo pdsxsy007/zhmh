@@ -14,6 +14,7 @@ import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
+import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
@@ -30,6 +31,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.lang.ref.WeakReference;
+import java.net.URLEncoder;
 import java.util.Calendar;
 
 import butterknife.BindView;
@@ -47,6 +49,7 @@ import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.StringUtils;
 import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.ToastUtils;
+import io.cordova.zhqy.utils.fingerUtil.MD5Util;
 
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 
@@ -89,7 +92,7 @@ public class SplashActivity extends AppCompatActivity {
     }
 
     protected void initView() {
-        handler.sendEmptyMessageDelayed(0, 3000);
+        handler.sendEmptyMessageDelayed(0, 2000);
     }
     /**
      * 暂时闪屏界面不需要执行什么操作，所以先发个2秒的延时空消息,其实可以把软件所需的申请权限放和检查版本更新放这
@@ -162,7 +165,12 @@ public class SplashActivity extends AppCompatActivity {
                             }
                         }else {
                             T.showShort(MyApp.getInstance(),loginBean.getMsg());
+
+                            SPUtils.put(MyApp.getInstance(),"userId","");
+//                                SPUtils.put(MyApp.getInstance(),"tgt",tgt);
+                            SPUtils.put(getApplicationContext(),"TGC","");
                             SPUtils.put(getApplicationContext(),"username","");
+                            SPUtils.put(getApplicationContext(),"password","");
                             Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
                             startActivity(intent);
                             finish();
