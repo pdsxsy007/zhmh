@@ -10,10 +10,12 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
+import android.hardware.Camera;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.provider.Settings;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
@@ -158,9 +160,14 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
         ll_shengwu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
+               if(isCameraUseable()){
+                   Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
 
-                startActivity(intent);
+                   startActivity(intent);
+               }
+               else{
+                   showDialog();
+               }
             }
         });
     }
@@ -462,8 +469,8 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 //这里用来跳到手机设置页，方便用户开启权限
-                Intent intent = new Intent(android.provider.Settings.ACTION_MANAGE_WRITE_SETTINGS);
-                intent.setData(Uri.parse("package:" + ShengWuActivity.this.getPackageName()));
+                Intent intent = new Intent(Settings.ACTION_SETTINGS);
+//                intent.setData(Uri.parse("package:" + ShengWuActivity.this.getPackageName()));
                 intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
@@ -672,4 +679,24 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
                     }
                 });
     }
+
+    public static boolean isCameraUseable() {
+        boolean canUse =true;
+        Camera mCamera =null;
+        try{
+            mCamera = Camera.open();
+// setParameters 是针对魅族MX5。MX5通过Camera.open()拿到的Camera对象不为null
+            Camera.Parameters mParameters = mCamera.getParameters();
+            mCamera.setParameters(mParameters);
+        }catch(Exception e) {
+            canUse =false;
+        }
+if(mCamera !=null) {
+mCamera.release();
+}
+
+return canUse;
+}
+
+
 }
