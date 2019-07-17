@@ -121,8 +121,12 @@ public class SplashActivity extends AppCompatActivity {
                 }else {
                     netWorkLogin();
                 }
-                //netWorkLogin();
+
             }
+
+           /* Intent intent = new Intent(getApplicationContext(),Main2Activity.class);
+            startActivity(intent);
+            finish();*/
         }
     }
 

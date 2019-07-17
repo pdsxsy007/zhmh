@@ -79,15 +79,18 @@ import java.util.Locale;
 import butterknife.BindView;
 import cn.jpush.android.api.JPushInterface;
 
+import io.cordova.zhqy.activity.FaceNewActivity;
 import io.cordova.zhqy.activity.InfoDetailsActivity;
 import io.cordova.zhqy.activity.LoginActivity2;
 import io.cordova.zhqy.activity.LoginActivity3;
 import io.cordova.zhqy.activity.SplashActivity;
+import io.cordova.zhqy.activity.UpdatePwdInfoActivity;
 import io.cordova.zhqy.bean.BaseBean;
 import io.cordova.zhqy.bean.CountBean;
 import io.cordova.zhqy.bean.CurrencyBean;
 import io.cordova.zhqy.bean.DownLoadBean;
 import io.cordova.zhqy.bean.LoginBean;
+import io.cordova.zhqy.bean.NewStudentBean;
 import io.cordova.zhqy.bean.UpdateBean;
 import io.cordova.zhqy.fragment.home.FindPreFragment;
 import io.cordova.zhqy.fragment.home.HomePreFragment;
@@ -116,6 +119,7 @@ import io.cordova.zhqy.utils.ToastUtils;
 import io.cordova.zhqy.utils.netState;
 
 import io.cordova.zhqy.widget.MyDialog;
+import io.reactivex.functions.Consumer;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static io.cordova.zhqy.UrlRes.insertPortalPositionUrl;
@@ -199,7 +203,74 @@ public class Main2Activity extends BaseActivity3 {
         addMobieInfo();
         getDownLoadType();
 
+
+        String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+      /*  if(!userId.equals("")){
+            //是否弹窗人脸识别
+            checkIsNewStudent(userId);
+
+            //是否强制修改密码
+            checkIsUpdatepwd(userId);
+
+
+        }
         logOut();
+*/
+    }
+
+    private void checkIsUpdatepwd(String userId) {
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.jugdeFaceUrl)
+        //OkGo.<String>post("http://192.168.30.30:8081/portal/mobile/newStudentRegister/newStudentUpdatePwdState")
+                .params("userName",userId)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("checkIsUpdatepwd",response.body());
+
+                        BaseBean baseBean = JsonUtil.parseJson(response.body(),BaseBean.class);
+                        boolean success = baseBean.isSuccess();
+                        if(success){
+                            Intent intent = new Intent(Main2Activity.this, UpdatePwdInfoActivity.class);
+                            startActivity(intent);
+                        }
+
+                    }
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        Log.e("onError",response.body());
+                    }
+                });
+    }
+
+    private void checkIsNewStudent(String userId) {
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.jugdeFaceUrl)
+        //OkGo.<String>post("http://192.168.30.30:8081/portal/mobile/newStudentRegister/jugdeFace")
+                .params("userName",userId)
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("checkIsNewStudent",response.body());
+
+                        NewStudentBean newStudentBean = JsonUtil.parseJson(response.body(),NewStudentBean.class);
+                        boolean success = newStudentBean.getSuccess();
+                        if(success){
+                            NewStudentBean.Obj obj = newStudentBean.getObj();
+                            if(obj != null){
+                                String type = obj.getType();
+                                if(type.equals("0")){//弹出人脸识别框
+                                    logOut();
+                                }
+                            }
+                        }
+
+                    }
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        Log.e("onError",response.body());
+                    }
+                });
     }
 
     private void getDownLoadType() {
@@ -795,18 +866,14 @@ public class Main2Activity extends BaseActivity3 {
                }else {
                    webView.setWebViewClient(mWebViewClient);
                    webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
-                   //netWorkSystemMsg();
 
                    if(count.equals("")){
                        netWorkSystemMsg();
                    }else {
-                       //remind();
+
                        netWorkSystemMsg();
                    }
-                   /*Intent i = new Intent(Main2Activity.this, MyService.class);
-                   startService(i);*/
-                   //setIconBadgeNumManager = new IconBadgeNumManager();
-                   //sendIconNumNotification(count);
+
 
 
 
@@ -1068,6 +1135,7 @@ public class Main2Activity extends BaseActivity3 {
                             // 用户已经同意该权限
                             Log.e("用户已经同意该权限", permission.name + " is granted.");
                             quanxian = 3;
+                            allowedScan = true;
                             SPUtils.put(Main2Activity.this,"quanxian",3);
                         } else if (permission.shouldShowRequestPermissionRationale) {
 
@@ -1322,7 +1390,7 @@ public class Main2Activity extends BaseActivity3 {
 
 
     private MyDialog m_Dialog2;
-
+    boolean allowedScan = false;
     private void logOut() {
         m_Dialog2 = new MyDialog(this, R.style.dialogdialog);
         Window window = m_Dialog2.getWindow();
@@ -1339,7 +1407,13 @@ public class Main2Activity extends BaseActivity3 {
         rl_sure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                m_Dialog2.dismiss();
+                //m_Dialog2.dismiss();
+                if (allowedScan){
+                    Intent intent = new Intent(Main2Activity.this, FaceNewActivity.class);
+                    startActivity(intent);
+                }else {
+                    setPermission2();
+                }
 
 
             }
@@ -1361,5 +1435,37 @@ public class Main2Activity extends BaseActivity3 {
     }
 
 
-
+    /**请求权限*/
+    private void setPermission2() {
+        //同时请求多个权限
+        RxPermissions rxPermission = new RxPermissions(this);
+        rxPermission
+                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE,
+                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                        Manifest.permission.CAMERA
+                )
+                .subscribe(new Consumer<Permission>() {
+                    @Override
+                    public void accept(Permission permission) throws Exception {
+                        if (permission.granted) {
+                            // 用户已经同意该权限
+                            Log.e("用户已经同意该权限", permission.name + " is granted.");
+//                            Intent intent = new Intent(MyApp.getInstance(), QRScanActivity.class);
+//                            startActivity(intent);
+                            allowedScan = true;
+                            //   Log.d(TAG, permission.name + " is granted.");
+                        } else if (permission.shouldShowRequestPermissionRationale) {
+                            Log.e("用户拒绝了该权限", permission.name + " is denied. More info should be provided.");
+                            // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
+                            //   Log.d(TAG, permission.name + " is denied. More info should be provided.");
+                            allowedScan = false;
+                        } else {
+                            // 用户拒绝了该权限，并且选中『不再询问』
+                            //   Log.d(TAG, permission.name + " is denied.");
+                            Log.e("用户拒绝了该权限", permission.name + permission.name + " is denied.");
+                            allowedScan = true;
+                        }
+                    }
+                });
+    }
 }

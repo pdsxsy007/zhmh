@@ -160,7 +160,7 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
             public void onClick(View view) {
                 Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
 
-               startActivity(intent);
+                startActivity(intent);
             }
         });
     }

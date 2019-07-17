@@ -263,6 +263,7 @@ public class LoginActivity2 extends BaseActivity {
 
 
         OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
+        //OkGo.<String>get("http://192.168.30.30:8080" +"/cas/casApiLoginController")
                 .params("openid","123456")
                 .params("username",s1)
                 .params("password",s2)

@@ -15,8 +15,7 @@ public class UrlRes {
      * 服务器地址
      */
     public static String HOME_URL ="http://iapp.zzuli.edu.cn";
-//    public static String HOME_URL ="http://192.168.30.30:8081";
-    //public static String HOME_URL ="http://192.168.30.30:8081";
+//    public static String HOME_URL ="http://192.168.30.30:8081";  //郭亚东
     /*tgt  相关*/
     public static String HOME2_URL ="http://kys.zzuli.edu.cn";
     /*绑定极光*/
@@ -25,20 +24,6 @@ public class UrlRes {
     /*图片前缀*/
     public static String HOME3_URL ="http://iapp.zzuli.edu.cn/portal/public/getImg?path=";
 
-    /*校验用户名密码*/
-    public static String Check_Pwd ="/portal-pc/login/authentication?username=admin&password=123456";
-
-    /*获取lt*/
-    public static String Get_Lt = "/cas/login?action=getlt&service.=http://iapp.zzuli.edu.cn:80/portal/login/appLoginn&callback=?";
-
-    /*表单提交登录*/
-    public static String From_Login = "/cas/login?service=http://iapp.zzuli.edu.cn:80/portal/login/appLogin";
-
-    /**
-     *  获取UserId
-     * portal/mobile/login  Get_UserId
-     * */
-    public static String Get_UserId = "/portal/mobile/login";
 
     /**
      *  获取极光绑定ID
@@ -77,16 +62,11 @@ public class UrlRes {
     public static String User_Head_Image="http://kys.zzuli.edu.cn/authentication/public/getHeadImg";
     /**
      *  获取服务器返回的图片地址
-     * portal/mobile/casMember/updateUserInfo\
-     * portal/mobile/public/getUploadFileUrl
      * */
     public static String Get_Img_uri ="/portal/mobile/casMember/updateUserInfo";
     /**
      *
      * 上传图片到服务器
-     * portal/mobile/public/photoUpload
-     *
-        /mobile/public/photoUploadBase64
      * */
     public static String Upload_Img ="/portal/mobile/public/photoUpload";
     /**
@@ -94,14 +74,6 @@ public class UrlRes {
      * */
 
     public static String System_Msg_List ="/portal/mobile/weiMessage/listMessageIniDtoForCurrentUser";
-     /**
-     * OA信息
-      *
-      * workFolwDbList  workFolwDbCount
-      *
-      * (key)workType   (value)  workdb，worksq
-     * */
-    public static String OA_Msg_List ="/portal/mobile/oa/getAppPortalOaController";
 
     /**我的收藏*/
     public static String My_Collection ="/portal/mobile/collectionApp/findCollectionAppList";
@@ -198,4 +170,15 @@ public class UrlRes {
      * 5分钟一次上传信息
      */
     public static String insertPortalPositionUrl="/portal/mobile/portalPosition/insertPortalPosition";
+
+    /**
+     * 新生报到是否弹出人脸识别
+     */
+    public static String jugdeFaceUrl="/portal/mobile/newStudentRegister/jugdeFace";
+
+    /**
+     * 是否强制修改密码
+     */
+    public static String newStudentUpdatePwdStateUrl="/portal/mobile/newStudentRegister/newStudentUpdatePwdState";
+
 }

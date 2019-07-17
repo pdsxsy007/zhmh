@@ -74,20 +74,20 @@ public class JPushReceiver extends BroadcastReceiver {
                 // 自定义消息主要用于应用的内部业务逻辑和特殊展示需求
             } else if (JPushInterface.ACTION_NOTIFICATION_RECEIVED.equals(intent.getAction())) {
                     Log.e(TAG, "[MyReceiver] 接收到推送下来的通知"+ JPushInterface.EXTRA_MESSAGE);
-                badgeCount = (int)SPUtils.get(MyApp.getInstance(),"badgeCount","");
+               /* badgeCount = (int)SPUtils.get(MyApp.getInstance(),"badgeCount","");
                 badgeCount++;
                 SPUtils.put(MyApp.getInstance(),"badgeCount",badgeCount);
                 if (Build.MANUFACTURER.equalsIgnoreCase("xiaomi")) {
                     String content = bundle.getString(JPushInterface.EXTRA_ALERT);
                     mBuilder = new Notification.Builder(context);
-                   /* mBuilder.setContentTitle(title);
+                   *//* mBuilder.setContentTitle(title);
                     mBuilder.setContentText(message);
-                    mBuilder.setSmallIcon(R.mipmap.ic_launcher);*/
+                    mBuilder.setSmallIcon(R.mipmap.ic_launcher);*//*
                     mNotification = mBuilder.build();
                     ShortcutBadger.applyNotification(context, mNotification, badgeCount);
                 } else {
                     ShortcutBadger.applyCount(context, badgeCount);
-                }
+                }*/
 
             } else if (JPushInterface.ACTION_NOTIFICATION_OPENED.equals(intent.getAction())) {
 //                assert bundle != null;
@@ -111,7 +111,7 @@ public class JPushReceiver extends BroadcastReceiver {
                     processCustomMessage(context,bundle);
                 }
 
-                badgeCount = (int)SPUtils.get(MyApp.getInstance(),"badgeCount","");
+             /*   badgeCount = (int)SPUtils.get(MyApp.getInstance(),"badgeCount","");
 
                 badgeCount--;
 
@@ -124,7 +124,7 @@ public class JPushReceiver extends BroadcastReceiver {
                 } else {
                     ShortcutBadger.applyCount(context, badgeCount);
 
-                }
+                }*/
 
             } else if (JPushInterface.ACTION_RICHPUSH_CALLBACK.equals(intent.getAction())) {
                 Log.d(TAG, "[MyReceiver] 用户收到到RICH PUSH CALLBACK: " + bundle.getString(JPushInterface.EXTRA_EXTRA));

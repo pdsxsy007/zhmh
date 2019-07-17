@@ -230,6 +230,8 @@
 
         <activity android:name=".activity.UpdateFaceActivity"
             android:screenOrientation="portrait"/>
+        <activity android:name=".activity.FaceNewActivity"
+            android:screenOrientation="portrait"/>
         <!--&lt;!&ndash;通知activity&ndash;&gt;-->
         <!--<activity android:name=".activity.NoticeActivity"-->
             <!--android:launchMode="singleInstance"-->
@@ -339,19 +341,20 @@
             android:value="5cf7337d4ca357695c000e67" >
         </meta-data>
 
+<!--
 
 
-        <!--本机号码一键登录-->
-        <!-- since 2.0.0 optional 可选项，使用一键登录功能必须添加  -->
-        <!-- since 2.1.1 optional 可选项，通过screenOrientation设置授权页面横竖屏展示  -->
+        &lt;!&ndash;本机号码一键登录&ndash;&gt;
+        &lt;!&ndash; since 2.0.0 optional 可选项，使用一键登录功能必须添加  &ndash;&gt;
+        &lt;!&ndash; since 2.1.1 optional 可选项，通过screenOrientation设置授权页面横竖屏展示  &ndash;&gt;
         <activity
             android:name="com.cmic.sso.sdk.activity.OAuthActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait"
             android:launchMode="singleTop">
         </activity>
-        <!-- since 2.0.0 optional 可选项，使用一键登录功能必须添加  -->
-        <!-- since 2.1.1 optional 可选项，通过screenOrientation设置授权页面横竖屏展示  -->
+        &lt;!&ndash; since 2.0.0 optional 可选项，使用一键登录功能必须添加  &ndash;&gt;
+        &lt;!&ndash; since 2.1.1 optional 可选项，通过screenOrientation设置授权页面横竖屏展示  &ndash;&gt;
         <activity
             android:name="com.cmic.sso.sdk.activity.LoginAuthActivity"
             android:theme="@android:style/Theme.Holo.NoActionBar"
@@ -359,14 +362,15 @@
             android:screenOrientation="portrait"
             android:launchMode="singleTop">
         </activity>
-        <!-- since 2.0.0 optional 可选项，使用一键登录功能必须添加  -->
-        <!-- since 2.1.1 optional 可选项，通过screenOrientation设置授权页面横竖屏展示  -->
+        &lt;!&ndash; since 2.0.0 optional 可选项，使用一键登录功能必须添加  &ndash;&gt;
+        &lt;!&ndash; since 2.1.1 optional 可选项，通过screenOrientation设置授权页面横竖屏展示  &ndash;&gt;
         <activity android:name="cn.jiguang.verifysdk.CtLoginActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:theme="@android:style/Theme.Holo.NoActionBar"
             android:screenOrientation="portrait"
             android:launchMode="singleTop">
         </activity>
+-->
 
         <!-- Required -->
         <meta-data android:name="JPUSH_APPKEY" android:value="4d6db4a813a03158396e5061"/>
