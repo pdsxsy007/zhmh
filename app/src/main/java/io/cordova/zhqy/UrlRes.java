@@ -15,9 +15,16 @@ public class UrlRes {
      * 服务器地址
      */
     public static String HOME_URL ="http://iapp.zzuli.edu.cn";
-//    public static String HOME_URL ="http://192.168.30.30:8081";  //郭亚东
+    //    public static String HOME_URL ="http://192.168.30.30:8081";  //郭亚东
+
+
+
     /*tgt  相关*/
     public static String HOME2_URL ="http://kys.zzuli.edu.cn";
+    //    public static String HOME_URL ="http://192.168.30.30:8080";  //郭亚东
+
+
+
     /*绑定极光*/
     public static String HOME4_URL ="http://iapp.zzuli.edu.cn";
 

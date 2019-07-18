@@ -83,8 +83,11 @@ import io.cordova.zhqy.activity.FaceNewActivity;
 import io.cordova.zhqy.activity.InfoDetailsActivity;
 import io.cordova.zhqy.activity.LoginActivity2;
 import io.cordova.zhqy.activity.LoginActivity3;
+import io.cordova.zhqy.activity.NewStudentPrgActivity;
+import io.cordova.zhqy.activity.ShengWuActivity;
 import io.cordova.zhqy.activity.SplashActivity;
 import io.cordova.zhqy.activity.UpdatePwdInfoActivity;
+import io.cordova.zhqy.bean.AddFaceBean;
 import io.cordova.zhqy.bean.BaseBean;
 import io.cordova.zhqy.bean.CountBean;
 import io.cordova.zhqy.bean.CurrencyBean;
@@ -116,8 +119,11 @@ import io.cordova.zhqy.utils.StringUtils;
 import io.cordova.zhqy.utils.SystemInfoUtils;
 import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.ToastUtils;
+import io.cordova.zhqy.utils.ViewUtils;
 import io.cordova.zhqy.utils.netState;
 
+import io.cordova.zhqy.web.BaseWebActivity4;
+import io.cordova.zhqy.web.ChangeUpdatePwdWebActivity;
 import io.cordova.zhqy.widget.MyDialog;
 import io.reactivex.functions.Consumer;
 
@@ -166,6 +172,8 @@ public class Main2Activity extends BaseActivity3 {
     WebView webView;
 
     private int quanxian = 0;
+
+    String userId;
     @Override
     protected int getResourceId() {
         return R.layout.activity_main2;
@@ -198,14 +206,20 @@ public class Main2Activity extends BaseActivity3 {
         isOpen();//判断悬浮窗权限
 
 
-        getUpdateInfo();
-        registerBoradcastReceiver();
+        //getUpdateInfo();
+        //registerBoradcastReceiver();
         addMobieInfo();
         getDownLoadType();
 
 
-        String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
-      /*  if(!userId.equals("")){
+
+
+
+    }
+
+    private void showNewSuDialog() {
+        userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+        if(!userId.equals("")){
             //是否弹窗人脸识别
             checkIsNewStudent(userId);
 
@@ -214,25 +228,35 @@ public class Main2Activity extends BaseActivity3 {
 
 
         }
-        logOut();
-*/
     }
 
+
     private void checkIsUpdatepwd(String userId) {
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.jugdeFaceUrl)
-        //OkGo.<String>post("http://192.168.30.30:8081/portal/mobile/newStudentRegister/newStudentUpdatePwdState")
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.newStudentUpdatePwdStateUrl)
                 .params("userName",userId)
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("checkIsUpdatepwd",response.body());
 
-                        BaseBean baseBean = JsonUtil.parseJson(response.body(),BaseBean.class);
-                        boolean success = baseBean.isSuccess();
-                        if(success){
-                            Intent intent = new Intent(Main2Activity.this, UpdatePwdInfoActivity.class);
-                            startActivity(intent);
+                        NewStudentBean newStudentBean = JsonUtil.parseJson(response.body(),NewStudentBean.class);
+                        if(newStudentBean != null){
+                            boolean success = newStudentBean.getSuccess();
+                            if(success){
+                                NewStudentBean.Obj obj = newStudentBean.getObj();
+                                if(obj != null){
+                                    String type = obj.getType();
+                                    if(type.equals("0")){//弹出修改密码
+                                        Intent intent = new Intent(Main2Activity.this, ChangeUpdatePwdWebActivity.class);
+                                        intent.putExtra("appUrl","http://kys.zzuli.edu.cn/authentication/authentication/views/appNative/changePwd.html");
+                                        startActivity(intent);
+                                    }
+                                }
+                            }
                         }
+
+
+
 
                     }
                     @Override
@@ -245,7 +269,6 @@ public class Main2Activity extends BaseActivity3 {
 
     private void checkIsNewStudent(String userId) {
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.jugdeFaceUrl)
-        //OkGo.<String>post("http://192.168.30.30:8081/portal/mobile/newStudentRegister/jugdeFace")
                 .params("userName",userId)
                 .execute(new StringCallback() {
                     @Override
@@ -253,16 +276,19 @@ public class Main2Activity extends BaseActivity3 {
                         Log.e("checkIsNewStudent",response.body());
 
                         NewStudentBean newStudentBean = JsonUtil.parseJson(response.body(),NewStudentBean.class);
-                        boolean success = newStudentBean.getSuccess();
-                        if(success){
-                            NewStudentBean.Obj obj = newStudentBean.getObj();
-                            if(obj != null){
-                                String type = obj.getType();
-                                if(type.equals("0")){//弹出人脸识别框
-                                    logOut();
+                        if(newStudentBean != null){
+                            boolean success = newStudentBean.getSuccess();
+                            if(success){
+                                NewStudentBean.Obj obj = newStudentBean.getObj();
+                                if(obj != null){
+                                    String type = obj.getType();
+                                    if(type.equals("0")){//弹出人脸识别框
+                                        logOut();
+                                    }
                                 }
                             }
                         }
+
 
                     }
                     @Override
@@ -420,10 +446,56 @@ public class Main2Activity extends BaseActivity3 {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
             if(action.equals("refresh2")){
-                showState();
+                String faceNewActivity = intent.getStringExtra("FaceNewActivity");
+                if(faceNewActivity != null){
+                    String bitmap  = (String) SPUtils.get(Main2Activity.this, "bitmapnewsd", "");;
+                    upToServer(bitmap);
+                }else {
+                    showState();
+                }
+
             }
         }
     };
+
+    public void upToServer(String sresult){
+//        String sresult = imageToBase64(file.getAbsolutePath());
+        String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+        ViewUtils.createLoadingDialog(this);
+        OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.addFaceUrl)
+        //OkGo.<String>post("http://192.168.30.30:8081/authentication/api/face/addFace")
+                .params( "openId","123456")
+                .params( "memberId",(String) SPUtils.get(MyApp.getInstance(), "userId", ""))
+                .params( "img",sresult )
+                .execute(new StringCallback(){
+                    @Override
+                    public void onSuccess(Response<String> response) {
+
+                        Log.e("上传图片",response.body());
+                        AddFaceBean faceBean = JsonUtil.parseJson(response.body(),AddFaceBean.class);
+                        boolean success = faceBean.getSuccess();
+                        String msg = faceBean.getMsg();
+                        ViewUtils.cancelLoadingDialog();
+                        if(success == true){
+                            Intent intent = new Intent(Main2Activity.this,BaseWebActivity4.class);
+                            intent.putExtra("appUrl","http://microapp.zzuli.edu.cn/microapplication/db_qy/app/newStudentDb.html");
+                            startActivity(intent);
+
+                            m_Dialog2.dismiss();
+                        }else {
+                            ToastUtils.showToast(Main2Activity.this,msg);
+                        }
+                    }
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        ViewUtils.cancelLoadingDialog();
+                        T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
+                    }
+                });
+    }
+
     @Override
     protected void initListener() {
         super.initListener();
@@ -776,17 +848,18 @@ public class Main2Activity extends BaseActivity3 {
             public void onClick(View view) {
                 SPUtils.put(MyApp.getInstance(),"update",portalVersionNumber);
                 m_Dialog.dismiss();
+                showNewSuDialog();
             }
         });
         String update = (String) SPUtils.get(MyApp.getInstance(), "update", "");
         Log.e("update",update);
 
         if(localVersionName.equals(portalVersionNumber)){//最新版本
-
+            showNewSuDialog();
         }else {
             if(update.equals(portalVersionNumber)){
 
-
+                showNewSuDialog();
             }else {
                 m_Dialog.show();
                 if (portalVersionUpdate == 1) {//1代表强制更新
@@ -825,6 +898,7 @@ public class Main2Activity extends BaseActivity3 {
             public void onClick(View view) {
                 m_Dialog.dismiss();
 
+                showNewSuDialog();
             }
         });
 
@@ -842,7 +916,7 @@ public class Main2Activity extends BaseActivity3 {
     protected void onResume() {
         super.onResume();
         getMyLocation();
-
+        getUpdateInfo();
         String count = (String) SPUtils.get(this, "count", "");
 
         isForeground = true;
@@ -893,6 +967,8 @@ public class Main2Activity extends BaseActivity3 {
 
         }
 
+
+        registerBoradcastReceiver();
 
     }
 

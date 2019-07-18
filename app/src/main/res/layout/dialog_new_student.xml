@@ -11,15 +11,180 @@
         android:layout_marginTop="@dimen/dp100"
         android:layout_marginLeft="@dimen/dp20"
         android:layout_marginRight="@dimen/dp20"
-        android:background="@color/colorPrimary"
+        android:background="@color/white"
         >
 
-
-        <View
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#1d4481"
-            />
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:layout_marginBottom="40dp"
+
+            >
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="@dimen/dp40">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_centerInParent="true"
+                    android:text="录入人脸信息"
+                    android:textColor="@color/black"
+                    android:textSize="14sp"
+                    android:textStyle="bold" />
+            </RelativeLayout>
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="#F3F5F9" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:text="确认账号身份与使用者一致"
+                android:textColor="@color/black"
+                android:padding="@dimen/dp5"
+                android:textSize="14sp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:id="@+id/imageView"
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerInParent="true"
+                            android:src="@mipmap/tips01" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/dp10"
+                            android:text="正对手机光线充足"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F3F5F9" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerInParent="true"
+                            android:src="@mipmap/tips02" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/dp10"
+                            android:text="不要在昏暗或逆光下扫描"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F3F5F9" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <ImageView
+                            android:layout_width="80dp"
+                            android:layout_height="80dp"
+                            android:layout_centerInParent="true"
+                            android:src="@mipmap/tips03" />
+                    </RelativeLayout>
+
+                    <RelativeLayout
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="1">
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_centerVertical="true"
+                            android:layout_marginRight="@dimen/dp10"
+                            android:text="不要斜视手机"
+                            android:textColor="@color/black"
+                            android:textSize="14sp" />
+                    </RelativeLayout>
+
+
+                </LinearLayout>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="#F3F5F9" />
+            </LinearLayout>
+
+        </LinearLayout>
+
+
+
 
 
             <RelativeLayout
@@ -27,14 +192,14 @@
                 android:layout_width="match_parent"
                 android:layout_height="40dp"
                 android:layout_alignParentBottom="true"
-                android:background="@color/black"
+                android:background="@color/colorPrimary"
                 >
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="确定"
                     android:layout_centerInParent="true"
-                    android:textColor="@color/blue3"
+                    android:textColor="@color/white"
                     android:textSize="14sp"
                     />
             </RelativeLayout>

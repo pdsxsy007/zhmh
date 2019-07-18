@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -17,23 +16,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.view.Window;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
-import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -46,11 +40,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.cxz.swipelibrary.SwipeBackActivity;
-import com.cxz.swipelibrary.SwipeBackActivityBase;
-import com.cxz.swipelibrary.SwipeBackActivityHelper;
-import com.cxz.swipelibrary.SwipeBackLayout;
-import com.cxz.swipelibrary.Utils;
 import com.google.gson.Gson;
 import com.just.agentweb.AbsAgentWebSettings;
 import com.just.agentweb.AgentWeb;
@@ -61,7 +50,6 @@ import com.just.agentweb.WebListenerManager;
 import com.just.agentweb.download.AgentWebDownloader;
 import com.just.agentweb.download.DefaultDownloadImpl;
 import com.just.agentweb.download.DownloadListenerAdapter;
-import com.just.agentweb.download.DownloadingService;
 import com.jwsd.libzxing.OnQRCodeListener;
 import com.jwsd.libzxing.QRCodeManager;
 import com.lzy.okgo.OkGo;
@@ -86,14 +74,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import gdut.bsx.share2.Share2;
 import gdut.bsx.share2.ShareContentType;
-import io.cordova.zhqy.Main2Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
-import io.cordova.zhqy.activity.LoginActivity;
 import io.cordova.zhqy.activity.LoginActivity2;
 import io.cordova.zhqy.bean.AppOrthBean;
 import io.cordova.zhqy.bean.BaseBean;
-import io.cordova.zhqy.bean.CountBean;
 import io.cordova.zhqy.bean.DownLoadBean;
 import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.CookieUtils;
@@ -118,7 +103,6 @@ import me.samlss.lighter.parameter.Direction;
 import me.samlss.lighter.parameter.LighterParameter;
 import me.samlss.lighter.parameter.MarginOffset;
 
-import static io.cordova.zhqy.activity.SplashActivity.getLocalVersionName;
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 import static io.cordova.zhqy.utils.MyApp.getInstance;
 
@@ -130,7 +114,7 @@ import static io.cordova.zhqy.utils.MyApp.getInstance;
  */
 
 @SuppressLint("Registered")
-public class BaseWebActivity4 extends AppCompatActivity implements GestureDetector.OnGestureListener {
+public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
     protected AgentWeb mAgentWeb;
 
     @BindView(R.id.webView)
@@ -170,13 +154,17 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
     GestureDetector gestureDetector;
     protected static final float FLIP_DISTANCE = 400;
 
+    @BindView(R.id.iv_back)
+    ImageView iv_back;
+
     @SuppressLint("WrongConstant")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
         ButterKnife.bind(this);
-        gestureDetector = new GestureDetector(this,this);
+        iv_back.setVisibility(View.GONE);
+
         mLinearLayout = (LinearLayout) this.findViewById(R.id.container);
         rvClose.setVisibility(View.GONE);
 
@@ -206,7 +194,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
         }else {
             rbSc.setVisibility(View.GONE);
         }
-        String tgc = (String) SPUtils.get(BaseWebActivity4.this, "TGC", "");
+        String tgc = (String) SPUtils.get(ChangeUpdatePwdWebActivity.this, "TGC", "");
         CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgc,getApplication());
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(mLinearLayout, new LinearLayout.LayoutParams(-1, -1))
@@ -267,7 +255,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
                                     //执行该方法
                                 }
                             }else {
-                                ToastUtils.showToast(BaseWebActivity4.this,"没有使用该功能的权限!");
+                                ToastUtils.showToast(ChangeUpdatePwdWebActivity.this,"没有使用该功能的权限!");
                             }
                         }
                         @Override
@@ -466,7 +454,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
             }
                 break;
             case R.id.iv_close:
-                BaseWebActivity4.this.finish();
+                ChangeUpdatePwdWebActivity.this.finish();
                 break;
         }
     }
@@ -621,7 +609,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
                     Log.e("urldown",urldown);
                     Log.e("myurl","加载结束了");
                     Log.e("myurl",url1);
-                    String downLoadType = (String) SPUtils.get(BaseWebActivity4.this, "downLoadType", "");
+                    String downLoadType = (String) SPUtils.get(ChangeUpdatePwdWebActivity.this, "downLoadType", "");
                     DownLoadBean downLoadBean = JsonUtil.parseJson(downLoadType,DownLoadBean.class);
                     List<String> downLoadTypeList = downLoadBean.getString();
                     for (int i = 0; i < downLoadTypeList.size(); i++) {
@@ -749,7 +737,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
                 m_Dialog.dismiss();
                 //setDownloader(webView, defaultDownload);
                 tag = 1;
-                mAgentWeb = AgentWeb.with(BaseWebActivity4.this)
+                mAgentWeb = AgentWeb.with(ChangeUpdatePwdWebActivity.this)
                         .setAgentWebParent(mLinearLayout, new LinearLayout.LayoutParams(-1, -1))
                         .useDefaultIndicator(-1, 3)//设置进度条颜色与高度，-1为默认值，高度为2，单位为dp。
                         .setWebChromeClient(mWebChromeClient)
@@ -757,7 +745,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
                         .setPermissionInterceptor(mPermissionInterceptor) //权限拦截 2.0.0 加入。
                         .setMainFrameErrorView(R.layout.agentweb_error_page, -1)
                         .setSecurityType(AgentWeb.SecurityType.STRICT_CHECK)
-                        .setWebLayout(new WebLayout(BaseWebActivity4.this))
+                        .setWebLayout(new WebLayout(ChangeUpdatePwdWebActivity.this))
                         .setOpenOtherPageWays(DefaultWebClient.OpenOtherPageWays.ASK)//打开其他应用时，弹窗咨询用户是否前往其他应用
                         .interceptUnkownUrl() //拦截找不到相关页面的Scheme
                         .setAgentWebWebSettings( getSettings())//设置 IAgentWebSettings。
@@ -842,7 +830,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
         @Override
         public boolean onStart(String url, String userAgent, String contentDisposition, String mimetype, long contentLength, AgentWebDownloader.Extra extra) {
             Log.i("下载链接", "onStart:" + url);
-            ViewUtils.createLoadingDialog(BaseWebActivity4.this);
+            ViewUtils.createLoadingDialog(ChangeUpdatePwdWebActivity.this);
             extra.setOpenBreakPointDownload(true) // 是否开启断点续传
                     .setIcon(R.drawable.ic_file_download_black_24dp) //下载通知的icon
                     .setConnectTimeOut(6000) // 连接最大时长
@@ -870,7 +858,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
                 Uri shareFileUrl = FileUtil.getFileUri(getApplicationContext(), null, new File(path));
                 Log.e("path2", String.valueOf(shareFileUrl));
-                new Share2.Builder(BaseWebActivity4.this)
+                new Share2.Builder(ChangeUpdatePwdWebActivity.this)
                         .setContentType(ShareContentType.FILE)
                         .setShareFileUri(shareFileUrl)
                         .setTitle("Share File")
@@ -883,7 +871,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
                 Uri shareFileUrl = FileUtil.getFileUri(getApplicationContext(), null, new File(path));
                 Log.e("path2", String.valueOf(shareFileUrl));
-                new Share2.Builder(BaseWebActivity4.this)
+                new Share2.Builder(ChangeUpdatePwdWebActivity.this)
                         .setContentType(ShareContentType.FILE)
                         .setShareFileUri(shareFileUrl)
                         .setTitle("Share File")
@@ -990,7 +978,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
             //关闭铃声
             SoundPoolUtils.stopRing();
             //关闭震动
-            SoundPoolUtils.virateCancle(BaseWebActivity4.this);
+            SoundPoolUtils.virateCancle(ChangeUpdatePwdWebActivity.this);
 
         }
     }
@@ -1042,12 +1030,23 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
             });
             Log.i("Info", "Thread:" + Thread.currentThread());
         }
-
+        /**关闭当前页面*/
+        @JavascriptInterface
+        public void closeCurrentPage() {
+            deliver.post(new Runnable() {
+                @Override
+                public void run() {
+                   finish();
+                }
+            });
+            Log.i("Info", "Thread:" + Thread.currentThread());
+        }
 
         /**进入扫描二维码页面*/
         @JavascriptInterface
-        public void nativeScanQRCode(final String invocationLogAppId,final String invocationLogFunction) {
+        public void scanQRCode() {
 
+            //String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
            /* String username = (String) SPUtils.get(MyApp.getInstance(), "personName", "");
             String userId  = null;
             try {
@@ -1094,43 +1093,6 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
         }
         /**手机定位坐标*/
         @JavascriptInterface
-        public void nativeGetLocation(final String invocationLogAppId,final String invocationLogFunction) {
-            deliver.post(new Runnable() {
-                @Override
-                public void run() {
-                    onLoctionCoordinate();
-                }
-            });
-            Log.i("Info", "Thread:" + Thread.currentThread());
-        }
-        /**关闭当前页面*/
-        @JavascriptInterface
-        public void nativeCloseCurrentPage() {
-            deliver.post(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                }
-            });
-            Log.i("Info", "Thread:" + Thread.currentThread());
-        }
-
-
-        /**关闭当前页面*/
-        @JavascriptInterface
-        public void closeCurrentPage() {
-            deliver.post(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                }
-            });
-            Log.i("Info", "Thread:" + Thread.currentThread());
-        }
-
-
-        /**手机定位坐标*/
-        @JavascriptInterface
         public void getLocation() {
             deliver.post(new Runnable() {
                 @Override
@@ -1142,28 +1104,6 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
         }
 
 
-
-        /**进入扫描二维码页面*/
-        @JavascriptInterface
-        public void ScanQRCode() {
-
-
-            deliver.post(new Runnable() {
-                @Override
-                public void run() {
-                    qrPermission();
-                    if (allowedScan){
-                        onScanQR();
-                    }else {
-                        Toast.makeText(getApplicationContext(),"请允许权限后尝试",Toast.LENGTH_SHORT).show();
-                        qrPermission();
-                    }
-
-
-                }
-            });
-
-        }
     }
 
 
@@ -1331,7 +1271,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
         // Android 5.0 (API level 21)以上版本会触发该方法，该方法为公开方法
         @SuppressWarnings("all")
-        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams) {
+        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
             if (Build.VERSION.SDK_INT >= 21) {
                 final boolean allowMultiple = fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE;//是否支持多选
                 openFileInput(null, filePathCallback, allowMultiple);
@@ -1469,75 +1409,9 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
     }
 
 
-    @Override
-    public boolean onDown(MotionEvent motionEvent) {
-        return false;
-    }
 
     @Override
-    public void onShowPress(MotionEvent motionEvent) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent motionEvent) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent motionEvent) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-       /* if(motionEvent.getX() - motionEvent1.getX() > FLIP_DISTANCE)
-        {
-            Toast.makeText(this, "左滑", Toast.LENGTH_SHORT).show();
-            return true;
-        }*/
-        float x = motionEvent1.getX();
-        float x1 = motionEvent.getX();
-        Log.e("x",x+"");
-        Log.e("x1",x1+"");
-        if(motionEvent1.getX() - motionEvent.getX() > FLIP_DISTANCE)
-        {
-            /*Toast.makeText(this, "右滑", Toast.LENGTH_SHORT).show();
-            onBackPressed();*/
-            boolean b = mAgentWeb.getWebCreator().getWebView().canGoBack();
-            if(b){
-                mAgentWeb.back();
-
-                Log.e("ACTION_MOVE","ACTION_MOVE");
-
-            }else {
-                finish();
-                Log.e("ACTION_MOVE","ACTION_MOVE---finish");
-            }
-
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        //TouchEvent dispatcher.
-        if (gestureDetector != null) {
-            if (gestureDetector.onTouchEvent(ev))
-                //If the gestureDetector handles the event, a swipe has been executed and no more needs to be done.
-                return true;
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
+    public void onBackPressed() {
+        //super.onBackPressed();
     }
 }

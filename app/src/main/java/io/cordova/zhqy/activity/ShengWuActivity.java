@@ -160,14 +160,14 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
         ll_shengwu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-               if(isCameraUseable()){
-                   Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
+                if (allowedScan){
+                    Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
 
-                   startActivity(intent);
-               }
-               else{
-                   showDialog();
-               }
+                    startActivity(intent);
+                }else {
+                    setPermission();
+                }
+
             }
         });
     }
@@ -691,12 +691,12 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
         }catch(Exception e) {
             canUse =false;
         }
-if(mCamera !=null) {
-mCamera.release();
-}
+        if(mCamera !=null) {
+        mCamera.release();
+        }
 
-return canUse;
-}
+        return canUse;
+        }
 
 
 }

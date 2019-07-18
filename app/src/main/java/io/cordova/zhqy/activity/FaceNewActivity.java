@@ -86,10 +86,14 @@ public class FaceNewActivity extends BaseActivity {
             String s = bitmapToBase64(scaledBitmap);
             Log.e("bitmap",s);
             Log.e("人脸",s+"");
-            SPUtils.put(FaceNewActivity.this,"bitmap",s);
+            SPUtils.put(FaceNewActivity.this,"bitmapnewsd",s);
             Intent intent = new Intent();
-            intent.setAction("facerefresh");
+            intent.setAction("refresh2");
+            intent.putExtra("FaceNewActivity","FaceNewActivity");
             sendBroadcast(intent);
+           /* Intent intent = new Intent(FaceNewActivity.this,NewStudentPrgActivity.class);
+            startActivity(intent);
+            finish();*/
 
         }
     };

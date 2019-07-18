@@ -232,12 +232,10 @@
             android:screenOrientation="portrait"/>
         <activity android:name=".activity.FaceNewActivity"
             android:screenOrientation="portrait"/>
-        <!--&lt;!&ndash;通知activity&ndash;&gt;-->
-        <!--<activity android:name=".activity.NoticeActivity"-->
-            <!--android:launchMode="singleInstance"-->
-            <!--android:excludeFromRecents="true"-->
-            <!--android:taskAffinity=""-->
-            <!--android:theme="@android:style/Theme.Wallpaper.NoTitleBar"/>-->
+        <activity android:name=".activity.NewStudentPrgActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".web.ChangeUpdatePwdWebActivity"
+            android:screenOrientation="portrait"/>
 
         <service android:name="io.cordova.zhqy.utils.MyIntentService" />
 
