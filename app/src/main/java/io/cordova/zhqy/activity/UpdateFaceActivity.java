@@ -69,9 +69,33 @@ public class UpdateFaceActivity extends BaseActivity {
             int i = windowWidth / 480;
 
 
-            Matrix matrix = new Matrix();
-            matrix.setScale(0.5f, 0.5f);
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
+            // 设置参数
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
+            BitmapFactory.decodeByteArray(data, 0, data.length, options);
+            int height = options.outHeight;
+            int width= options.outWidth;
+            int inSampleSize = 1; // 默认像素压缩比例，压缩为原图的1/2
+            int minLen = Math.min(height, width); // 原图的最小边长
+            if(minLen > 100) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
+                float ratio = (float)minLen / 100.0f; // 计算像素压缩比例
+                inSampleSize = (int)ratio;
+            }
+            Log.e("minLen",minLen+"");
+            Log.e("inSampleSize",inSampleSize+"");
+            if(minLen <= 1500){
+                inSampleSize = 4;
+            }else if(minLen <= 2500 && minLen > 1500){
+                inSampleSize = 6;
+            }
+            else if(minLen <= 3500 && minLen > 2500){
+                inSampleSize = 5;
+            }else {
+                inSampleSize = 10;
+            }
+            options.inJustDecodeBounds = false; // 计算好压缩比例后，这次可以去加载原图了
+            options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
+            Bitmap scaledBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);; // 解码文件
 
 
 

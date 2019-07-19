@@ -27,7 +27,10 @@ import com.lzy.okgo.request.base.Request;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
@@ -91,37 +94,86 @@ public class FaceActivity extends BaseActivity {
         public void handleMessage(Message msg) {
             super.handleMessage(msg);
             byte[] data = (byte[]) msg.obj;
-            Bitmap bitmap= BitmapFactory.decodeByteArray(data, 0, data.length);
-            int windowWidth = SystemInfoUtils.getWindowWidth(FaceActivity.this);
-            int windowHeigh = SystemInfoUtils.getWindowHeigh(FaceActivity.this);
-            int i = windowWidth / 480;
+            // 设置参数
+            BitmapFactory.Options options = new BitmapFactory.Options();
+            options.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
+              BitmapFactory.decodeByteArray(data, 0, data.length, options);
+            int height = options.outHeight;
+            int width= options.outWidth;
+            int inSampleSize = 1; // 默认像素压缩比例，压缩为原图的1/2
+           /* int minLen = Math.min(height, width); // 原图的最小边长
+            if(minLen > 100) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
+                float ratio = (float)minLen / 100.0f; // 计算像素压缩比例
+                inSampleSize = (int)ratio;
+            }
+            Log.e("minLen",minLen+"");
+            Log.e("inSampleSize",inSampleSize+"");
+            if(minLen <= 1500){
+                inSampleSize = 4;
+            }else if(minLen <= 2500 && minLen > 1500){
+                inSampleSize = 6;
+            }
+            else if(minLen <= 3500 && minLen > 2500){
+                inSampleSize = 5;
+            }else {
+                inSampleSize = 10;
+            }*/
+            options.inJustDecodeBounds = false; // 计算好压缩比例后，这次可以去加载原图了
+            options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
+            Bitmap scaledBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);; // 解码文件
 
 
-            Matrix matrix = new Matrix();
-            matrix.setScale(0.5f, 0.5f);
-            //Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),bitmap.getHeight(), matrix, true);
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
-            Log.e("wechat", "压缩前图片的大小"+ (bitmap.getByteCount() / 1024/ 1024)
-
-                    + "M宽度为"+ bitmap.getWidth() + "高度为"+ bitmap.getHeight());
-
-            Log.e("wechat", "压缩后图片的大小"+ (scaledBitmap.getByteCount() / 1024/ 1024)
+            //Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
+            Log.e("wechat", "压缩后图片的大小"+ (scaledBitmap.getByteCount() / 1024)
 
                     + "M宽度为"+ scaledBitmap.getWidth() + "高度为"+ scaledBitmap.getHeight());
 
-
-            //Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 480, windowHeigh/i, true);
-            bitmap = null;
-            String s = bitmapToBase64(scaledBitmap);
+            //iv_face_pic.setImageBitmap(scaledBitmap);
+          /*  String s = bitmapToBase64(scaledBitmap);
             Log.e("bitmap",s);
             Log.e("人脸",s+"");
             SPUtils.put(FaceActivity.this,"bitmap",s);
             Intent intent = new Intent();
             intent.setAction("facerefresh");
-            sendBroadcast(intent);
-
+            sendBroadcast(intent);*/
+            try {
+                saveMyBitmap(scaledBitmap,"test");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     };
+
+    public boolean saveMyBitmap(Bitmap bmp, String bitName) throws IOException {
+        File dirFile = new File("./sdcard/DCIM/Camera/");
+        if (!dirFile.exists()) {
+            dirFile.mkdirs();
+        }
+        File f = new File("./sdcard/DCIM/Camera/" + bitName + ".png");
+        boolean flag = false;
+        f.createNewFile();
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(f);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            flag = true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return flag;
+    }
+
+
     @Override
     protected int getResourceId() {
         return R.layout.activity_face;
@@ -201,7 +253,7 @@ public class FaceActivity extends BaseActivity {
         @Override
         public void onPreviewFrame(final byte[] data, final Camera camera) {
             Log.d(TAG, "onPreviewFrame");
-            if (System.currentTimeMillis() - lastModirTime <= 200 || data == null || data.length == 0 ) {
+            if (System.currentTimeMillis() - lastModirTime <= 1000 || data == null || data.length == 0 ) {
                 return;
             }
             Log.i(TAG, "onPreviewFrame " + (data == null ? null : data.length));
@@ -235,19 +287,21 @@ public class FaceActivity extends BaseActivity {
             mBitmapOutput = new ByteArrayOutputStream();
             mMatrix = new Matrix();
             int mOrienta = mCameraView.getCameraDisplayOrientation();
-            mMatrix.postRotate(mOrienta * -1);
-            mMatrix.postScale(-1, 1);//默认是前置摄像头，直接写死 -1 。
+            mMatrix.postRotate(0);
+            mMatrix.postScale(-1, -1);//默认是前置摄像头，直接写死 -1 。
             mCamera = camera;
-
+            mCamera.cancelAutoFocus();
         }
 
         @Override
         public void run() {
-            Log.i(TAG, "thread is run");
             Bitmap bitmap = null;
             Bitmap roteBitmap  = null ;
             try {
                 Camera.Parameters parameters = mCamera.getParameters();
+                parameters.setFlashMode(Camera.Parameters.FLASH_MODE_TORCH);
+                parameters.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_PICTURE);//1连续对焦
+
                 int width = parameters.getPreviewSize().width;
                 int height = parameters.getPreviewSize().height;
                 YuvImage yuv = new YuvImage(mData, parameters.getPreviewFormat(), width, height, null);
@@ -277,7 +331,6 @@ public class FaceActivity extends BaseActivity {
                         mCameraView.takePicture();
                     }
 
-                    //mCameraView.takePicture();
 
                 }
 

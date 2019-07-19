@@ -66,6 +66,7 @@ import io.cordova.zhqy.bean.GetServiceImgBean;
 import io.cordova.zhqy.bean.GetUserIdBean;
 import io.cordova.zhqy.bean.LogInTypeBean;
 import io.cordova.zhqy.bean.LoginBean;
+import io.cordova.zhqy.face2.TestActivity;
 import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.BaseActivity;
 import io.cordova.zhqy.utils.CookieUtils;
@@ -168,7 +169,7 @@ public class LoginActivity2 extends BaseActivity {
         list.add(new LogInTypeBean("微博登录",R.mipmap.xl));
         recyclerview.setAdapter(new LoginTypeAdapter(this,R.layout.list_item_logintype,list));
         update = getIntent().getStringExtra("update");
-
+        registerBoradcastReceiver();
     }
 
     /**请求权限*/
@@ -747,7 +748,7 @@ public class LoginActivity2 extends BaseActivity {
     private void faceData() {
         if (allowedScan){
             SPUtils.put(this,"bitmap","");
-            Intent intent = new Intent(this,FaceActivity.class);
+            Intent intent = new Intent(this,TestActivity.class);
             startActivityForResult(intent,99);
             /*AligreenSdkManager.getInstance().startFaceLiveness(LoginActivity2.this, true, new FaceImageResultCallback() {
                 @Override
@@ -856,7 +857,7 @@ public class LoginActivity2 extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        registerBoradcastReceiver();
+        //registerBoradcastReceiver();
 
     }
 
@@ -882,7 +883,6 @@ public class LoginActivity2 extends BaseActivity {
                 try {
                     String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
                     OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.getPassByFaceUrl)
-                    //OkGo.<String>post("http://192.168.30.28:8090"+ UrlRes.getPassByFaceUrl)
                             .params( "openId","123456")
                             .params( "secret",secret)
                             .params( "img",bitmap )
@@ -904,7 +904,7 @@ public class LoginActivity2 extends BaseActivity {
                                         boolean success = faceBean.getSuccess();
                                         String msg = faceBean.getMsg();
                                         if(success == true){
-
+                                            Log.e("调试1",response.body());
                                             Boolean verification = faceBean.getObj().getVerification();
                                             if(verification == false){
                                                 netWorkLogin2(faceBean.getObj().getUserName(),faceBean.getObj().getPassWord());
@@ -919,6 +919,7 @@ public class LoginActivity2 extends BaseActivity {
                                             }
 
                                         }else {
+                                            Log.e("调试2",response.body());
                                             ToastUtils.showToast(LoginActivity2.this,msg);
                                             ViewUtils.cancelLoadingDialog();
                                         }

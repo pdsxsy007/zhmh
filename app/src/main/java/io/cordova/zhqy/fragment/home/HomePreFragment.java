@@ -66,6 +66,7 @@ import io.cordova.zhqy.activity.MyShenqingActivity;
 import io.cordova.zhqy.activity.OaMsgActivity;
 import io.cordova.zhqy.activity.SystemMsgActivity;
 import io.cordova.zhqy.bean.BaseBean;
+import io.cordova.zhqy.face2.TestActivity;
 import io.cordova.zhqy.utils.DensityUtil;
 import io.cordova.zhqy.utils.LighterHelper;
 import io.cordova.zhqy.utils.MobileInfoUtils;
@@ -564,6 +565,7 @@ public class HomePreFragment extends BaseFragment {
             case R.id.iv_qr:
                 if (allowedScan){
                     onScanQR();
+
                 }else {
                     setPermission();
                 }

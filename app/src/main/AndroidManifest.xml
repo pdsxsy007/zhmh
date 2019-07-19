@@ -237,6 +237,9 @@
         <activity android:name=".web.ChangeUpdatePwdWebActivity"
             android:screenOrientation="portrait"/>
 
+        <activity android:name=".face2.TestActivity"
+            android:screenOrientation="portrait"/>
+
         <service android:name="io.cordova.zhqy.utils.MyIntentService" />
 
 
