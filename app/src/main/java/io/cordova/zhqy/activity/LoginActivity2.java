@@ -879,6 +879,9 @@ public class LoginActivity2 extends BaseActivity {
         myIntentFilter.addAction("facerefresh");
         //注册广播
        registerReceiver(broadcastReceiver, myIntentFilter);
+
+
+
     }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
