@@ -160,13 +160,14 @@ public class LoginActivity2 extends BaseActivity {
         mLinearLayoutManager = new LinearLayoutManager(this, LinearLayout.HORIZONTAL,false);
         recyclerview.setLayoutManager(mLinearLayoutManager);
 
+
         List<LogInTypeBean> list = new ArrayList<>();
         list.clear();
         list.add(new LogInTypeBean("一键登录",R.mipmap.yj));
         list.add(new LogInTypeBean("刷脸登录",R.mipmap.rl));
         list.add(new LogInTypeBean("微信登录",R.mipmap.wx));
-        list.add(new LogInTypeBean("qq登录",R.mipmap.qq));
-        list.add(new LogInTypeBean("微博登录",R.mipmap.xl));
+//        list.add(new LogInTypeBean("qq登录",R.mipmap.qq));
+//        list.add(new LogInTypeBean("微博登录",R.mipmap.xl));
         recyclerview.setAdapter(new LoginTypeAdapter(this,R.layout.list_item_logintype,list));
         update = getIntent().getStringExtra("update");
         registerBoradcastReceiver();
@@ -748,7 +749,7 @@ public class LoginActivity2 extends BaseActivity {
     private void faceData() {
         if (allowedScan){
             SPUtils.put(this,"bitmap","");
-            Intent intent = new Intent(this,TestActivity.class);
+            Intent intent = new Intent(this,FaceActivity.class);
             startActivityForResult(intent,99);
             /*AligreenSdkManager.getInstance().startFaceLiveness(LoginActivity2.this, true, new FaceImageResultCallback() {
                 @Override
@@ -858,7 +859,15 @@ public class LoginActivity2 extends BaseActivity {
     protected void onResume() {
         super.onResume();
         //registerBoradcastReceiver();
-
+        String isLoading2 = (String) SPUtils.get(LoginActivity2.this, "isloading2", "");
+        if(!isLoading2 .equals("")){
+            ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
+        }
+        /*String isLoading = (String) SPUtils.get(LoginActivity2.this, "isloading", "");
+        if(!isLoading .equals("")) {
+            Log.e("进度条", isLoading);
+            ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
+        }*/
     }
 
 
@@ -880,6 +889,8 @@ public class LoginActivity2 extends BaseActivity {
             if(action.equals("facerefresh")){
                 String bitmap = (String) SPUtils.get(LoginActivity2.this, "bitmap", "");
                 String imei = (String) SPUtils.get(LoginActivity2.this, "imei", "");
+
+//                }
                 try {
                     String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
                     OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.getPassByFaceUrl)
@@ -892,12 +903,12 @@ public class LoginActivity2 extends BaseActivity {
                                 @Override
                                 public void onStart(Request<String, ? extends Request> request) {
                                     super.onStart(request);
-                                    ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
+//                                    ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
                                 }
 
                                 @Override
                                 public void onSuccess(Response<String> response) {
-
+                                    SPUtils.put(getApplicationContext(),"isloading2","");
                                     Log.e("tag",response.body());
                                     FaceBean faceBean = JsonUtil.parseJson(response.body(),FaceBean.class);
                                     try{
@@ -933,6 +944,7 @@ public class LoginActivity2 extends BaseActivity {
                                 @Override
                                 public void onError(Response<String> response) {
                                     super.onError(response);
+                                    SPUtils.put(getApplicationContext(),"isloading2","112");
                                     T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
                                     ViewUtils.cancelLoadingDialog();
                                 }
