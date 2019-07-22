@@ -585,7 +585,6 @@ public class HomePreFragment extends BaseFragment {
             case R.id.msg_num:
 //                netHomePageData();
 
-
                 break;
             case R.id.iv_qr:
 

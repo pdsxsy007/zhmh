@@ -140,7 +140,12 @@ public class FaceActivity extends BaseActivity {
                 }*/
             }
         });
-
+      iv_close.setOnClickListener(new View.OnClickListener() {
+          @Override
+          public void onClick(View view) {
+              finish();
+          }
+      });
     }
     private Handler handler = new Handler(){
         @Override
