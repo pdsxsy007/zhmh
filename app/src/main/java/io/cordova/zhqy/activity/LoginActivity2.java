@@ -8,11 +8,13 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Build;
+import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -747,85 +749,122 @@ public class LoginActivity2 extends BaseActivity {
      * 刷脸登录
      */
     private void faceData() {
-        if (allowedScan){
+
+
+        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+            //权限发生了改变 true  //  false 小米
+            if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA)){
+
+
+
+                new AlertDialog.Builder(this).setTitle("title")
+                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                // 请求授权
+                                ActivityCompat.requestPermissions(getParent(),new String[]{Manifest.permission.CAMERA},1);
+
+                            }
+                        }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+
+                    }
+                }).create().show();
+
+
+
+            }else {
+                ActivityCompat.requestPermissions(getParent(),new String[]{Manifest.permission.CAMERA},1);
+
+            }
+
+        }else{
+
             SPUtils.put(this,"bitmap","");
             Intent intent = new Intent(this,FaceActivity.class);
             startActivityForResult(intent,99);
-            /*AligreenSdkManager.getInstance().startFaceLiveness(LoginActivity2.this, true, new FaceImageResultCallback() {
-                @Override
-                public void onFinish(FaceResult faceResult) {
-                    Log.e("faceResult",faceResult+"");
-                    if(faceResult.getFaceImagePaths() != null){
-                        String s = faceResult.getFaceImagePaths().get(0);
-                        String sresult = imageToBase64(s);
-                        String imei = (String) SPUtils.get(LoginActivity2.this, "imei", "");
-                        try {
-                            String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
-                            OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.getPassByFaceUrl)
-                                    .params( "openId","123456")
-                                    .params( "secret",secret)
-                                    .params( "img",sresult )
-                                    .params( "equipmentId",imei)
-                                    .execute(new StringCallback(){
 
-                                        @Override
-                                        public void onStart(Request<String, ? extends Request> request) {
-                                            super.onStart(request);
-                                            ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
-                                        }
-
-                                        @Override
-                                        public void onSuccess(Response<String> response) {
-
-                                            Log.e("tag",response.body());
-                                            FaceBean faceBean = JsonUtil.parseJson(response.body(),FaceBean.class);
-                                            try{
-                                                boolean success = faceBean.getSuccess();
-                                                String msg = faceBean.getMsg();
-                                                if(success == true){
-
-                                                    Boolean verification = faceBean.getObj().getVerification();
-                                                    if(verification == false){
-                                                        netWorkLogin2(faceBean.getObj().getUserName(),faceBean.getObj().getPassWord());
-                                                    }else {
-                                                        ViewUtils.cancelLoadingDialog();
-                                                        Intent intent = new Intent(LoginActivity2.this,CodeBindActivity.class);
-                                                        intent.putExtra("phone",faceBean.getObj().getPhone());
-                                                        intent.putExtra("username",faceBean.getObj().getUserName());
-                                                        intent.putExtra("password",faceBean.getObj().getPassWord());
-                                                        startActivity(intent);
-                                                        FinishActivity.addActivity(LoginActivity2.this);
-                                                    }
-
-                                                }else {
-                                                    ToastUtils.showToast(LoginActivity2.this,msg);
-                                                }
-                                            }catch (Exception e){
-                                                e.printStackTrace();
-                                            }
-
-                                        }
-
-                                        @Override
-                                        public void onError(Response<String> response) {
-                                            super.onError(response);
-                                            T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
-                                        }
-                                    });
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }else {
-                        //finish();
-                    }
-
-
-
-                }
-            });*/
-        }else {
-            setPermission();
         }
+//        if (allowedScan){
+//            SPUtils.put(this,"bitmap","");
+//            Intent intent = new Intent(this,FaceActivity.class);
+//            startActivityForResult(intent,99);
+//            /*AligreenSdkManager.getInstance().startFaceLiveness(LoginActivity2.this, true, new FaceImageResultCallback() {
+//                @Override
+//                public void onFinish(FaceResult faceResult) {
+//                    Log.e("faceResult",faceResult+"");
+//                    if(faceResult.getFaceImagePaths() != null){
+//                        String s = faceResult.getFaceImagePaths().get(0);
+//                        String sresult = imageToBase64(s);
+//                        String imei = (String) SPUtils.get(LoginActivity2.this, "imei", "");
+//                        try {
+//                            String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
+//                            OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.getPassByFaceUrl)
+//                                    .params( "openId","123456")
+//                                    .params( "secret",secret)
+//                                    .params( "img",sresult )
+//                                    .params( "equipmentId",imei)
+//                                    .execute(new StringCallback(){
+//
+//                                        @Override
+//                                        public void onStart(Request<String, ? extends Request> request) {
+//                                            super.onStart(request);
+//                                            ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
+//                                        }
+//
+//                                        @Override
+//                                        public void onSuccess(Response<String> response) {
+//
+//                                            Log.e("tag",response.body());
+//                                            FaceBean faceBean = JsonUtil.parseJson(response.body(),FaceBean.class);
+//                                            try{
+//                                                boolean success = faceBean.getSuccess();
+//                                                String msg = faceBean.getMsg();
+//                                                if(success == true){
+//
+//                                                    Boolean verification = faceBean.getObj().getVerification();
+//                                                    if(verification == false){
+//                                                        netWorkLogin2(faceBean.getObj().getUserName(),faceBean.getObj().getPassWord());
+//                                                    }else {
+//                                                        ViewUtils.cancelLoadingDialog();
+//                                                        Intent intent = new Intent(LoginActivity2.this,CodeBindActivity.class);
+//                                                        intent.putExtra("phone",faceBean.getObj().getPhone());
+//                                                        intent.putExtra("username",faceBean.getObj().getUserName());
+//                                                        intent.putExtra("password",faceBean.getObj().getPassWord());
+//                                                        startActivity(intent);
+//                                                        FinishActivity.addActivity(LoginActivity2.this);
+//                                                    }
+//
+//                                                }else {
+//                                                    ToastUtils.showToast(LoginActivity2.this,msg);
+//                                                }
+//                                            }catch (Exception e){
+//                                                e.printStackTrace();
+//                                            }
+//
+//                                        }
+//
+//                                        @Override
+//                                        public void onError(Response<String> response) {
+//                                            super.onError(response);
+//                                            T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
+//                                        }
+//                                    });
+//                        } catch (Exception e) {
+//                            e.printStackTrace();
+//                        }
+//                    }else {
+//                        //finish();
+//                    }
+//
+//
+//
+//                }
+//            });*/
+//        }else {
+//            setPermission();
+//        }
     }
 
 
@@ -959,6 +998,40 @@ public class LoginActivity2 extends BaseActivity {
         }
     };
 
+    /**
+     *
+     * @param requestCode
+     * @param permissions 请求的权限
+     * @param grantResults 请求权限返回的结果
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        if(requestCode == 1){
+            // camear 权限回调
+
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                // 表示用户授权
+                Toast.makeText(LoginActivity2.this, " user Permission" , Toast.LENGTH_SHORT).show();
+
+                SPUtils.put(this,"bitmap","");
+                Intent intent = new Intent(this,FaceActivity.class);
+                startActivityForResult(intent,99);
+
+
+            } else {
+
+                //用户拒绝权限
+                Toast.makeText(LoginActivity2.this, " no Permission" , Toast.LENGTH_SHORT).show();
+
+            }
+
+
+
+        }
+
+    }
 
 }
