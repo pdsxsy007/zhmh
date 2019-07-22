@@ -13,6 +13,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
+import android.hardware.Camera;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.v4.app.ActivityCompat;
@@ -86,6 +87,8 @@ import io.cordova.zhqy.utils.ToastUtils;
 import io.cordova.zhqy.utils.ViewUtils;
 import io.cordova.zhqy.utils.fingerUtil.MD5Util;
 import io.reactivex.functions.Consumer;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 
@@ -743,6 +746,24 @@ public class LoginActivity2 extends BaseActivity {
     }
 
 
+    private static final int RC_CAMERA_PERM = 123;
+
+    @AfterPermissionGranted(RC_CAMERA_PERM)
+    public void cameraTask() {
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Have permission, do the thing!
+
+            SPUtils.put(this,"bitmap","");
+            Intent intent = new Intent(this,FaceActivity.class);
+            startActivityForResult(intent,99);
+            ;//调用相机照相
+        } else {//没有相应权限，获取相机权限
+            // Ask for one permission
+            EasyPermissions.requestPermissions(this, "获取照相机权限",
+                    RC_CAMERA_PERM, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
 
 
     /**
@@ -750,27 +771,10 @@ public class LoginActivity2 extends BaseActivity {
      */
     private void faceData() {
 
-
-        if(ActivityCompat.checkSelfPermission(this,Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-            //权限发生了改变 true  //  false 小米
-            if(ActivityCompat.shouldShowRequestPermissionRationale(this,Manifest.permission.CAMERA)){
+        cameraTask();
 
 
 
-
-                ActivityCompat.requestPermissions(getParent(),new String[]{Manifest.permission.CAMERA},1);
-
-
-            }
-
-        }else{
-
-            SPUtils.put(this,"bitmap","");
-            Intent intent = new Intent(this,FaceActivity.class);
-            startActivityForResult(intent,99);
-
-        }
-//        if (allowedScan){
 //            SPUtils.put(this,"bitmap","");
 //            Intent intent = new Intent(this,FaceActivity.class);
 //            startActivityForResult(intent,99);
@@ -1017,5 +1021,6 @@ public class LoginActivity2 extends BaseActivity {
         }
 
     }
+
 
 }

@@ -74,6 +74,8 @@ import io.reactivex.functions.Consumer;
 import kr.co.namee.permissiongen.PermissionFail;
 import kr.co.namee.permissiongen.PermissionGen;
 import kr.co.namee.permissiongen.PermissionSuccess;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 
@@ -163,20 +165,7 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
             @Override
             public void onClick(View view) {
 
-                if(ActivityCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-                    //权限发生了改变 true  //  false 小米
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(getParent(), Manifest.permission.CAMERA)) {
-                        ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.CAMERA}, 1);
-
-
-                    }
-                } else {
-
-                    Intent intent = new Intent(ShengWuActivity.this, UpdateFaceActivity.class);
-//
-                    startActivity(intent);
-
-                }
+                cameraTask();
             }
         });
 
@@ -189,7 +178,23 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
 
     }
 
+    private static final int RC_CAMERA_PERM = 123;
 
+    @AfterPermissionGranted(RC_CAMERA_PERM)
+    public void cameraTask() {
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Have permission, do the thing!
+
+            Intent intent = new Intent(ShengWuActivity.this, UpdateFaceActivity.class);
+
+            startActivity(intent);
+            ;//调用相机照相
+        } else {//没有相应权限，获取相机权限
+            // Ask for one permission
+            EasyPermissions.requestPermissions(this, "获取照相机权限",
+                    RC_CAMERA_PERM, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+    }
 
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 

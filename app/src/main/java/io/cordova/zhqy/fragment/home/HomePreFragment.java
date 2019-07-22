@@ -71,7 +71,9 @@ import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.activity.LoginActivity;
 import io.cordova.zhqy.activity.MyShenqingActivity;
 import io.cordova.zhqy.activity.OaMsgActivity;
+import io.cordova.zhqy.activity.ShengWuActivity;
 import io.cordova.zhqy.activity.SystemMsgActivity;
+import io.cordova.zhqy.activity.UpdateFaceActivity;
 import io.cordova.zhqy.bean.BaseBean;
 import io.cordova.zhqy.face2.TestActivity;
 import io.cordova.zhqy.utils.DensityUtil;
@@ -99,6 +101,8 @@ import me.samlss.lighter.parameter.LighterParameter;
 import me.samlss.lighter.parameter.MarginOffset;
 import me.samlss.lighter.shape.CircleShape;
 import me.samlss.lighter.shape.RectShape;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static io.cordova.zhqy.utils.MyApp.getInstance;
 
@@ -559,7 +563,21 @@ public class HomePreFragment extends BaseFragment {
             return false;
         }
     };
+    private static final int RC_CAMERA_PERM = 123;
 
+    @AfterPermissionGranted(RC_CAMERA_PERM)
+    public void cameraTask() {
+        if (EasyPermissions.hasPermissions(getActivity(), Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Have permission, do the thing!
+
+            onScanQR();
+            ;//调用相机照相
+        } else {//没有相应权限，获取相机权限
+            // Ask for one permission
+            EasyPermissions.requestPermissions(this, "获取照相机权限",
+                    RC_CAMERA_PERM, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+    }
 //    ,R.id.tv_result_net
     @OnClick({R.id.msg_num, R.id.layout_msg,R.id.iv_qr})
     public void onViewClicked(View view) {
@@ -570,34 +588,8 @@ public class HomePreFragment extends BaseFragment {
 
                 break;
             case R.id.iv_qr:
-//                if ( allowedScan == true){
-//                    onScanQR();
-//
-//                }else {
-//                    setPermission();
-//                }
 
-
-                //        checkSelfPermission 检测有没有 权限
-//        PackageManager.PERMISSION_GRANTED 有权限
-//        PackageManager.PERMISSION_DENIED  拒绝权限
-                if(ActivityCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
-                    //权限发生了改变 true  //  false 小米
-                    if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),Manifest.permission.CAMERA)){
-
-
-                        ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.CAMERA},1);
-
-
-
-                    }
-
-                }else{
-
-                    onScanQR();
-
-                }
-
+                cameraTask();
                 break;
             case R.id.layout_msg:
 //                Intent intent = new Intent(MyApp.getInstance(), MyDataChangesActivity.class);
