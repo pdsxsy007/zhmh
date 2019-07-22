@@ -3,12 +3,18 @@ package io.cordova.zhqy.fragment.home;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.net.Uri;
 import android.net.http.SslError;
 import android.os.Build;
+import android.provider.MediaStore;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
 import android.view.Gravity;
@@ -28,6 +34,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.google.gson.Gson;
@@ -563,11 +570,49 @@ public class HomePreFragment extends BaseFragment {
 
                 break;
             case R.id.iv_qr:
-                if (allowedScan){
+//                if ( allowedScan == true){
+//                    onScanQR();
+//
+//                }else {
+//                    setPermission();
+//                }
+
+
+                //        checkSelfPermission 检测有没有 权限
+//        PackageManager.PERMISSION_GRANTED 有权限
+//        PackageManager.PERMISSION_DENIED  拒绝权限
+                if(ActivityCompat.checkSelfPermission(getActivity(),Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                    //权限发生了改变 true  //  false 小米
+                    if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),Manifest.permission.CAMERA)){
+
+
+
+                        new AlertDialog.Builder(getActivity()).setTitle("title")
+                                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // 请求授权
+                                        ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.CAMERA},1);
+
+                                    }
+                                }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).create().show();
+
+
+
+                    }else {
+                        ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.CAMERA},1);
+
+                    }
+
+                }else{
+
                     onScanQR();
 
-                }else {
-                    setPermission();
                 }
 
                 break;
@@ -779,6 +824,47 @@ public class HomePreFragment extends BaseFragment {
                     }
                 });
     }
+    /**
+     *
+     * @param requestCode
+     * @param permissions 请求的权限
+     * @param grantResults 请求权限返回的结果
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        if(requestCode == 1){
+            // camear 权限回调
+
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                // 表示用户授权
+                Toast.makeText(getActivity(), " user Permission" , Toast.LENGTH_SHORT).show();
+
+                onScanQR();
+
+
+            } else {
+
+                //用户拒绝权限
+                Toast.makeText(getActivity(), " no Permission" , Toast.LENGTH_SHORT).show();
+
+            }
+
+
+
+        }
+
+    }
+
+//    public void camear(){
+//        try {
+//            Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+//            startActivityForResult(intent,1);
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//        }
+//    }
 
 }
