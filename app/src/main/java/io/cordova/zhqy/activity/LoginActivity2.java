@@ -757,25 +757,9 @@ public class LoginActivity2 extends BaseActivity {
 
 
 
-                new AlertDialog.Builder(this).setTitle("title")
-                        .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-                                // 请求授权
-                                ActivityCompat.requestPermissions(getParent(),new String[]{Manifest.permission.CAMERA},1);
 
-                            }
-                        }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
-
-                    }
-                }).create().show();
-
-
-
-            }else {
                 ActivityCompat.requestPermissions(getParent(),new String[]{Manifest.permission.CAMERA},1);
+
 
             }
 

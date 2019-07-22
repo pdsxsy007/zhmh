@@ -586,26 +586,9 @@ public class HomePreFragment extends BaseFragment {
                     if(ActivityCompat.shouldShowRequestPermissionRationale(getActivity(),Manifest.permission.CAMERA)){
 
 
-
-                        new AlertDialog.Builder(getActivity()).setTitle("title")
-                                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // 请求授权
-                                        ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.CAMERA},1);
-
-                                    }
-                                }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        }).create().show();
-
-
-
-                    }else {
                         ActivityCompat.requestPermissions(getActivity(),new String[]{Manifest.permission.CAMERA},1);
+
+
 
                     }
 

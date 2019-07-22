@@ -162,48 +162,21 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
         ll_shengwu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                if (allowedScan){
-//                    Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
-//
-//                    startActivity(intent);
-//                }else {
-//                    setPermission();
-//                }
-                if(ActivityCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+
+                if(ActivityCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
                     //权限发生了改变 true  //  false 小米
-                    if(ActivityCompat.shouldShowRequestPermissionRationale(getParent(),Manifest.permission.CAMERA)){
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(getParent(), Manifest.permission.CAMERA)) {
+                        ActivityCompat.requestPermissions(getParent(), new String[]{Manifest.permission.CAMERA}, 1);
 
-
-
-                        new AlertDialog.Builder(getApplicationContext()).setTitle("title")
-                                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        // 请求授权
-                                        ActivityCompat.requestPermissions(getParent(),new String[]{Manifest.permission.CAMERA},1);
-                                    }
-                                }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
-                            @Override
-                            public void onClick(DialogInterface dialog, int which) {
-
-                            }
-                        }).create().show();
-
-
-
-                    }else {
-                        ActivityCompat.requestPermissions(getParent(),new String[]{Manifest.permission.CAMERA},1);
 
                     }
+                } else {
 
-                }else{
-
-                    Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
+                    Intent intent = new Intent(ShengWuActivity.this, UpdateFaceActivity.class);
 //
                     startActivity(intent);
 
                 }
-
             }
         });
 
