@@ -8,6 +8,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.drawable.BitmapDrawable;
 import android.hardware.Camera;
@@ -18,6 +19,7 @@ import android.provider.MediaStore;
 import android.provider.Settings;
 import android.security.keystore.KeyProperties;
 import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
@@ -160,16 +162,52 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
         ll_shengwu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if (allowedScan){
-                    Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
+//                if (allowedScan){
+//                    Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
+//
+//                    startActivity(intent);
+//                }else {
+//                    setPermission();
+//                }
+                if(ActivityCompat.checkSelfPermission(getApplicationContext(),Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED){
+                    //权限发生了改变 true  //  false 小米
+                    if(ActivityCompat.shouldShowRequestPermissionRationale(getParent(),Manifest.permission.CAMERA)){
 
+
+
+                        new AlertDialog.Builder(getApplicationContext()).setTitle("title")
+                                .setPositiveButton("ok", new DialogInterface.OnClickListener() {
+                                    @Override
+                                    public void onClick(DialogInterface dialog, int which) {
+                                        // 请求授权
+                                        ActivityCompat.requestPermissions(getParent(),new String[]{Manifest.permission.CAMERA},1);
+                                    }
+                                }).setNegativeButton("cancel", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+
+                            }
+                        }).create().show();
+
+
+
+                    }else {
+                        ActivityCompat.requestPermissions(getParent(),new String[]{Manifest.permission.CAMERA},1);
+
+                    }
+
+                }else{
+
+                    Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
+//
                     startActivity(intent);
-                }else {
-                    setPermission();
+
                 }
 
             }
         });
+
+
     }
     @Override
     protected void onResume() {
@@ -421,10 +459,10 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
         showDialog();
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        PermissionGen.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
-    }
+//    @Override
+//    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+//        PermissionGen.onRequestPermissionsResult(this, requestCode, permissions, grantResults);
+//    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -697,6 +735,40 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
 
         return canUse;
         }
+    /**
+     *
+     * @param requestCode
+     * @param permissions 请求的权限
+     * @param grantResults 请求权限返回的结果
+     */
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
+        if(requestCode == 1){
+            // camear 权限回调
+
+            if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+
+                // 表示用户授权
+                Toast.makeText(getApplicationContext(), " user Permission" , Toast.LENGTH_SHORT).show();
+
+                Intent intent = new Intent(ShengWuActivity.this,UpdateFaceActivity.class);
+
+                startActivity(intent);
+
+
+            } else {
+
+                //用户拒绝权限
+                Toast.makeText(getApplicationContext(), " no Permission" , Toast.LENGTH_SHORT).show();
+
+            }
+
+
+
+        }
+
+    }
 
 }
