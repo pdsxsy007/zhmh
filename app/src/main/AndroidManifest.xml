@@ -84,7 +84,7 @@
         android:label="@string/app_name"
         android:supportsRtl="true"
         android:roundIcon="@drawable/icon_logo"
-        tools:replace="android:allowBackup"
+        tools:replace="android:allowBackup,android:icon,android:roundIcon"
         android:theme="@style/AppTheme">
         <meta-data android:name="android.max_aspect" android:value="2.1" />
         <activity android:name="io.cordova.zhqy.activity.SplashActivity"

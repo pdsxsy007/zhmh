@@ -1,15 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<LinearLayout android:layout_width="match_parent"
+
+<ScrollView android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1D2E63"
     android:clipToPadding="false"
+    android:id="@+id/root"
     android:fitsSystemWindows="true"
     android:orientation="vertical"
     android:clipChildren="false"
     android:focusable="true"
     android:focusableInTouchMode="true"
     xmlns:android="http://schemas.android.com/apk/res/android" >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
     <RelativeLayout
         android:layout_toRightOf="@+id/layout_back"
         android:visibility="visible"
@@ -79,6 +87,9 @@
             android:textColor="@color/white"
             android:padding="@dimen/sp12"
             android:text="用户名"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <EditText
             android:id="@+id/et_phoneNum"
             android:layout_width="match_parent"
@@ -92,7 +103,7 @@
             android:textColor="@color/gray2"
             android:textSize="@dimen/sp13"
             android:gravity="center|start"/>
-
+        </ScrollView>
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp0.5"
@@ -117,6 +128,9 @@
             android:textColor="@color/white"
             android:padding="@dimen/sp12"
             android:text="密码"/>
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
         <EditText
             android:id="@+id/et_password"
             android:layout_width="match_parent"
@@ -131,6 +145,7 @@
             android:textSize="@dimen/sp13"
             android:gravity="center|start"
             android:inputType="textPassword"/>
+        </ScrollView>
         <View
             android:layout_width="match_parent"
             android:layout_height="@dimen/dp0.5"
@@ -174,7 +189,7 @@
             android:textColor="@color/colorPrimary" />
 
 
-    </LinearLayout>
+
 
 
 
@@ -195,19 +210,20 @@
 </LinearLayout>
     <android.support.v7.widget.RecyclerView
         android:id="@+id/recyclerview"
-        android:layout_width="200dp"
+        android:layout_width="wrap_content"
         android:layout_gravity="center_horizontal"
         android:layout_height="wrap_content"
         android:visibility="visible"
         >
 
     </android.support.v7.widget.RecyclerView>
-
+    </LinearLayout>
 
 <WebView
     android:visibility="gone"
     android:id="@+id/webView"
-    android:layout_width="wrap_content"
+    android:layout_width="match_parent"
     android:layout_height="wrap_content"></WebView>
+    </LinearLayout>
 
-</LinearLayout>
+</ScrollView>
