@@ -190,4 +190,15 @@ public class UrlRes {
      */
     public static String newStudentUpdatePwdStateUrl="/portal/mobile/newStudentRegister/newStudentUpdatePwdState";
 
+
+    /**
+     * 新消息数量
+     */
+    public static String countUserMessagesByTypeUrl="/portal/mobile/weiMessage/countUserMessagesByType";
+
+    /**
+     * 新消息列表
+     */
+    public static String findUserMessagesByTypeUrl="/portal/mobile/weiMessage/findUserMessagesByType";
+
 }

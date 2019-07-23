@@ -238,6 +238,15 @@
             android:screenOrientation="portrait"/>
 
         <activity android:name=".face2.TestActivity"
+        android:screenOrientation="portrait"/>
+
+        <activity android:name=".activity.newToDo.NewMyToDoMsgActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.newToDo.NewSystemMsgActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.newToDo.NewOaMsgActivity"
+            android:screenOrientation="portrait"/>
+        <activity android:name=".activity.newToDo.NewMyShenqingActivity"
             android:screenOrientation="portrait"/>
 
         <service android:name="io.cordova.zhqy.utils.MyIntentService" />
@@ -271,6 +280,13 @@
             android:exported="false"
             android:grantUriPermissions="true" >
         </provider>
+
+        <!-- since 3.1.0 Required SDK 核心功能-->
+        <provider
+            android:authorities="io.cordova.zhqy.DownloadProvider"
+            android:name="cn.jpush.android.service.DownloadProvider"
+            android:exported="true"
+            />
 
         <activity android:name=".activity.OpenClickActivity"
             android:theme="@style/OpenClick"
