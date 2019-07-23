@@ -146,6 +146,7 @@ public class LoginActivity2 extends BaseActivity {
     protected void initSystemBar() {
         super.initSystemBar();
 
+
         tv_find_pwd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
