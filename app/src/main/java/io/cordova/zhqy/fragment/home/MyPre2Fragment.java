@@ -42,6 +42,7 @@ import io.cordova.zhqy.activity.MyCollectionActivity;
 import io.cordova.zhqy.activity.MyDataActivity;
 import io.cordova.zhqy.activity.MyToDoMsgActivity;
 import io.cordova.zhqy.activity.OaMsgActivity;
+import io.cordova.zhqy.activity.newToDo.NewMyToDoMsgActivity;
 import io.cordova.zhqy.adapter.MyAdapter;
 import io.cordova.zhqy.bean.AppListBean;
 import io.cordova.zhqy.bean.CountBean;
@@ -286,7 +287,7 @@ public class MyPre2Fragment extends BaseFragment {
             case R.id.rv_my_to_do_msg:
             case R.id.tv_app_msg:
                 if (isLogin){
-                    intent = new Intent(MyApp.getInstance(), MyToDoMsgActivity.class);
+                    intent = new Intent(MyApp.getInstance(), NewMyToDoMsgActivity.class);
                     startActivity(intent);
                 }
                 break;
