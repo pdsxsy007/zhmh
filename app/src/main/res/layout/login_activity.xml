@@ -1,230 +1,235 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<ScrollView android:layout_width="match_parent"
+<io.cordova.zhqy.widget.InputMethodLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#1D2E63"
-    android:clipToPadding="false"
-    android:id="@+id/root"
-    android:fitsSystemWindows="true"
+    android:id="@+id/rl"
+
     android:orientation="vertical"
-    android:clipChildren="false"
+
 
     xmlns:android="http://schemas.android.com/apk/res/android" >
 
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:focusable="true"
-        android:focusableInTouchMode="true"
-        android:orientation="vertical">
-    <RelativeLayout
-        android:layout_toRightOf="@+id/layout_back"
-        android:visibility="visible"
-        android:id="@+id/layout_close"
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        >
-
-           <ImageView
-               android:layout_width="match_parent"
-               android:layout_height="match_parent"
-               android:src="@mipmap/login_bg"
-               android:scaleType="fitXY"
-               android:paddingBottom="@dimen/dp20"
-               />
-            <ImageView
-                android:layout_width="match_parent"
-                android:layout_height="160dp"
-                android:padding="@dimen/dp12"
-                android:src="@mipmap/login_logo"
-                android:layout_alignParentBottom="true"
-                />
-
-        <ImageView
-            android:id="@+id/iv_close"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="@dimen/dp5"
-            android:layout_marginTop="@dimen/dp5"
-            android:src="@mipmap/cha" />
-
-        <TextView
-            android:id="@+id/tv_find_pwd"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="忘记密码?"
-            android:textColor="@color/white"
-            android:layout_marginRight="@dimen/dp10"
-            android:layout_marginTop="@dimen/dp10"
-            android:visibility="visible"
-           android:layout_alignParentRight="true"
-
-            />
-    </RelativeLayout>
-
-<LinearLayout
-    android:layout_width="match_parent"
-    android:layout_height="0dp"
-    android:orientation="vertical"
-    android:layout_weight="3">
-
-    <LinearLayout
-        android:layout_gravity="center|center_vertical"
-        android:layout_above="@+id/l_2"
-        android:id="@+id/l_1"
-        android:layout_marginTop="18dp"
-        android:layout_marginLeft="@dimen/dp5"
-        android:layout_marginRight="@dimen/dp5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="@dimen/sp16"
-            android:textColor="@color/white"
-            android:padding="@dimen/sp12"
-            android:text="用户名"/>
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/et_phoneNum"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="用户名"
-            android:textCursorDrawable="@null"
-            android:padding="@dimen/dp12"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="@color/gray2"
-            android:textSize="@dimen/sp13"
-            android:gravity="center|start"/>
-        </ScrollView>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp0.5"
-            android:layout_marginLeft="@dimen/dp12"
-            android:layout_marginRight="@dimen/dp12"
-            android:background="#ffffff"
-            android:alpha="0.5"
-            />
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_centerVertical="true"
-        android:id="@+id/l_2"
-        android:layout_margin="@dimen/dp5"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:textSize="@dimen/sp16"
-            android:textColor="@color/white"
-            android:padding="@dimen/sp12"
-            android:text="密码"/>
-        <ScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-        <EditText
-            android:id="@+id/et_password"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@null"
-            android:hint="密码"
-            android:textCursorDrawable="@null"
-            android:padding="@dimen/dp12"
-            android:singleLine="true"
-            android:text=""
-            android:textColor="@color/gray2"
-            android:textSize="@dimen/sp13"
-            android:gravity="center|start"
-            android:inputType="textPassword"/>
-        </ScrollView>
-        <View
-            android:layout_width="match_parent"
-            android:layout_height="@dimen/dp0.5"
-            android:layout_marginLeft="@dimen/dp12"
-            android:layout_marginRight="@dimen/dp12"
-            android:background="#ffffff"
-            android:alpha="0.5"/>
-    </LinearLayout>
-
-    <LinearLayout
-        android:layout_below="@+id/l_2"
-        android:id="@+id/l_3"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical">
-
-        <TextView
-            android:id="@+id/tv_body"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:padding="@dimen/sp12"
-            android:gravity="center"
-            android:textColor="@color/white"
-            android:text="请使用信息门户账号登录"
-            />
-
-        <Button
-            style="@style/button2"
-            android:id="@+id/btn_login"
-            android:text="@string/login"
-            android:layout_marginLeft="40dp"
-            android:layout_marginTop="@dimen/sp12"
-            android:layout_marginRight="40dp"
-            android:textColor="@color/colorPrimary" />
-        <Button
-            android:visibility="gone"
-            style="@style/button2"
-            android:id="@+id/btn_login_3"
-            android:text="@string/exit_out"
-            android:layout_marginTop="@dimen/sp12"
-            android:textColor="@color/colorPrimary" />
-
-
-
-
-
-
-
-    <TextView
-        android:id="@+id/tv_other"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:padding="@dimen/sp12"
-        android:gravity="center"
-        android:textColor="@color/white"
-        android:text="其他登录方式"
-        android:visibility="gone"
-        />
-
-
-
-</LinearLayout>
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/recyclerview"
+    <ScrollView
+        android:id="@+id/root"
         android:layout_width="wrap_content"
-        android:layout_gravity="center_horizontal"
-        android:layout_height="wrap_content"
-        android:visibility="visible"
-        >
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:focusable="true"
+            android:focusableInTouchMode="true"
+            android:orientation="vertical">
+            <RelativeLayout
+                android:layout_toRightOf="@+id/layout_back"
+                android:visibility="visible"
+                android:id="@+id/layout_close"
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_weight="1"
+                >
 
-    </android.support.v7.widget.RecyclerView>
-    </LinearLayout>
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:src="@mipmap/login_bg"
+                    android:scaleType="fitXY"
+                    android:paddingBottom="@dimen/dp20"
+                    />
+                <ImageView
+                    android:layout_width="match_parent"
+                    android:layout_height="160dp"
+                    android:padding="@dimen/dp12"
+                    android:src="@mipmap/login_logo"
+                    android:layout_alignParentBottom="true"
+                    />
 
-<WebView
-    android:visibility="gone"
-    android:id="@+id/webView"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"></WebView>
-    </LinearLayout>
+                <ImageView
+                    android:id="@+id/iv_close"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="@dimen/dp5"
+                    android:layout_marginTop="@dimen/dp5"
+                    android:src="@mipmap/cha" />
 
-</ScrollView>
+                <TextView
+                    android:id="@+id/tv_find_pwd"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="忘记密码?"
+                    android:textColor="@color/white"
+                    android:layout_marginRight="@dimen/dp10"
+                    android:layout_marginTop="@dimen/dp10"
+                    android:visibility="visible"
+                    android:layout_alignParentRight="true"
+
+                    />
+            </RelativeLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:orientation="vertical"
+                android:layout_weight="3">
+
+                <LinearLayout
+                    android:layout_gravity="center|center_vertical"
+                    android:layout_above="@+id/l_2"
+                    android:id="@+id/l_1"
+                    android:layout_marginTop="18dp"
+                    android:layout_marginLeft="@dimen/dp5"
+                    android:layout_marginRight="@dimen/dp5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="@dimen/sp16"
+                        android:textColor="@color/white"
+                        android:padding="@dimen/sp12"
+                        android:text="用户名"/>
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/et_phoneNum"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="用户名"
+                            android:textCursorDrawable="@null"
+                            android:padding="@dimen/dp12"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/gray2"
+                            android:textSize="@dimen/sp13"
+                            android:gravity="center|start"/>
+                    </ScrollView>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp0.5"
+                        android:layout_marginLeft="@dimen/dp12"
+                        android:layout_marginRight="@dimen/dp12"
+                        android:background="#ffffff"
+                        android:alpha="0.5"
+                        />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_centerVertical="true"
+                    android:id="@+id/l_2"
+                    android:layout_margin="@dimen/dp5"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:textSize="@dimen/sp16"
+                        android:textColor="@color/white"
+                        android:padding="@dimen/sp12"
+                        android:text="密码"/>
+                    <ScrollView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+                        <EditText
+                            android:id="@+id/et_password"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:background="@null"
+                            android:hint="密码"
+                            android:textCursorDrawable="@null"
+                            android:padding="@dimen/dp12"
+                            android:singleLine="true"
+                            android:text=""
+                            android:textColor="@color/gray2"
+                            android:textSize="@dimen/sp13"
+                            android:gravity="center|start"
+                            android:inputType="textPassword"/>
+                    </ScrollView>
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp0.5"
+                        android:layout_marginLeft="@dimen/dp12"
+                        android:layout_marginRight="@dimen/dp12"
+                        android:background="#ffffff"
+                        android:alpha="0.5"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_below="@+id/l_2"
+                    android:id="@+id/l_3"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_body"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/sp12"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:text="请使用信息门户账号登录"
+                        />
+
+                    <Button
+                        style="@style/button2"
+                        android:id="@+id/btn_login"
+                        android:text="@string/login"
+                        android:layout_marginLeft="40dp"
+                        android:layout_marginTop="@dimen/sp12"
+                        android:layout_marginRight="40dp"
+                        android:textColor="@color/colorPrimary" />
+                    <Button
+                        android:visibility="gone"
+                        style="@style/button2"
+                        android:id="@+id/btn_login_3"
+                        android:text="@string/exit_out"
+                        android:layout_marginTop="@dimen/sp12"
+                        android:textColor="@color/colorPrimary" />
+
+
+
+
+
+
+
+                    <TextView
+                        android:id="@+id/tv_other"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/sp12"
+                        android:gravity="center"
+                        android:textColor="@color/white"
+                        android:text="其他登录方式"
+                        android:visibility="gone"
+                        />
+
+
+
+                </LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/recyclerview"
+                    android:layout_width="match_parent"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    >
+
+                </android.support.v7.widget.RecyclerView>
+            </LinearLayout>
+
+            <WebView
+                android:visibility="gone"
+                android:id="@+id/webView"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"></WebView>
+        </LinearLayout>
+    </ScrollView>
+
+
+
+</io.cordova.zhqy.widget.InputMethodLayout>

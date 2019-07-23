@@ -33,6 +33,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -86,6 +87,7 @@ import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.ToastUtils;
 import io.cordova.zhqy.utils.ViewUtils;
 import io.cordova.zhqy.utils.fingerUtil.MD5Util;
+import io.cordova.zhqy.widget.InputMethodLayout;
 import io.reactivex.functions.Consumer;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
@@ -121,6 +123,14 @@ public class LoginActivity2 extends BaseActivity {
     @BindView(R.id.recyclerview)
     RecyclerView recyclerview;
 
+    @BindView(R.id.root)
+    ScrollView scrollView;
+
+    @BindView(R.id.rl)
+    InputMethodLayout rl;
+
+    int scrollViewHeight;
+
     private LinearLayoutManager mLinearLayoutManager;
 
     private Object W;
@@ -135,7 +145,7 @@ public class LoginActivity2 extends BaseActivity {
     @Override
     protected void initSystemBar() {
         super.initSystemBar();
-        SystemBarTintUtils.initSystemBarColor(this, R.color.colorPrimary);
+
         tv_find_pwd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -155,6 +165,32 @@ public class LoginActivity2 extends BaseActivity {
         });
 
 
+        rl.setOnkeyboarddStateListener(new InputMethodLayout.onKeyboardsChangeListener() {
+            @Override
+            public void onKeyBoardStateChange(int state) {
+                switch (state) {
+                    case InputMethodLayout.KEYBOARD_STATE_HIDE:
+
+                        break;
+                    case InputMethodLayout.KEYBOARD_STATE_SHOW:
+
+                        scrollView.post(new Runnable() {
+                            @Override
+                            public void run() {
+                                scrollViewHeight = scrollView.getMeasuredWidth();
+
+                                scrollView.scrollTo(0, 500);
+                            }
+                        });
+
+                        break;
+
+                    default:
+                        break;
+                }
+            }
+        });
+
     }
     String update;
     boolean allowedScan = false;
@@ -171,8 +207,8 @@ public class LoginActivity2 extends BaseActivity {
         list.add(new LogInTypeBean("一键登录",R.mipmap.yj));
         list.add(new LogInTypeBean("刷脸登录",R.mipmap.rl));
         list.add(new LogInTypeBean("微信登录",R.mipmap.wx));
-//        list.add(new LogInTypeBean("qq登录",R.mipmap.qq));
-//        list.add(new LogInTypeBean("微博登录",R.mipmap.xl));
+        list.add(new LogInTypeBean("qq登录",R.mipmap.qq));
+        list.add(new LogInTypeBean("微博登录",R.mipmap.xl));
         recyclerview.setAdapter(new LoginTypeAdapter(this,R.layout.list_item_logintype,list));
         update = getIntent().getStringExtra("update");
         registerBoradcastReceiver();
