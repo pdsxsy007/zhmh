@@ -79,6 +79,7 @@ import java.util.Locale;
 import butterknife.BindView;
 import cn.jpush.android.api.JPushInterface;
 
+import io.cordova.zhqy.activity.FaceActivity;
 import io.cordova.zhqy.activity.FaceNewActivity;
 import io.cordova.zhqy.activity.InfoDetailsActivity;
 import io.cordova.zhqy.activity.LoginActivity2;
@@ -126,6 +127,8 @@ import io.cordova.zhqy.web.BaseWebActivity4;
 import io.cordova.zhqy.web.ChangeUpdatePwdWebActivity;
 import io.cordova.zhqy.widget.MyDialog;
 import io.reactivex.functions.Consumer;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
 import static io.cordova.zhqy.UrlRes.insertPortalPositionUrl;
@@ -268,6 +271,7 @@ public class Main2Activity extends BaseActivity3 {
     }
 
     private void checkIsNewStudent(String userId) {
+        Log.e("弹出了"," showNewSuDialog();");
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.jugdeFaceUrl)
                 .params("userName",userId)
                 .execute(new StringCallback() {
@@ -283,7 +287,8 @@ public class Main2Activity extends BaseActivity3 {
                                 if(obj != null){
                                     String type = obj.getType();
                                     if(type.equals("0")){//弹出人脸识别框
-                                        logOut();
+                                        cameraTask();
+
                                     }
                                 }
                             }
@@ -297,6 +302,17 @@ public class Main2Activity extends BaseActivity3 {
                         Log.e("onError",response.body());
                     }
                 });
+    }
+    private static final int RC_CAMERA_PERM = 123;
+    @AfterPermissionGranted(RC_CAMERA_PERM)
+    public void cameraTask() {
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            logOut();
+        } else {//没有相应权限，获取相机权限
+            // Ask for one permission
+            EasyPermissions.requestPermissions(this, "获取照相机权限",
+                    RC_CAMERA_PERM, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
     }
 
     private void getDownLoadType() {
@@ -705,7 +721,7 @@ public class Main2Activity extends BaseActivity3 {
                 .tag("Jpush")
                 .params("equipType","android")
                 .params("userId",(String) SPUtils.get(getInstance(),"userId",""))
-                .params("portalEquipmentMemberEquipmentId", MyApp.registrationId)
+                .params("portalEquipmentMemberEquipmentId",(String)SPUtils.get(Main2Activity.this,"registrationId",""))
                 .params("portalEquipmentMemberGroup", "")
                 .execute(new StringCallback() {
                     @Override
@@ -855,7 +871,14 @@ public class Main2Activity extends BaseActivity3 {
         Log.e("update",update);
 
         if(localVersionName.equals(portalVersionNumber)){//最新版本
+            if(m_Dialog2 != null){
+                if(m_Dialog2.isShowing()){
+                    m_Dialog2.dismiss();
+                }
+            }
             showNewSuDialog();
+
+
         }else {
             if(update.equals(portalVersionNumber)){
 
