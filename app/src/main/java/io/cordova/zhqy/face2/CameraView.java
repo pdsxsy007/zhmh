@@ -196,7 +196,7 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
             Camera.Size size = camera.getParameters().getPreviewSize();
             final byte[] byteArray = ImageUtils.yuv2Jpeg(data, size.width, size.height);
             isDetectingFace = true;
-            camera.stopPreview();
+            //camera.stopPreview();
             new Thread() {
                 @Override
                 public void run() {

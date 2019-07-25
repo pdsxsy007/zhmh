@@ -11,20 +11,13 @@ import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.graphics.drawable.ColorDrawable;
-import android.hardware.Camera;
-import android.os.Build;
 import android.support.annotation.NonNull;
-import android.support.v4.app.ActivityCompat;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.text.TextUtils;
-import android.util.Base64;
 import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
@@ -51,6 +44,7 @@ import com.umeng.socialize.bean.SHARE_MEDIA;
 import com.zhy.adapter.recyclerview.CommonAdapter;
 import com.zhy.adapter.recyclerview.base.ViewHolder;
 
+import java.io.ByteArrayOutputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -60,29 +54,27 @@ import java.util.Map;
 import butterknife.BindView;
 import butterknife.OnClick;
 
+import cn.jiguang.verifysdk.api.JVerificationInterface;
+import cn.jiguang.verifysdk.api.JVerifyUIConfig;
+import cn.jiguang.verifysdk.api.VerifyListener;
 import io.cordova.zhqy.Main2Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.bean.Constants;
 import io.cordova.zhqy.bean.FaceBean;
 import io.cordova.zhqy.bean.FaceBean2;
-import io.cordova.zhqy.bean.GetServiceImgBean;
 import io.cordova.zhqy.bean.GetUserIdBean;
 import io.cordova.zhqy.bean.LogInTypeBean;
 import io.cordova.zhqy.bean.LoginBean;
-import io.cordova.zhqy.face2.TestActivity;
 import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.BaseActivity;
 import io.cordova.zhqy.utils.CookieUtils;
-import io.cordova.zhqy.utils.FileCompressUtils;
 import io.cordova.zhqy.utils.FinishActivity;
 import io.cordova.zhqy.utils.JsonUtil;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtil;
 import io.cordova.zhqy.utils.SPUtils;
-import io.cordova.zhqy.utils.ScreenSizeUtils;
 import io.cordova.zhqy.utils.StringUtils;
-import io.cordova.zhqy.utils.SystemBarTintUtils;
 import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.ToastUtils;
 import io.cordova.zhqy.utils.ViewUtils;
@@ -92,6 +84,7 @@ import io.reactivex.functions.Consumer;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static io.cordova.zhqy.activity.FaceActivity.bitmapToBase64;
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 
 /**
@@ -205,8 +198,8 @@ public class LoginActivity2 extends BaseActivity {
 
         List<LogInTypeBean> list = new ArrayList<>();
         list.clear();
-        list.add(new LogInTypeBean("一键登录",R.mipmap.yj));
         list.add(new LogInTypeBean("刷脸登录",R.mipmap.rl));
+        list.add(new LogInTypeBean("一键登录",R.mipmap.yj));
         list.add(new LogInTypeBean("微信登录",R.mipmap.wx));
         list.add(new LogInTypeBean("qq登录",R.mipmap.qq));
         list.add(new LogInTypeBean("微博登录",R.mipmap.xl));
@@ -305,61 +298,69 @@ public class LoginActivity2 extends BaseActivity {
             e.printStackTrace();
         }
 
+       ;
+        try {
+            String imei =  AesEncryptUtile.encrypt((String) SPUtils.get(this, "imei", ""), key);
+            OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
+                    .params("openid","123456")
+                    .params("username",s1)
+                    .params("password",s2)
+                    .params("equipmentId",imei)
+                    .params("type","1")
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            Log.e("result1",response.body());
 
-        OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
-                .params("openid","123456")
-                .params("username",s1)
-                .params("password",s2)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        Log.e("result1",response.body());
+                            loginBean = JSON.parseObject(response.body(),LoginBean.class);
+                            if (loginBean.isSuccess() ) {
 
-                        loginBean = JSON.parseObject(response.body(),LoginBean.class);
-                        if (loginBean.isSuccess() ) {
+                                try {
+                                    CookieManager cookieManager =  CookieManager.getInstance();
+                                    cookieManager.removeAllCookie();
+                                    tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
 
-                            try {
-                                CookieManager cookieManager =  CookieManager.getInstance();
-                                cookieManager.removeAllCookie();
-                                tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
+                                    String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
 
-                                String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
-
-                                webView.setWebViewClient(mWebViewClient);
-                                webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
-                                String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
-                                SPUtils.put(MyApp.getInstance(),"time",Calendar.getInstance().getTimeInMillis()+"");
-                                SPUtils.put(MyApp.getInstance(),"userId",userId);
-                                SPUtils.put(MyApp.getInstance(),"personName",userName);
-                                SPUtils.put(getApplicationContext(),"TGC",tgt);
-                                SPUtils.put(getApplicationContext(),"username",s1);
-                                SPUtils.put(getApplicationContext(),"password",s2);
-
-
-
-                                finish();
-                                Intent intent = new Intent();
-                                intent.putExtra("refreshService","dongtai");
-                                intent.setAction("refresh2");
-                                sendBroadcast(intent);
+                                    webView.setWebViewClient(mWebViewClient);
+                                    webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
+                                    String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
+                                    SPUtils.put(MyApp.getInstance(),"time",Calendar.getInstance().getTimeInMillis()+"");
+                                    SPUtils.put(MyApp.getInstance(),"userId",userId);
+                                    SPUtils.put(MyApp.getInstance(),"personName",userName);
+                                    SPUtils.put(getApplicationContext(),"TGC",tgt);
+                                    SPUtils.put(getApplicationContext(),"username",s1);
+                                    SPUtils.put(getApplicationContext(),"password",s2);
 
 
-                                //本地存储账号用户指纹登录时显示账号信息
-                                StringBuffer stringBuffer = new StringBuffer();
-                                SPUtil.getInstance().putString(Constants.SP_ACCOUNT, etPhoneNum.getText().toString());
-                                stringBuffer.append( etPhoneNum.getText().toString());
-                                stringBuffer.append(etPassword.getText().toString());
-                                SPUtil.getInstance().putString(Constants.SP_A_P, MD5Util.md5Password(stringBuffer.toString()));
-                                Log.e("login","tgt = "+ tgt + "  ,userName  = " + userName);
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
+                                    finish();
+                                    Intent intent = new Intent();
+                                    intent.putExtra("refreshService","dongtai");
+                                    intent.setAction("refresh2");
+                                    sendBroadcast(intent);
+
+
+                                    //本地存储账号用户指纹登录时显示账号信息
+                                    StringBuffer stringBuffer = new StringBuffer();
+                                    SPUtil.getInstance().putString(Constants.SP_ACCOUNT, etPhoneNum.getText().toString());
+                                    stringBuffer.append( etPhoneNum.getText().toString());
+                                    stringBuffer.append(etPassword.getText().toString());
+                                    SPUtil.getInstance().putString(Constants.SP_A_P, MD5Util.md5Password(stringBuffer.toString()));
+                                    Log.e("login","tgt = "+ tgt + "  ,userName  = " + userName);
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else {
+                                T.showShort(MyApp.getInstance(),loginBean.getMsg());
                             }
-                        }else {
-                            T.showShort(MyApp.getInstance(),loginBean.getMsg());
                         }
-                    }
-                });
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
     @Override
@@ -388,8 +389,8 @@ public class LoginActivity2 extends BaseActivity {
             }
 
 
-            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
-                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
+           /* if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
+                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"userId",""))){
                     Intent intent = new Intent(getApplicationContext(),LoginActivity2.class);
                     startActivity(intent);
                     finish();
@@ -397,22 +398,22 @@ public class LoginActivity2 extends BaseActivity {
                     return true;
                 }
             }
-
+*/
             return super.shouldOverrideUrlLoading(view, request);
         }
 
         /**网址拦截*/
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
-            if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
-                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""))){
+            /*if (url.contains("http://kys.zzuli.edu.cn/cas/login")) {
+                if (StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"userId",""))){
                     Intent intent = new Intent(getApplicationContext(),LoginActivity2.class);
                     startActivity(intent);
                     finish();
 
                     return true;
                 }
-            }
+            }*/
 
             return super.shouldOverrideUrlLoading(view, url);
         }
@@ -531,74 +532,76 @@ public class LoginActivity2 extends BaseActivity {
 
 
 
-    private void netWorkLogin2(String uname, String pwd) {
+    private void netWorkLogin2(final String uname, final String pwd, String s) {
         try {
-//            URLEncoder.encode( ,"UTF-8")
-            s1 = URLEncoder.encode(uname,"UTF-8");
-            s2 =  URLEncoder.encode(pwd,"UTF-8");
+           /* s1 = URLEncoder.encode(uname,"UTF-8");
+            s2 =  URLEncoder.encode(pwd,"UTF-8");*/
             SPUtils.put(MyApp.getInstance(),"phone",AesEncryptUtile.decrypt(uname)+"");
             SPUtils.put(MyApp.getInstance(),"pwd",AesEncryptUtile.decrypt(pwd)+"");
-            Log.e("login","s1 = "+ s1 + "  ,s2  = " + s2);
+            String imei =  AesEncryptUtile.encrypt((String) SPUtils.get(this, "imei", ""), key);
+            OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
+                    .params("openid","123456")
+                    .params("username",uname)
+                    .params("password",pwd)
+                    .params("type",s)
+                    .params("equipmentId",imei)
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            Log.e("result1",response.body());
+                            ViewUtils.cancelLoadingDialog();
+                            loginBean = JSON.parseObject(response.body(),LoginBean.class);
+                            if (loginBean.isSuccess() ) {
 
+                                try {
+                                    CookieManager cookieManager =  CookieManager.getInstance();
+                                    cookieManager.removeAllCookie();
+                                    tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
+
+                                    String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
+
+                                    webView.setWebViewClient(mWebViewClient);
+                                    webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
+                                    String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
+                                    SPUtils.put(MyApp.getInstance(),"time",Calendar.getInstance().getTimeInMillis()+"");
+                                    SPUtils.put(MyApp.getInstance(),"userId",userId);
+                                    SPUtils.put(MyApp.getInstance(),"personName",userName);
+                                    SPUtils.put(MyApp.getInstance(),"TGC",tgt);
+                                    SPUtils.put(MyApp.getInstance(),"username",AesEncryptUtile.decrypt(uname)+"");
+                                    SPUtils.put(MyApp.getInstance(),"password",AesEncryptUtile.decrypt(pwd)+"");
+
+
+
+                                    finish();
+                                    Intent intent = new Intent();
+                                    intent.putExtra("refreshService","dongtai");
+                                    intent.setAction("refresh2");
+                                    sendBroadcast(intent);
+
+
+                                    //本地存储账号用户指纹登录时显示账号信息
+                                    StringBuffer stringBuffer = new StringBuffer();
+                                    SPUtil.getInstance().putString(Constants.SP_ACCOUNT, etPhoneNum.getText().toString());
+                                    stringBuffer.append( etPhoneNum.getText().toString());
+                                    stringBuffer.append(etPassword.getText().toString());
+                                    SPUtil.getInstance().putString(Constants.SP_A_P, MD5Util.md5Password(stringBuffer.toString()));
+                                    Log.e("login","tgt = "+ tgt + "  ,userName  = " + userName);
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else {
+                                T.showShort(MyApp.getInstance(),loginBean.getMsg());
+                            }
+                        }
+                    });
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-        OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
-                .params("openid","123456")
-                .params("username",s1)
-                .params("password",s2)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        Log.e("result1",response.body());
-                        ViewUtils.cancelLoadingDialog();
-                        loginBean = JSON.parseObject(response.body(),LoginBean.class);
-                        if (loginBean.isSuccess() ) {
-
-                            try {
-                                CookieManager cookieManager =  CookieManager.getInstance();
-                                cookieManager.removeAllCookie();
-                                tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
-
-                                String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
-
-                                webView.setWebViewClient(mWebViewClient);
-                                webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
-                                String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
-                                SPUtils.put(MyApp.getInstance(),"time",Calendar.getInstance().getTimeInMillis()+"");
-                                SPUtils.put(MyApp.getInstance(),"userId",userId);
-                                SPUtils.put(MyApp.getInstance(),"personName",userName);
-                                SPUtils.put(getApplicationContext(),"TGC",tgt);
-                                SPUtils.put(getApplicationContext(),"username",s1);
-                                SPUtils.put(getApplicationContext(),"password",s2);
 
 
-
-                                finish();
-                                Intent intent = new Intent();
-                                intent.putExtra("refreshService","dongtai");
-                                intent.setAction("refresh2");
-                                sendBroadcast(intent);
-
-
-                                //本地存储账号用户指纹登录时显示账号信息
-                                StringBuffer stringBuffer = new StringBuffer();
-                                SPUtil.getInstance().putString(Constants.SP_ACCOUNT, etPhoneNum.getText().toString());
-                                stringBuffer.append( etPhoneNum.getText().toString());
-                                stringBuffer.append(etPassword.getText().toString());
-                                SPUtil.getInstance().putString(Constants.SP_A_P, MD5Util.md5Password(stringBuffer.toString()));
-                                Log.e("login","tgt = "+ tgt + "  ,userName  = " + userName);
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            T.showShort(MyApp.getInstance(),loginBean.getMsg());
-                        }
-                    }
-                });
     }
 
 
@@ -618,20 +621,10 @@ public class LoginActivity2 extends BaseActivity {
             LinearLayout ll_item = holder.getConvertView().findViewById(R.id.ll_go);
             TextView tv = holder.getConvertView().findViewById(R.id.tv_name);
             Glide.with(mContext).load(s.getImageId()).asBitmap().into(iv);
-          /*  ViewGroup.LayoutParams layoutParams = holder.getView(R.id.ll_go).getLayoutParams();
-            layoutParams.width = (ScreenSizeUtils.getWidth(mContext) - DensityUtil.dp2px( 70)) / 3;//
-            holder.getView(R.id.ll_go).setLayoutParams(layoutParams);*/
             switch (position){
                 case 0:
-                    ll_item.setOnClickListener(new View.OnClickListener() {
-                        @Override
-                        public void onClick(View view) {
 
-                            yiJianData();
-                        }
-                    });
-                    break;
-                case 1:
+
                     ll_item.setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
@@ -639,6 +632,19 @@ public class LoginActivity2 extends BaseActivity {
                             faceData();
                         }
                     });
+                    break;
+                case 1:
+                     /* ll_item.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+
+                            yiJianData();
+                        }
+                    });*/
+                    iv.setAlpha(0.5f);
+                    tv.setAlpha(0.5f);
+                    ll_item.setClickable(false);
+
                     break;
                 case 2:
                     iv.setAlpha(0.5f);
@@ -675,7 +681,7 @@ public class LoginActivity2 extends BaseActivity {
         showLoadingDialog();
 
 
-       /* JVerifyUIConfig uiConfig = new JVerifyUIConfig.Builder()
+        JVerifyUIConfig uiConfig = new JVerifyUIConfig.Builder()
                 .setAuthBGImgPath("main_bg")
                 .setNavColor(0xff1d4481)
                 .setNavText("登录")
@@ -719,7 +725,7 @@ public class LoginActivity2 extends BaseActivity {
                 }
 
             }
-        });*/
+        });
     }
 
     private void checkYiJianData(String content) {
@@ -745,7 +751,7 @@ public class LoginActivity2 extends BaseActivity {
 
 
                                 if(success == true){
-                                    netWorkLogin2(faceBean.getObj().getUserName(),faceBean.getObj().getPassWord());
+                                    netWorkLogin2(faceBean.getObj().getUserName(),faceBean.getObj().getPassWord(),"12");
 
                                 }else {
                                     String msg = faceBean.getMsg();
@@ -809,87 +815,6 @@ public class LoginActivity2 extends BaseActivity {
     private void faceData() {
 
         cameraTask();
-
-
-
-//            SPUtils.put(this,"bitmap","");
-//            Intent intent = new Intent(this,FaceActivity.class);
-//            startActivityForResult(intent,99);
-//            /*AligreenSdkManager.getInstance().startFaceLiveness(LoginActivity2.this, true, new FaceImageResultCallback() {
-//                @Override
-//                public void onFinish(FaceResult faceResult) {
-//                    Log.e("faceResult",faceResult+"");
-//                    if(faceResult.getFaceImagePaths() != null){
-//                        String s = faceResult.getFaceImagePaths().get(0);
-//                        String sresult = imageToBase64(s);
-//                        String imei = (String) SPUtils.get(LoginActivity2.this, "imei", "");
-//                        try {
-//                            String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
-//                            OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.getPassByFaceUrl)
-//                                    .params( "openId","123456")
-//                                    .params( "secret",secret)
-//                                    .params( "img",sresult )
-//                                    .params( "equipmentId",imei)
-//                                    .execute(new StringCallback(){
-//
-//                                        @Override
-//                                        public void onStart(Request<String, ? extends Request> request) {
-//                                            super.onStart(request);
-//                                            ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
-//                                        }
-//
-//                                        @Override
-//                                        public void onSuccess(Response<String> response) {
-//
-//                                            Log.e("tag",response.body());
-//                                            FaceBean faceBean = JsonUtil.parseJson(response.body(),FaceBean.class);
-//                                            try{
-//                                                boolean success = faceBean.getSuccess();
-//                                                String msg = faceBean.getMsg();
-//                                                if(success == true){
-//
-//                                                    Boolean verification = faceBean.getObj().getVerification();
-//                                                    if(verification == false){
-//                                                        netWorkLogin2(faceBean.getObj().getUserName(),faceBean.getObj().getPassWord());
-//                                                    }else {
-//                                                        ViewUtils.cancelLoadingDialog();
-//                                                        Intent intent = new Intent(LoginActivity2.this,CodeBindActivity.class);
-//                                                        intent.putExtra("phone",faceBean.getObj().getPhone());
-//                                                        intent.putExtra("username",faceBean.getObj().getUserName());
-//                                                        intent.putExtra("password",faceBean.getObj().getPassWord());
-//                                                        startActivity(intent);
-//                                                        FinishActivity.addActivity(LoginActivity2.this);
-//                                                    }
-//
-//                                                }else {
-//                                                    ToastUtils.showToast(LoginActivity2.this,msg);
-//                                                }
-//                                            }catch (Exception e){
-//                                                e.printStackTrace();
-//                                            }
-//
-//                                        }
-//
-//                                        @Override
-//                                        public void onError(Response<String> response) {
-//                                            super.onError(response);
-//                                            T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
-//                                        }
-//                                    });
-//                        } catch (Exception e) {
-//                            e.printStackTrace();
-//                        }
-//                    }else {
-//                        //finish();
-//                    }
-//
-//
-//
-//                }
-//            });*/
-//        }else {
-//            setPermission();
-//        }
     }
 
 
@@ -922,16 +847,13 @@ public class LoginActivity2 extends BaseActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        //registerBoradcastReceiver();
+
         String isLoading2 = (String) SPUtils.get(LoginActivity2.this, "isloading2", "");
         if(!isLoading2 .equals("")){
             ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
+            SPUtils.put(getApplicationContext(),"isloading2","");
         }
-        /*String isLoading = (String) SPUtils.get(LoginActivity2.this, "isloading", "");
-        if(!isLoading .equals("")) {
-            Log.e("进度条", isLoading);
-            ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
-        }*/
+
     }
 
 
@@ -947,78 +869,90 @@ public class LoginActivity2 extends BaseActivity {
 
 
     }
-
+    private int imageid = 0;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
+
             if(action.equals("facerefresh")){
-                String bitmap = (String) SPUtils.get(LoginActivity2.this, "bitmap", "");
-                String imei = (String) SPUtils.get(LoginActivity2.this, "imei", "");
+                String FaceActivity = intent.getStringExtra("FaceActivity");
+                if(imageid == 0){
+                    if(FaceActivity != null){
+                        imageid = 1;
+                        String s = (String)SPUtils.get(LoginActivity2.this, "bitmap", "");
+
+
+                        String imei = (String) SPUtils.get(LoginActivity2.this, "imei", "");
 
 //                }
-                try {
-                    String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
-                    OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.getPassByFaceUrl)
-                            .params( "openId","123456")
-                            .params( "secret",secret)
-                            .params( "img",bitmap )
-                            .params( "equipmentId",imei)
-                            .execute(new StringCallback(){
+                        try {
+                            String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
+                            OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.getPassByFaceUrl)
+                                    .params( "openId","123456")
+                                    .params( "secret",secret)
+                                    .params( "img",s )
+                                    .params( "equipmentId",imei)
+                                    .execute(new StringCallback(){
 
-                                @Override
-                                public void onStart(Request<String, ? extends Request> request) {
-                                    super.onStart(request);
+                                        @Override
+                                        public void onStart(Request<String, ? extends Request> request) {
+                                            super.onStart(request);
 //                                    ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
-                                }
+                                        }
 
-                                @Override
-                                public void onSuccess(Response<String> response) {
-                                    SPUtils.put(getApplicationContext(),"isloading2","");
-                                    Log.e("tag",response.body());
-                                    FaceBean faceBean = JsonUtil.parseJson(response.body(),FaceBean.class);
-                                    try{
-                                        boolean success = faceBean.getSuccess();
-                                        String msg = faceBean.getMsg();
-                                        if(success == true){
-                                            Log.e("调试1",response.body());
-                                            Boolean verification = faceBean.getObj().getVerification();
-                                            if(verification == false){
-                                                netWorkLogin2(faceBean.getObj().getUserName(),faceBean.getObj().getPassWord());
-                                            }else {
+                                        @Override
+                                        public void onSuccess(Response<String> response) {
+                                            SPUtils.put(getApplicationContext(),"isloading2","");
+                                            Log.e("tag",response.body());
+                                            FaceBean faceBean = JsonUtil.parseJson(response.body(),FaceBean.class);
+                                            try{
+                                                boolean success = faceBean.getSuccess();
+                                                String msg = faceBean.getMsg();
+                                                if(success == true){
+                                                    Log.e("调试1",response.body());
+                                                    Boolean verification = faceBean.getObj().getVerification();
+                                                    if(verification == false){
+                                                        netWorkLogin2(faceBean.getObj().getUserName(),faceBean.getObj().getPassWord(), "9");
+                                                    }else {
+                                                        ViewUtils.cancelLoadingDialog();
+                                                        Intent intent = new Intent(LoginActivity2.this,CodeBindActivity.class);
+                                                        intent.putExtra("phone",faceBean.getObj().getPhone());
+                                                        intent.putExtra("username",faceBean.getObj().getUserName());
+                                                        intent.putExtra("password",faceBean.getObj().getPassWord());
+                                                        startActivity(intent);
+                                                        FinishActivity.addActivity(LoginActivity2.this);
+                                                    }
+
+                                                }else {
+                                                    Log.e("调试2",response.body());
+                                                    ToastUtils.showToast(LoginActivity2.this,msg);
+                                                    ViewUtils.cancelLoadingDialog();
+                                                }
+                                            }catch (Exception e){
+                                                e.printStackTrace();
                                                 ViewUtils.cancelLoadingDialog();
-                                                Intent intent = new Intent(LoginActivity2.this,CodeBindActivity.class);
-                                                intent.putExtra("phone",faceBean.getObj().getPhone());
-                                                intent.putExtra("username",faceBean.getObj().getUserName());
-                                                intent.putExtra("password",faceBean.getObj().getPassWord());
-                                                startActivity(intent);
-                                                FinishActivity.addActivity(LoginActivity2.this);
                                             }
 
-                                        }else {
-                                            Log.e("调试2",response.body());
-                                            ToastUtils.showToast(LoginActivity2.this,msg);
+                                        }
+
+                                        @Override
+                                        public void onError(Response<String> response) {
+                                            super.onError(response);
+                                            SPUtils.put(getApplicationContext(),"isloading2","112");
+                                            T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
                                             ViewUtils.cancelLoadingDialog();
                                         }
-                                    }catch (Exception e){
-                                        e.printStackTrace();
-                                        ViewUtils.cancelLoadingDialog();
-                                    }
-
-                                }
-
-                                @Override
-                                public void onError(Response<String> response) {
-                                    super.onError(response);
-                                    SPUtils.put(getApplicationContext(),"isloading2","112");
-                                    T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
-                                    ViewUtils.cancelLoadingDialog();
-                                }
-                            });
-                } catch (Exception e) {
-                    e.printStackTrace();
+                                    });
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }else {
+                        imageid = 0;
+                    }
                 }
+
             }
         }
     };

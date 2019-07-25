@@ -206,47 +206,6 @@ public class FaceNewActivity extends BaseActivity {
         }
     }
 
-    private void showDialog(){
-       /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("计算结果");
-        View contentView = LayoutInflater.from(this).inflate(R.layout.pop_win_layout, null);
-        ImageView imageView = (ImageView) contentView.findViewById(R.id.imageview);
-        TextView textView = (TextView) contentView.findViewById(R.id.textview);
-        builder.setView(contentView);
-        Bitmap bm = faceView.getFaceArea();
-        imageView.setImageBitmap(bm);
-        iv.setImageBitmap(bm);
-        textView.setText("人脸区域亮度：" + getBright(bm) + "\n整幅图片亮度：" + getBright(fullBitmap) + "\n光线传感器的值：" + sensorBright);
-        builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
-
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-                cameraView.reset();
-            }
-
-        });
-        builder.setCancelable(false);
-        builder.create().show();*/
-    }
-
-    public int getBright(Bitmap bm) {
-        int width = bm.getWidth();
-        int height = bm.getHeight();
-        int r, g, b;
-        int count = 0;
-        int bright = 0;
-        for(int i = 0; i < width; i++) {
-            for(int j = 0; j < height; j++) {
-                count++;
-                int localTemp = bm.getPixel(i, j);
-                r = (localTemp | 0xff00ffff) >> 16 & 0x00ff;
-                g = (localTemp | 0xffff00ff) >> 8 & 0x0000ff;
-                b = (localTemp | 0xffffff00) & 0x0000ff;
-                bright = (int) (bright + 0.299 * r + 0.587 * g + 0.114 * b);
-            }
-        }
-        return bright / count;
-    }
 
     /**
      * 判断是否有前置摄像

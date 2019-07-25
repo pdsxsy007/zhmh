@@ -22,7 +22,7 @@ import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.StringUtils;
 import io.cordova.zhqy.utils.ToastUtils;
-import me.leolin.shortcutbadger.ShortcutBadger;
+
 
 import static io.cordova.zhqy.utils.MyApp.isrRunIng;
 

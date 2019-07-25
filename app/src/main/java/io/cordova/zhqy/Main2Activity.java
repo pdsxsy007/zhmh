@@ -476,6 +476,7 @@ public class Main2Activity extends BaseActivity3 {
         registerReceiver(broadcastReceiver, myIntentFilter);
     }
 
+    private int imageid = 0;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
         @Override
@@ -483,15 +484,20 @@ public class Main2Activity extends BaseActivity3 {
             String action = intent.getAction();
             if(action.equals("refresh2")){
                 String faceNewActivity = intent.getStringExtra("FaceNewActivity");
-                if(faceNewActivity != null){
-                    Log.e("收到图片通知",faceNewActivity);
-                    String bitmap  = (String) SPUtils.get(Main2Activity.this, "bitmapnewsd", "");;
-                    upToServer(bitmap);
-                }else {
-                    ViewUtils.cancelLoadingDialog();
+                if(imageid == 0){
+                    if(faceNewActivity != null){
+                        imageid = 1;
+                        Log.e("收到图片通知",faceNewActivity);
+                        String bitmap  = (String) SPUtils.get(Main2Activity.this, "bitmapnewsd", "");;
+                        upToServer(bitmap);
+                    }else {
+                        imageid = 0;
+                        ViewUtils.cancelLoadingDialog();
 
-                    getUpdateInfo();
+                        getUpdateInfo();
+                    }
                 }
+
 
             }
         }
@@ -597,6 +603,8 @@ public class Main2Activity extends BaseActivity3 {
             }
         });
     }
+
+
 
     public void showFragment(int i) {
         FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
@@ -947,6 +955,7 @@ public class Main2Activity extends BaseActivity3 {
     protected void onPause() {
         isForeground = false;
         super.onPause();
+
     }
 
 
@@ -1028,7 +1037,6 @@ public class Main2Activity extends BaseActivity3 {
             String phone = (String) SPUtils.get(MyApp.getInstance(), "phone", "");
             String pwd = (String) SPUtils.get(MyApp.getInstance(), "pwd", "");
 
-//            URLEncoder.encode( ,"UTF-8")
             s1 = URLEncoder.encode(AesEncryptUtile.encrypt(phone,key),"UTF-8");
             s2 =  URLEncoder.encode(AesEncryptUtile.encrypt(pwd,key),"UTF-8");
 

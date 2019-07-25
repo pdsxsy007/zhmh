@@ -48,6 +48,7 @@ import java.io.InputStream;
 import java.util.Calendar;
 
 import butterknife.BindView;
+import io.cordova.zhqy.Main2Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.bean.AddFaceBean;
@@ -169,12 +170,12 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
             }
         });
 
-
+        registerBoradcastReceiver();
     }
     @Override
     protected void onResume() {
         super.onResume();
-        registerBoradcastReceiver();
+
 
     }
 
@@ -195,16 +196,24 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
                     RC_CAMERA_PERM, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
     }
-
+    private int imageid = 0;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
 
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            Log.e("走到我了",action);
             if(action.equals("facedata")){
-                String bitmap  = (String) SPUtils.get(ShengWuActivity.this, "bitmap2", "");;
-                upToServer(bitmap);
+                String UpdateFaceActivity = intent.getStringExtra("UpdateFaceActivity");
+
+                if(imageid == 0){
+                    if(UpdateFaceActivity != null){
+                        imageid = 1;
+                        String bitmap  = (String) SPUtils.get(ShengWuActivity.this, "bitmap2", "");;
+                        upToServer(bitmap);
+                    }else {
+                        imageid = 0;
+                    }
+                }
             }
         }
     };

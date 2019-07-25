@@ -104,6 +104,7 @@ import me.samlss.lighter.shape.RectShape;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
+
 import static io.cordova.zhqy.utils.MyApp.getInstance;
 
 
@@ -137,7 +138,7 @@ public class HomePreFragment extends BaseFragment {
 
     @BindView(R.id.linearLayout)
     LinearLayout mLinearLayout;
-    private DownloadingService mDownloadingService;
+
     private Gson mGson = new Gson();
     String tgc ,msgType;
     boolean isLogin =false;
@@ -467,30 +468,6 @@ public class HomePreFragment extends BaseFragment {
             return false;
         }
 
-        /**
-         *
-         * 不需要暂停或者停止下载该方法可以不必实现
-         * @param url
-         * @param downloadingService  用户可以通过 DownloadingService#shutdownNow 终止下载
-         */
-        @Override
-        public void onBindService(String url, DownloadingService downloadingService) {
-            super.onBindService(url, downloadingService);
-            mDownloadingService = downloadingService;
-            Log.i("停止下载", "onBindService:" + url + "  DownloadingService:" + downloadingService);
-        }
-
-        /**
-         * 回调onUnbindService方法，让用户释放掉 DownloadingService。
-         * @param url
-         * @param downloadingService
-         */
-        @Override
-        public void onUnbindService(String url, DownloadingService downloadingService) {
-            super.onUnbindService(url, downloadingService);
-            mDownloadingService = null;
-            Log.i("回调onUnbindService方法", "onUnbindService:" + url);
-        }
 
         /**
          *
@@ -578,12 +555,11 @@ public class HomePreFragment extends BaseFragment {
                     RC_CAMERA_PERM, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
         }
     }
-//    ,R.id.tv_result_net
+
     @OnClick({R.id.msg_num, R.id.layout_msg,R.id.iv_qr})
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.msg_num:
-//                netHomePageData();
 
                 break;
             case R.id.iv_qr:
@@ -591,9 +567,7 @@ public class HomePreFragment extends BaseFragment {
                 cameraTask();
                 break;
             case R.id.layout_msg:
-//                Intent intent = new Intent(MyApp.getInstance(), MyDataChangesActivity.class);
 
-//                setPermission();
                 break;
         }
     }
@@ -635,7 +609,6 @@ public class HomePreFragment extends BaseFragment {
      */
     public void onScanQR() {
         isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
-//        QRCodeManager.getInstance().with(getActivity()).scanningQRCode(1);
         Log.e("tag  = ","点击了");
         QRCodeManager.getInstance()
                 .with(getActivity())
@@ -697,73 +670,6 @@ public class HomePreFragment extends BaseFragment {
         }
 
     }
-    boolean allowedScan = false;
-    /**请求权限*/
-    private void setPermission() {
-        //同时请求多个权限
-        RxPermissions rxPermission = new RxPermissions(getActivity());
-        rxPermission
-                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA
-                )
-                .subscribe(new Consumer<Permission>() {
-                    @Override
-                    public void accept(Permission permission) throws Exception {
-                        if (permission.granted) {
-                            // 用户已经同意该权限
-                            Log.e("用户已经同意该权限", permission.name + " is granted.");
-//                            Intent intent = new Intent(MyApp.getInstance(), QRScanActivity.class);
-//                            startActivity(intent);
-                            allowedScan = true;
-                            //   Log.d(TAG, permission.name + " is granted.");
-                        } else if (permission.shouldShowRequestPermissionRationale) {
-                            Log.e("用户拒绝了该权限", permission.name + " is denied. More info should be provided.");
-                            // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
-                            //   Log.d(TAG, permission.name + " is denied. More info should be provided.");
-                            allowedScan = false;
-                        } else {
-                            // 用户拒绝了该权限，并且选中『不再询问』
-                            //   Log.d(TAG, permission.name + " is denied.");
-                            Log.e("用户拒绝了该权限", permission.name + permission.name + " is denied.");
-                            allowedScan = true;
-                        }
-                    }
-                });
-    }
-    protected void addBGChild(FrameLayout frameLayout) {
-        TextView mTextView = new TextView(frameLayout.getContext());
-        mTextView.setText("技术由 精华教育 提供");
-        mTextView.setTextSize(16);
-        mTextView.setTextColor(Color.parseColor("#727779"));
-        frameLayout.setBackgroundColor(Color.parseColor("#272b2d"));
-        FrameLayout.LayoutParams mFlp = new FrameLayout.LayoutParams(-2, -2);
-        mFlp.gravity = Gravity.CENTER_HORIZONTAL;
-        final float scale = frameLayout.getContext().getResources().getDisplayMetrics().density;
-        mFlp.topMargin = (int) (15 * scale + 0.5f);
-        frameLayout.addView(mTextView, 0, mFlp);
-        TextView mTextView2 = new TextView(frameLayout.getContext());
-        mTextView2.setText("技术由 精华教育 提供");
-        mTextView2.setTextSize(16);
-        mTextView2.setTextColor(Color.parseColor("#727779"));
-        frameLayout.setBackgroundColor(Color.parseColor("#272b2d"));
-        FrameLayout.LayoutParams mFlp2 = new FrameLayout.LayoutParams(-2, -2);
-        mFlp2.gravity = (Gravity.BOTTOM/Gravity.CENTER_HORIZONTAL);
-//		mFlp2.gravity = Gravity.;
-        final float scale2 = frameLayout.getContext().getResources().getDisplayMetrics().density;
-        mFlp2.topMargin = (int) (15 * scale2 + 0.5f);
-        mFlp2.leftMargin =  (55);
-        frameLayout.addView(mTextView2, 0, mFlp2);
-    }
-
-
-
-    /*public void cancleSelect() {
-        //ToastUtils.showToast(getActivity(),"撒大声地静安寺刀剑三");
-        if (!mAgentWeb.back()) {
-            BaseWebActivity.this.;
-        }
-    }*/
 
 
     @Override
