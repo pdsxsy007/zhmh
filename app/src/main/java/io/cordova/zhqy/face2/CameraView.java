@@ -192,10 +192,11 @@ public class CameraView extends SurfaceView implements SurfaceHolder.Callback, C
         Log.e("yubo", "onPreviewFrame...");
         frameCount++;
         //前面15帧丢弃
-        if (frameCount > 40 && !isDetectingFace && !detectedFace) {
+        if (frameCount > 30 && !isDetectingFace && !detectedFace) {
             Camera.Size size = camera.getParameters().getPreviewSize();
             final byte[] byteArray = ImageUtils.yuv2Jpeg(data, size.width, size.height);
             isDetectingFace = true;
+            camera.stopPreview();
             new Thread() {
                 @Override
                 public void run() {
