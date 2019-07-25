@@ -190,6 +190,39 @@ public class HomePreFragment extends BaseFragment {
                     @Override
                     public void onDismiss() {
                         SPUtils.put(MyApp.getInstance(),"home01","1");
+
+
+
+
+                        CircleShape circleShape = new CircleShape(10);
+                        circleShape.setPaint(LighterHelper.getDashPaint()); //set custom paint
+                        // 使用图片
+                        Lighter.with(getActivity())
+                                .setBackgroundColor(0xB9000000)
+                                .setOnLighterListener(new OnLighterListener() {
+                                    @Override
+                                    public void onShow(int index) {
+
+
+                                    }
+
+                                    @Override
+                                    public void onDismiss() {
+                                        SPUtils.put(MyApp.getInstance(),"home06","1");
+                                    }
+                                })
+                                .addHighlight(new LighterParameter.Builder()
+                                        .setHighlightedViewId(R.id.rb_my)
+                                        //.setHighlightedView(rbMy)
+                                        .setTipLayoutId(R.layout.fragment_home_gl_new)
+//                        .setLighterShape(new RectShape(50, 50, 0))
+//                        .setLighterShape(circleShape)
+                                        .setTipViewRelativeDirection(Direction.TOP)
+                                        //.setTipViewRelativeOffset(new MarginOffset(150, 70, 150, 50))
+                                        .build()).show();
+
+
+
                     }
                 })
                 .addHighlight(new LighterParameter.Builder()
@@ -201,6 +234,9 @@ public class HomePreFragment extends BaseFragment {
                         .setTipViewRelativeDirection(Direction.BOTTOM)
                         .setTipViewRelativeOffset(new MarginOffset(150, 0, 30, 0))
                         .build()).show();
+
+
+
     }
 
     private void checkNetState() {

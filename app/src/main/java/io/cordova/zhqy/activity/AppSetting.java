@@ -360,6 +360,7 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
                         String home03 = (String) SPUtils.get(MyApp.getInstance(), "home03", "");
                         String home04 = (String) SPUtils.get(MyApp.getInstance(), "home04", "");
                         String home05 = (String) SPUtils.get(MyApp.getInstance(), "home05", "");
+                        String home06 = (String) SPUtils.get(MyApp.getInstance(), "home06", "");
 
                         //SPUtils.clear(getApplicationContext());
                         SPUtils.put(getApplicationContext(),"username","");
@@ -388,6 +389,9 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
                         }
                         if(home05.equals("1")){
                             SPUtils.put(MyApp.getInstance(),"home05","1");
+                        }
+                        if(home06.equals("1")){
+                            SPUtils.put(MyApp.getInstance(),"home06","1");
                         }
                         T.showShort(MyApp.getInstance(), "退出成功");
                         //closeFingerprintLogin();
