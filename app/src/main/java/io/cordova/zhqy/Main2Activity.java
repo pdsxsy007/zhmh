@@ -71,6 +71,7 @@ import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
@@ -162,7 +163,6 @@ public class Main2Activity extends BaseActivity3 {
     MyPre2Fragment myPre2Fragment;
     private String registrationId;
     CurrencyBean currencyBean;
-    //    boolean enabled = NotificationsUtils.isNotificationEnabled2(MyApp.getInstance());
     private static final String[] mPermission = {android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
             android.Manifest.permission.READ_EXTERNAL_STORAGE};
     private Button button4;
@@ -173,8 +173,6 @@ public class Main2Activity extends BaseActivity3 {
     String time;
     @BindView(R.id.webView)
     WebView webView;
-
-    private int quanxian = 0;
 
     String userId;
     @Override
@@ -199,25 +197,47 @@ public class Main2Activity extends BaseActivity3 {
         badge1.hide();
         Log.d("TAG", " registrationId : " + MyApp.registrationId);
 
-        mainRadioGroup.check(R.id.rb_home_page);
-        //showFragment(0);
+        //mainRadioGroup.check(R.id.rb_home_page);
+
         insertPortalAccessLog = "1";
         if (isHome){
             netInsertPortal(insertPortalAccessLog);
         }
-        setPermission();//权限判断
+        //cameraTask2();
+        //setPermission();
+
+        setListener();
         isOpen();//判断悬浮窗权限
 
-
-        //getUpdateInfo();
-        //registerBoradcastReceiver();
+        getUpdateInfo();
         addMobieInfo();
         getDownLoadType();
 
+        registerBoradcastReceiver();
 
 
 
+    }
 
+    private void cameraTask2() {
+        /*Manifest.permission.READ_PHONE_STATE,
+                //Manifest.permission.SYSTEM_ALERT_WINDOW,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission. RECEIVE_WAP_PUSH,
+                Manifest.permission. MANAGE_DOCUMENTS,
+                Manifest.permission. MEDIA_CONTENT_CONTROL*/
+        if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_PHONE_STATE,Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission. RECEIVE_WAP_PUSH,
+                Manifest.permission. MANAGE_DOCUMENTS,
+                Manifest.permission. MEDIA_CONTENT_CONTROL
+        )) {
+
+        } else {//没有相应权限，获取相机权限
+            // Ask for one permission
+
+        }
     }
 
     private void showNewSuDialog() {
@@ -464,10 +484,13 @@ public class Main2Activity extends BaseActivity3 {
             if(action.equals("refresh2")){
                 String faceNewActivity = intent.getStringExtra("FaceNewActivity");
                 if(faceNewActivity != null){
+                    Log.e("收到图片通知",faceNewActivity);
                     String bitmap  = (String) SPUtils.get(Main2Activity.this, "bitmapnewsd", "");;
                     upToServer(bitmap);
                 }else {
-                    showState();
+                    ViewUtils.cancelLoadingDialog();
+
+                    getUpdateInfo();
                 }
 
             }
@@ -475,18 +498,14 @@ public class Main2Activity extends BaseActivity3 {
     };
 
     public void upToServer(String sresult){
-//        String sresult = imageToBase64(file.getAbsolutePath());
-        String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
-        ViewUtils.createLoadingDialog(this);
         OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.addFaceUrl)
-        //OkGo.<String>post("http://192.168.30.30:8081/authentication/api/face/addFace")
                 .params( "openId","123456")
                 .params( "memberId",(String) SPUtils.get(MyApp.getInstance(), "userId", ""))
                 .params( "img",sresult )
                 .execute(new StringCallback(){
                     @Override
                     public void onSuccess(Response<String> response) {
-
+                        ViewUtils.cancelLoadingDialog();
                         Log.e("上传图片",response.body());
                         AddFaceBean faceBean = JsonUtil.parseJson(response.body(),AddFaceBean.class);
                         boolean success = faceBean.getSuccess();
@@ -871,11 +890,7 @@ public class Main2Activity extends BaseActivity3 {
         Log.e("update",update);
 
         if(localVersionName.equals(portalVersionNumber)){//最新版本
-            if(m_Dialog2 != null){
-                if(m_Dialog2.isShowing()){
-                    m_Dialog2.dismiss();
-                }
-            }
+
             showNewSuDialog();
 
 
@@ -938,14 +953,21 @@ public class Main2Activity extends BaseActivity3 {
     @Override
     protected void onResume() {
         super.onResume();
+
+        String isLoading3 = (String) SPUtils.get(Main2Activity.this, "isloading3", "");
+        if(!isLoading3 .equals("")){
+            SPUtils.put(getApplicationContext(),"isloading3","");
+            ViewUtils.createLoadingDialog2(Main2Activity.this,true,"人脸上传中");
+
+        }
         getMyLocation();
-        getUpdateInfo();
+        //getUpdateInfo();
         String count = (String) SPUtils.get(this, "count", "");
 
         isForeground = true;
         showFragment(flag);
         isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
-        Log.e("onResume","onResume");
+
 
         if (isLogin){
 
@@ -991,7 +1013,7 @@ public class Main2Activity extends BaseActivity3 {
         }
 
 
-        registerBoradcastReceiver();
+
 
     }
 
@@ -1233,27 +1255,28 @@ public class Main2Activity extends BaseActivity3 {
                         if (permission.granted) {
                             // 用户已经同意该权限
                             Log.e("用户已经同意该权限", permission.name + " is granted.");
-                            quanxian = 3;
+
                             allowedScan = true;
-                            SPUtils.put(Main2Activity.this,"quanxian",3);
+
                         } else if (permission.shouldShowRequestPermissionRationale) {
 
                             Log.e("用户拒绝了该权限", permission.name + " is denied. More info should be provided.");
-                            if(permission.name.contains(Manifest.permission.ACCESS_FINE_LOCATION)){
-                                quanxian = 1;
-                                SPUtils.put(Main2Activity.this,"quanxian",3);
-                            }
+
 
 
                         } else {
                             // 用户拒绝了该权限，并且选中『不再询问』
                             //   Log.d(TAG, permission.name + " is denied.");
                             Log.e("用户拒绝了该权限", permission.name + permission.name + " is denied.");
-                            quanxian = 2;
+
                         }
                     }
                 });
     }
+
+
+
+
     private LocationManager locationManager;
     private String locationProvider;       //位置提供器
     /**
@@ -1506,14 +1529,14 @@ public class Main2Activity extends BaseActivity3 {
         rl_sure.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //m_Dialog2.dismiss();
-                if (allowedScan){
-                    Intent intent = new Intent(Main2Activity.this, FaceNewActivity.class);
-                    startActivity(intent);
+                Intent intent = new Intent(Main2Activity.this, FaceNewActivity.class);
+                startActivity(intent);
+               /* if (allowedScan){
+
                 }else {
                     setPermission2();
                 }
-
+*/
 
             }
         });
@@ -1567,4 +1590,85 @@ public class Main2Activity extends BaseActivity3 {
                     }
                 });
     }
+
+
+    List<String> permission = new ArrayList<>();
+    protected void setListener() {
+         /*Manifest.permission.READ_PHONE_STATE,
+                //Manifest.permission.SYSTEM_ALERT_WINDOW,
+                Manifest.permission.READ_EXTERNAL_STORAGE,
+                Manifest.permission.WRITE_EXTERNAL_STORAGE,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission. RECEIVE_WAP_PUSH,
+                Manifest.permission. MANAGE_DOCUMENTS,
+                Manifest.permission. MEDIA_CONTENT_CONTROL*/
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        {
+                    permission.add(  android.Manifest.permission.ACCESS_COARSE_LOCATION);
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED)
+        {
+            permission.add(android.Manifest.permission.READ_PHONE_STATE);
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.WRITE_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            permission.add( android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.READ_EXTERNAL_STORAGE) != PackageManager.PERMISSION_GRANTED)
+        {
+            permission.add( android.Manifest.permission.READ_EXTERNAL_STORAGE);
+        }
+
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.RECORD_AUDIO) != PackageManager.PERMISSION_GRANTED)
+        {
+            permission.add(  android.Manifest.permission.RECORD_AUDIO);
+        }
+        if (ContextCompat.checkSelfPermission(this,
+                android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+        {
+            permission.add(  android.Manifest.permission.CAMERA);
+        }
+        if (!permission.isEmpty())
+        {
+            String[] permissions = permission.toArray(new String[permission.size()]);//将集合转化成数组
+            //@onRequestPermissionsResult会接受次函数传的数据
+            ActivityCompat.requestPermissions(this, permissions, 1);
+        }
+    }
+
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions,
+                                           @NonNull int[] grantResults)
+    {
+        switch (requestCode)
+        {
+            case 1:
+                if (grantResults.length > 0)
+                {
+                    for (int result : grantResults)
+                    {
+                        if (result != PackageManager.PERMISSION_GRANTED)
+                        {
+                            Toast.makeText(this, "" +
+                                    "必须统一授权才能使用本程序", Toast.LENGTH_SHORT).show();
+                            return;
+                        }
+                    }
+
+                } else
+                {
+//                    Toast.makeText(this, "" +
+//                            "发生未知错误", Toast.LENGTH_SHORT).show();
+                }
+                break;
+            default:
+        }
+    }
+
 }

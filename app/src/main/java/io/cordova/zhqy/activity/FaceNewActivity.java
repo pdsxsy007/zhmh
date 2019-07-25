@@ -8,16 +8,25 @@ import android.graphics.Matrix;
 import android.graphics.Rect;
 import android.graphics.YuvImage;
 import android.hardware.Camera;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.os.Build;
 import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.Message;
+import android.os.SystemClock;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -26,9 +35,11 @@ import io.cordova.zhqy.R;
 import io.cordova.zhqy.face.CameraView;
 import io.cordova.zhqy.face.FaceSDK;
 import io.cordova.zhqy.face.view.RefreshProgress;
+import io.cordova.zhqy.face2.FaceView;
 import io.cordova.zhqy.utils.BaseActivity;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.SystemInfoUtils;
+import io.cordova.zhqy.utils.ViewUtils;
 
 /**
  * Created by Administrator on 2019/7/4 0004.
@@ -36,13 +47,15 @@ import io.cordova.zhqy.utils.SystemInfoUtils;
 
 public class FaceNewActivity extends BaseActivity {
 
-    private static final int REQUEST_CAMERA_PERMISSION = 1;
-    private static final String TAG = "FaceActivity";
-    @BindView(R.id.camera)
-    CameraView mCameraView;
+    io.cordova.zhqy.face2.CameraView cameraView;
+    FaceView faceView;
+    Bitmap fullBitmap;
 
-    private Handler mBackgroundHandler;
-    long lastModirTime;
+    private SensorManager sensorManager;
+    private Sensor sensor;
+    private MySensorListener mySensorListener;
+    private int sensorBright = 0;
+    private ImageView iv;
 
     @BindView(R.id.iv_wai)
     RefreshProgress iv_wai;
@@ -53,234 +66,210 @@ public class FaceNewActivity extends BaseActivity {
     @BindView(R.id.iv_close)
     ImageView iv_close;
 
-    @BindView(R.id.iv_face_pic)
-    ImageView iv_face_pic;
-
-    @SuppressLint("HandlerLeak")
+    @Override
+    protected int getResourceId() {
+        return R.layout.activity_test;
+    }
+    long l0;
+    @Override
+    protected void initView() {
+        super.initView();
+        if(!hasFrontCamera()) {
+            Toast.makeText(this, "没有前置摄像头", Toast.LENGTH_SHORT).show();
+            return ;
+        }
+        iv_wai.Animation2();
+        iv_nei.Animation();
+        sensorManager = (SensorManager) getSystemService(SENSOR_SERVICE);
+        sensor = sensorManager.getDefaultSensor(Sensor.TYPE_LIGHT);
+        mySensorListener = new MySensorListener();
+        sensorManager.registerListener(mySensorListener, sensor, SensorManager.SENSOR_DELAY_NORMAL);
+        cameraView = (io.cordova.zhqy.face2.CameraView) findViewById(R.id.camera_view);
+        faceView = (FaceView) findViewById(R.id.face_view);
+        iv = (ImageView) findViewById(R.id.iv);
+        //cameraView.setFaceView(faceView);
+        cameraView.setOnFaceDetectedListener(new io.cordova.zhqy.face2.CameraView.OnFaceDetectedListener() {
+            @Override
+            public void onFaceDetected(Bitmap bm) {
+                Log.e("test","检测2");
+                //检测到人脸后的回调方法
+                finish();
+                SPUtils.put(getApplicationContext(),"isloading3","113");
+                fullBitmap = bm;
+                Message message = new Message();
+                message.obj = fullBitmap;
+                handler.sendMessage(message);
+            }
+        });
+        iv_close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
+    }
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
+
             super.handleMessage(msg);
-            byte[] data = (byte[]) msg.obj;
-            Bitmap bitmap= BitmapFactory.decodeByteArray(data, 0, data.length);
-            int windowWidth = SystemInfoUtils.getWindowWidth(FaceNewActivity.this);
-            int windowHeigh = SystemInfoUtils.getWindowHeigh(FaceNewActivity.this);
-            int i = windowWidth / 480;
+
+            fullBitmap = (Bitmap) msg.obj;
+            new Thread(){
+                @Override
+                public void run() {
+                    super.run();
+                    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+                    fullBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte [] data =baos.toByteArray();
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
+                    BitmapFactory.decodeByteArray(data, 0, data.length, options);
+                    int inSampleSize = 1; // 默认像素压缩比例，压缩为原图的1/2
+                    int height = options.outHeight;
+                    int width= options.outWidth;
+                    int minLen = Math.min(height, width); // 原图的最小边长
+                    if(minLen > 100) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
+                        float ratio = (float)minLen / 100.0f; // 计算像素压缩比例
+                        inSampleSize = (int)ratio;
+                    }
+                    if(minLen <= 1500){
+                        inSampleSize = 4;
+                    }else if(minLen <= 2500 && minLen > 1500){
+                        inSampleSize = 6;
+                    }
+                    else if(minLen <= 3500 && minLen > 2500){
+                        inSampleSize = 5;
+                    }else {
+                        inSampleSize = 10;
+                    }
+
+                    options.inJustDecodeBounds = false; // 计算好压缩比例后，这次可以去加载原图了
+                    options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
+                    Bitmap scaledBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);; // 解码文件
+                    String s = bitmapToBase64(scaledBitmap);
+                    SPUtils.put(FaceNewActivity.this,"bitmapnewsd",s);
+                    Intent intent = new Intent();
+                    intent.setAction("refresh2");
+                    intent.putExtra("FaceNewActivity","FaceNewActivity");
+                    sendBroadcast(intent);
+                }
+            }.start();
 
 
-            Matrix matrix = new Matrix();
-            matrix.setScale(0.5f, 0.5f);
-            //Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),bitmap.getHeight(), matrix, true);
-            Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 150, 150, true);
-            Log.e("wechat", "压缩前图片的大小"+ (bitmap.getByteCount() / 1024/ 1024)
-
-                    + "M宽度为"+ bitmap.getWidth() + "高度为"+ bitmap.getHeight());
-
-            Log.e("wechat", "压缩后图片的大小"+ (scaledBitmap.getByteCount() / 1024/ 1024)
-
-                    + "M宽度为"+ scaledBitmap.getWidth() + "高度为"+ scaledBitmap.getHeight());
-
-
-            //Bitmap scaledBitmap = Bitmap.createScaledBitmap(bitmap, 480, windowHeigh/i, true);
-            bitmap = null;
-            String s = bitmapToBase64(scaledBitmap);
-            Log.e("bitmap",s);
-            Log.e("人脸",s+"");
-            SPUtils.put(FaceNewActivity.this,"bitmapnewsd",s);
-            Intent intent = new Intent();
-            intent.setAction("refresh2");
-            intent.putExtra("FaceNewActivity","FaceNewActivity");
-            sendBroadcast(intent);
            /* Intent intent = new Intent(FaceNewActivity.this,NewStudentPrgActivity.class);
             startActivity(intent);
             finish();*/
 
         }
     };
-    @Override
-    protected int getResourceId() {
-        return R.layout.activity_face;
+    public boolean saveMyBitmap(Bitmap bmp, String bitName) throws IOException {
+        File dirFile = new File("./sdcard/DCIM/Camera/");
+        if (!dirFile.exists()) {
+            dirFile.mkdirs();
+        }
+        File f = new File("./sdcard/DCIM/Camera/" + bitName + ".png");
+        boolean flag = false;
+        f.createNewFile();
+        FileOutputStream fOut = null;
+        try {
+            fOut = new FileOutputStream(f);
+            bmp.compress(Bitmap.CompressFormat.PNG, 100, fOut);
+            flag = true;
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            fOut.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return flag;
     }
 
-    @Override
-    protected void initView() {
-        super.initView();
-        iv_wai.Animation2();
-        iv_nei.Animation();
+    private class MySensorListener implements SensorEventListener {
 
-        if (mCameraView != null) {
-            mCameraView.start();
-            mCameraView.addCallback(mCallback);
+        @Override
+        public void onSensorChanged(SensorEvent sensorEvent) {
+            //光线传感器亮度改变
+            sensorBright = (int) sensorEvent.values[0];
         }
-        iv_close.setOnClickListener(new View.OnClickListener() {
+
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int i) {
+
+        }
+    }
+
+    private void showDialog(){
+       /* AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("计算结果");
+        View contentView = LayoutInflater.from(this).inflate(R.layout.pop_win_layout, null);
+        ImageView imageView = (ImageView) contentView.findViewById(R.id.imageview);
+        TextView textView = (TextView) contentView.findViewById(R.id.textview);
+        builder.setView(contentView);
+        Bitmap bm = faceView.getFaceArea();
+        imageView.setImageBitmap(bm);
+        iv.setImageBitmap(bm);
+        textView.setText("人脸区域亮度：" + getBright(bm) + "\n整幅图片亮度：" + getBright(fullBitmap) + "\n光线传感器的值：" + sensorBright);
+        builder.setPositiveButton("确定", new DialogInterface.OnClickListener(){
+
             @Override
-            public void onClick(View view) {
-                if (mCameraView != null) {
-                    mCameraView.stop();
-                }
-                if (mBackgroundHandler == null) {
-                    mBackgroundHandler = null;
-                }
-                finish();
+            public void onClick(DialogInterface dialogInterface, int i) {
+                cameraView.reset();
             }
+
         });
+        builder.setCancelable(false);
+        builder.create().show();*/
+    }
+
+    public int getBright(Bitmap bm) {
+        int width = bm.getWidth();
+        int height = bm.getHeight();
+        int r, g, b;
+        int count = 0;
+        int bright = 0;
+        for(int i = 0; i < width; i++) {
+            for(int j = 0; j < height; j++) {
+                count++;
+                int localTemp = bm.getPixel(i, j);
+                r = (localTemp | 0xff00ffff) >> 16 & 0x00ff;
+                g = (localTemp | 0xffff00ff) >> 8 & 0x0000ff;
+                b = (localTemp | 0xffffff00) & 0x0000ff;
+                bright = (int) (bright + 0.299 * r + 0.587 * g + 0.114 * b);
+            }
+        }
+        return bright / count;
+    }
+
+    /**
+     * 判断是否有前置摄像
+     * @return
+     */
+    @SuppressLint("NewApi")
+    public static boolean hasFrontCamera(){
+        Camera.CameraInfo info = new Camera.CameraInfo();
+        int count = Camera.getNumberOfCameras();
+        for(int i = 0; i < count; i++){
+            Camera.getCameraInfo(i, info);
+            if(info.facing == Camera.CameraInfo.CAMERA_FACING_FRONT){
+                return true;
+            }
+        }
+        return false;
     }
 
     @Override
-    protected void onPause() {
-        super.onPause();
-        if (mCameraView != null) {
-            mCameraView.stop();
-        }
-        if (mBackgroundHandler == null) {
-            mBackgroundHandler = null;
-        }
-
-
+    protected void onDestroy() {
+        super.onDestroy();
+        sensorManager.unregisterListener(mySensorListener);
     }
-
-    private CameraView.Callback mCallback = new CameraView.Callback() {
-
-        @Override
-        public void onCameraOpened(CameraView cameraView) {
-            Log.d(TAG, "onCameraOpened");
-          /*  mCameraView.setAspectRatio(AspectRatio.of(640, 480));
-            mCameraView.setAutoFocus(true);*/
-
-        }
-
-        @Override
-        public void onCameraClosed(CameraView cameraView) {
-            Log.d(TAG, "onCameraClosed");
-            //mCameraView.stop();
-        }
-
-        @Override
-        public void onPictureTaken(CameraView cameraView, final byte[] data) {
-            Log.d(TAG, "onPictureTaken");
-            lastModirTime = System.currentTimeMillis();
-            finish();
-
-            mBackgroundHandler = null;
-
-            Log.e("人脸",lastModirTime+"");
-            Message message = new Message();
-            message.obj = data;
-            handler.sendMessage(message);
-
-
-           /* Log.e("人脸",s);
-            SPUtils.put(FaceActivity.this,"bitmap",s);*/
-
-        }
-
-        @Override
-        public void onPreviewFrame(final byte[] data, final Camera camera) {
-            Log.d(TAG, "onPreviewFrame");
-            if (System.currentTimeMillis() - lastModirTime <= 200 || data == null || data.length == 0 ) {
-                return;
-            }
-            Log.i(TAG, "onPreviewFrame " + (data == null ? null : data.length));
-            getBackgroundHandler().post(new FaceThread(data, camera));
-            lastModirTime = System.currentTimeMillis();
-        }
-    };
-
-
-
-
-
-    private Handler getBackgroundHandler() {
-        if (mBackgroundHandler == null) {
-            HandlerThread thread = new HandlerThread("background");
-            thread.start();
-            mBackgroundHandler = new Handler(thread.getLooper());
-        }
-        return mBackgroundHandler;
-    }
-
-
-    private class FaceThread implements Runnable {
-        private byte[] mData;
-        private ByteArrayOutputStream mBitmapOutput;
-        private Matrix mMatrix;
-        private Camera mCamera;
-
-        public FaceThread(byte[] data, Camera camera) {
-            mData = data;
-            mBitmapOutput = new ByteArrayOutputStream();
-            mMatrix = new Matrix();
-            int mOrienta = mCameraView.getCameraDisplayOrientation();
-            mMatrix.postRotate(mOrienta * -1);
-            mMatrix.postScale(-1, 1);//默认是前置摄像头，直接写死 -1 。
-            mCamera = camera;
-
-        }
-
-        @Override
-        public void run() {
-            Log.i(TAG, "thread is run");
-            Bitmap bitmap = null;
-            Bitmap roteBitmap  = null ;
-            try {
-                Camera.Parameters parameters = mCamera.getParameters();
-                int width = parameters.getPreviewSize().width;
-                int height = parameters.getPreviewSize().height;
-                YuvImage yuv = new YuvImage(mData, parameters.getPreviewFormat(), width, height, null);
-                mData = null ;
-                yuv.compressToJpeg(new Rect(0, 0, width, height), 50, mBitmapOutput);
-
-                byte[] bytes = mBitmapOutput.toByteArray();
-                BitmapFactory.Options options = new BitmapFactory.Options();
-                options.inPreferredConfig = Bitmap.Config.RGB_565;//必须设置为565，否则无法检测
-                bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length, options);
-                mBitmapOutput.reset();
-                roteBitmap = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(), bitmap.getHeight(), mMatrix, false);
-                List<Rect> rects = FaceSDK.detectionBitmap(bitmap,getResources().getDisplayMetrics().widthPixels,getResources().getDisplayMetrics().heightPixels) ;
-
-                if(null == rects || rects.size() == 0){
-                    Log.i("janecer","没有检测到人脸哦");
-                } else {
-                    Log.i("janecer","检测到有" + rects.size() +"人脸");
-                    if(Build.VERSION.SDK_INT <26){
-                        finish();
-
-                        mBackgroundHandler = null;
-                        Message message = new Message();
-                        message.obj = bytes;
-                        handler.sendMessage(message);
-                    }else {
-                        mCameraView.takePicture();
-                    }
-
-                    //mCameraView.takePicture();
-
-                }
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                mMatrix = null ;
-                if (bitmap != null) {
-                    bitmap.recycle();
-                }
-                if (roteBitmap != null) {
-                    roteBitmap.recycle();
-                }
-
-                if (mBitmapOutput != null) {
-                    try {
-                        mBitmapOutput.close();
-                        mBitmapOutput = null;
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-    }
-
-
 
 
     /**
@@ -316,12 +305,5 @@ public class FaceNewActivity extends BaseActivity {
             }
         }
         return result;
-    }
-
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        mCameraView.stop();
     }
 }
