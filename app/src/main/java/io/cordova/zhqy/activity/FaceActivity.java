@@ -116,21 +116,20 @@ public class FaceActivity extends BaseActivity {
         cameraView = (io.cordova.zhqy.face2.CameraView) findViewById(R.id.camera_view);
         faceView = (FaceView) findViewById(R.id.face_view);
         iv = (ImageView) findViewById(R.id.iv);
-        cameraView.setFaceView(faceView);
+        //cameraView.setFaceView(faceView);
         cameraView.setOnFaceDetectedListener(new io.cordova.zhqy.face2.CameraView.OnFaceDetectedListener() {
             @Override
             public void onFaceDetected(Bitmap bm) {
+
+                Log.e("test","检测2");
                 //检测到人脸后的回调方法
                 SPUtils.put(getApplicationContext(),"isloading2","112");
                 finish();
-                ViewUtils.createLoadingDialog(FaceActivity.this);
                 fullBitmap = bm;
                 Message message = new Message();
                 message.obj = fullBitmap;
                 handler.sendMessage(message);
-                //SPUtils.put(getApplicationContext(),"isloading","112");
 
-                Log.e("time", l0+"");
 
 
               /*  try {
@@ -140,6 +139,7 @@ public class FaceActivity extends BaseActivity {
                 }*/
             }
         });
+
       iv_close.setOnClickListener(new View.OnClickListener() {
           @Override
           public void onClick(View view) {
@@ -155,45 +155,49 @@ public class FaceActivity extends BaseActivity {
 
             fullBitmap = (Bitmap) msg.obj;
 
-            ByteArrayOutputStream baos=new ByteArrayOutputStream();
-            fullBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
-            byte [] data =baos.toByteArray();
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
-            BitmapFactory.decodeByteArray(data, 0, data.length, options);
-            int inSampleSize = 1; // 默认像素压缩比例，压缩为原图的1/2
-            int height = options.outHeight;
-            int width= options.outWidth;
-            int minLen = Math.min(height, width); // 原图的最小边长
-            if(minLen > 100) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
-                float ratio = (float)minLen / 100.0f; // 计算像素压缩比例
-                inSampleSize = (int)ratio;
-            }
-            if(minLen <= 1500){
-                inSampleSize = 4;
-            }else if(minLen <= 2500 && minLen > 1500){
-                inSampleSize = 6;
-            }
-            else if(minLen <= 3500 && minLen > 2500){
-                inSampleSize = 5;
-            }else {
-                inSampleSize = 10;
-            }
+            new Thread(){
+                @Override
+                public void run() {
+                    super.run();
+                    ByteArrayOutputStream baos=new ByteArrayOutputStream();
+                    fullBitmap.compress(Bitmap.CompressFormat.PNG, 100, baos);
+                    byte [] data =baos.toByteArray();
+                    BitmapFactory.Options options = new BitmapFactory.Options();
+                    options.inJustDecodeBounds = true; // 只获取图片的大小信息，而不是将整张图片载入在内存中，避免内存溢出
+                    BitmapFactory.decodeByteArray(data, 0, data.length, options);
+                    int inSampleSize = 1; // 默认像素压缩比例，压缩为原图的1/2
+                    int height = options.outHeight;
+                    int width= options.outWidth;
+                    int minLen = Math.min(height, width); // 原图的最小边长
+                    if(minLen > 100) { // 如果原始图像的最小边长大于100dp（此处单位我认为是dp，而非px）
+                        float ratio = (float)minLen / 100.0f; // 计算像素压缩比例
+                        inSampleSize = (int)ratio;
+                    }
+                    if(minLen <= 1500){
+                        inSampleSize = 4;
+                    }else if(minLen <= 2500 && minLen > 1500){
+                        inSampleSize = 6;
+                    }
+                    else if(minLen <= 3500 && minLen > 2500){
+                        inSampleSize = 5;
+                    }else {
+                        inSampleSize = 10;
+                    }
 
-            options.inJustDecodeBounds = false; // 计算好压缩比例后，这次可以去加载原图了
-            options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
-            Bitmap scaledBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);; // 解码文件
-            String s = bitmapToBase64(scaledBitmap);
-            long l1 = SystemClock.currentThreadTimeMillis();
-            Log.e("time", l1+"");
-            Log.e("time", (l1-l0)+"");
+                    options.inJustDecodeBounds = false; // 计算好压缩比例后，这次可以去加载原图了
+                    options.inSampleSize = inSampleSize; // 设置为刚才计算的压缩比例
+                    Bitmap scaledBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);; // 解码文件
+                    String s = bitmapToBase64(scaledBitmap);
 
-            Log.e("bitmap",s);
-            Log.e("人脸",s+"");
-            SPUtils.put(FaceActivity.this,"bitmap",s);
-            Intent intent = new Intent();
-            intent.setAction("facerefresh");
-            sendBroadcast(intent);
+                    // Log.e("人脸",s+"");
+                    SPUtils.put(FaceActivity.this,"bitmap",s);
+                    Intent intent = new Intent();
+                    intent.setAction("facerefresh");
+                    intent.putExtra("FaceActivity","FaceActivity");
+                    sendBroadcast(intent);
+                }
+            }.start();
+
            /* Intent intent = new Intent(FaceNewActivity.this,NewStudentPrgActivity.class);
             startActivity(intent);
             finish();*/

@@ -135,62 +135,68 @@ public class SplashActivity extends AppCompatActivity {
     private void netWorkLogin() {
         s1 = (String) SPUtils.get(MyApp.getInstance(),"username","");
         s2 =  (String) SPUtils.get(MyApp.getInstance(),"password","");
-        Log.e("login","s1 = "+ s1 + "  ,s2  = " + s2);
-        OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
-//        OkGo.<String>get("http://192.168.30.29:8080" +"/cas/casApiLoginController")
-                .params("openid","123456")
-                .params("username",s1)
-                .params("password",s2)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        loginBean = JSON.parseObject(response.body(),LoginBean.class);
-                        if (loginBean.isSuccess() ) {
-                            try {
 
-                                tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
-                                String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
-                                String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
+        try {
+            String imei = AesEncryptUtile.encrypt((String) SPUtils.get(this, "imei", ""), key);
+            OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
+                    .params("openid","123456")
+                    .params("username",s1)
+                    .params("password",s2)
+                    .params("type","10")
+                    .params("equipmentId",imei)
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            loginBean = JSON.parseObject(response.body(),LoginBean.class);
+                            if (loginBean.isSuccess() ) {
+                                try {
 
-                                SPUtils.put(MyApp.getInstance(),"userId",userId);
+                                    tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
+                                    String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
+                                    String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
+
+                                    SPUtils.put(MyApp.getInstance(),"userId",userId);
 //                                SPUtils.put(MyApp.getInstance(),"tgt",tgt);
-                                SPUtils.put(getApplicationContext(),"TGC",tgt);
-                                SPUtils.put(getApplicationContext(),"username",s1);
-                                SPUtils.put(getApplicationContext(),"password",s2);
+                                    SPUtils.put(getApplicationContext(),"TGC",tgt);
+                                    SPUtils.put(getApplicationContext(),"username",s1);
+                                    SPUtils.put(getApplicationContext(),"password",s2);
                                /* webView.setWebViewClient(mWebViewClient);
                                 webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");*/
+                                    Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
+                                    intent.putExtra("userId",userName);
+                                    startActivity(intent);
+                                    finish();
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else {
+                                T.showShort(MyApp.getInstance(),loginBean.getMsg());
+
+                                SPUtils.put(MyApp.getInstance(),"userId","");
+//                                SPUtils.put(MyApp.getInstance(),"tgt",tgt);
+                                SPUtils.put(getApplicationContext(),"TGC","");
+                                SPUtils.put(getApplicationContext(),"username","");
+                                SPUtils.put(getApplicationContext(),"password","");
                                 Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
-                                intent.putExtra("userId",userName);
                                 startActivity(intent);
                                 finish();
 
-                            } catch (Exception e) {
-                                e.printStackTrace();
                             }
-                        }else {
-                            T.showShort(MyApp.getInstance(),loginBean.getMsg());
+                        }
 
-                            SPUtils.put(MyApp.getInstance(),"userId","");
-//                                SPUtils.put(MyApp.getInstance(),"tgt",tgt);
-                            SPUtils.put(getApplicationContext(),"TGC","");
-                            SPUtils.put(getApplicationContext(),"username","");
-                            SPUtils.put(getApplicationContext(),"password","");
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
                             Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
                             startActivity(intent);
                             finish();
+
                         }
-                    }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-//                        finish();
-                        Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
-                        startActivity(intent);
-                        finish();
-
-                    }
-                });
 
     }
 

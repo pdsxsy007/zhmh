@@ -67,9 +67,7 @@ import io.cordova.zhqy.utils.fingerUtil.FingerprintUtil;
 import io.cordova.zhqy.utils.fingerUtil.MD5Util;
 import io.cordova.zhqy.widget.finger.CommonTipDialog;
 import io.cordova.zhqy.widget.finger.FingerprintVerifyDialog;
-import kr.co.namee.permissiongen.PermissionFail;
-import kr.co.namee.permissiongen.PermissionGen;
-import kr.co.namee.permissiongen.PermissionSuccess;
+
 
 import static io.cordova.zhqy.UrlRes.verificationUrl;
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
@@ -190,7 +188,7 @@ public class CodeBindActivity extends BaseActivity2 implements View.OnClickListe
     String s2;
     LoginBean loginBean;
     String tgt;
-    private void netWorkLogin2(String uname, String pwd) {
+    private void netWorkLogin2(final String uname, final String pwd) {
         try {
 //            URLEncoder.encode( ,"UTF-8")
 
@@ -198,66 +196,70 @@ public class CodeBindActivity extends BaseActivity2 implements View.OnClickListe
             s2 = URLEncoder.encode(pwd,"UTF-8");
             SPUtils.put(MyApp.getInstance(),"phone",AesEncryptUtile.decrypt(uname)+"");
             SPUtils.put(MyApp.getInstance(),"pwd",AesEncryptUtile.decrypt(pwd)+"");
-            Log.e("login","s1 = "+ s1 + "  ,s2  = " + s2);
+            String imei =  AesEncryptUtile.encrypt((String) SPUtils.get(this, "imei", ""), key);
+            OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
+                    .params("openid","123456")
+                    .params("username",uname)
+                    .params("password",pwd)
+                    .params("type","9")
+                    .params("equipmentId",imei)
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+                            Log.e("result1",response.body());
+
+                            loginBean = JSON.parseObject(response.body(),LoginBean.class);
+                            if (loginBean.isSuccess() ) {
+
+                                try {
+                                    CookieManager cookieManager =  CookieManager.getInstance();
+                                    cookieManager.removeAllCookie();
+                                    tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
+
+                                    String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
+
+                                    webView.setWebViewClient(mWebViewClient);
+                                    webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
+                                    String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
+                                    SPUtils.put(MyApp.getInstance(),"time",Calendar.getInstance().getTimeInMillis()+"");
+                                    SPUtils.put(MyApp.getInstance(),"userId",userId);
+                                    SPUtils.put(MyApp.getInstance(),"personName",userName);
+                                    SPUtils.put(getApplicationContext(),"TGC",tgt);
+                                    SPUtils.put(MyApp.getInstance(),"username",AesEncryptUtile.decrypt(uname)+"");
+                                    SPUtils.put(MyApp.getInstance(),"password",AesEncryptUtile.decrypt(pwd)+"");
+
+
+                                    FinishActivity.clearActivity();
+                                    finish();
+                                    Intent intent = new Intent();
+                                    intent.putExtra("refreshService","dongtai");
+                                    intent.setAction("refresh2");
+                                    sendBroadcast(intent);
+
+
+                                    //本地存储账号用户指纹登录时显示账号信息
+                                    StringBuffer stringBuffer = new StringBuffer();
+                                    SPUtil.getInstance().putString(Constants.SP_ACCOUNT, AesEncryptUtile.decrypt(username,key));
+                                    stringBuffer.append(AesEncryptUtile.decrypt(username,key));
+                                    stringBuffer.append(AesEncryptUtile.decrypt(password,key));
+                                    SPUtil.getInstance().putString(Constants.SP_A_P, MD5Util.md5Password(stringBuffer.toString()));
+                                    Log.e("login","tgt = "+ tgt + "  ,userName  = " + userName);
+
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }else {
+                                T.showShort(MyApp.getInstance(),loginBean.getMsg());
+                            }
+                        }
+                    });
 
         } catch (Exception e) {
             e.printStackTrace();
         }
 
 
-        OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
-                .params("openid","123456")
-                .params("username",s1)
-                .params("password",s2)
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        Log.e("result1",response.body());
 
-                        loginBean = JSON.parseObject(response.body(),LoginBean.class);
-                        if (loginBean.isSuccess() ) {
-
-                            try {
-                                CookieManager cookieManager =  CookieManager.getInstance();
-                                cookieManager.removeAllCookie();
-                                tgt = AesEncryptUtile.decrypt(loginBean.getAttributes().getTgt(),key);
-
-                                String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
-
-                                webView.setWebViewClient(mWebViewClient);
-                                webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
-                                String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
-                                SPUtils.put(MyApp.getInstance(),"time",Calendar.getInstance().getTimeInMillis()+"");
-                                SPUtils.put(MyApp.getInstance(),"userId",userId);
-                                SPUtils.put(MyApp.getInstance(),"personName",userName);
-                                SPUtils.put(getApplicationContext(),"TGC",tgt);
-                                SPUtils.put(getApplicationContext(),"username",s1);
-                                SPUtils.put(getApplicationContext(),"password",s2);
-
-                                FinishActivity.clearActivity();
-                                finish();
-                                Intent intent = new Intent();
-                                intent.putExtra("refreshService","dongtai");
-                                intent.setAction("refresh2");
-                                sendBroadcast(intent);
-
-
-                                //本地存储账号用户指纹登录时显示账号信息
-                                StringBuffer stringBuffer = new StringBuffer();
-                                SPUtil.getInstance().putString(Constants.SP_ACCOUNT, AesEncryptUtile.decrypt(username,key));
-                                stringBuffer.append(AesEncryptUtile.decrypt(username,key));
-                                stringBuffer.append(AesEncryptUtile.decrypt(password,key));
-                                SPUtil.getInstance().putString(Constants.SP_A_P, MD5Util.md5Password(stringBuffer.toString()));
-                                Log.e("login","tgt = "+ tgt + "  ,userName  = " + userName);
-
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            }
-                        }else {
-                            T.showShort(MyApp.getInstance(),loginBean.getMsg());
-                        }
-                    }
-                });
     }
 
     private WebViewClient mWebViewClient = new WebViewClient() {
