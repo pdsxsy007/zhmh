@@ -52,6 +52,7 @@ import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.activity.LoginActivity;
 import io.cordova.zhqy.activity.LoginActivity2;
 import io.cordova.zhqy.activity.MyToDoMsgActivity;
+import io.cordova.zhqy.activity.newToDo.NewMyToDoMsgActivity;
 import io.cordova.zhqy.bean.CountBean;
 import io.cordova.zhqy.utils.BadgeView;
 import io.cordova.zhqy.utils.BaseFragment;
@@ -139,7 +140,7 @@ public class FindPreFragment extends BaseFragment {
             public void onClick(View view) {
                 isLogin = !StringUtils.isEmpty((String) SPUtils.get(MyApp.getInstance(),"username",""));
                 if (isLogin){
-                    Intent intent = new Intent(MyApp.getInstance(), MyToDoMsgActivity.class);
+                    Intent intent = new Intent(MyApp.getInstance(), NewMyToDoMsgActivity.class);
                     startActivity(intent);
                 }else {
                     Intent intent = new Intent(MyApp.getInstance(), LoginActivity2.class);
@@ -579,40 +580,61 @@ public class FindPreFragment extends BaseFragment {
         }
     }
     CountBean countBean1;
-    private void netWorkSystemMsg() {
+//    private void netWorkSystemMsg() {
+//
+//        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_countUnreadMessagesForCurrentUser)
+//                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+//                .execute(new StringCallback() {
+//                    @Override
+//                    public void onSuccess(Response<String> response) {
+//                        Log.e("s",response.toString());
+//
+//                        countBean1 = JSON.parseObject(response.body(), CountBean.class);
+//                        //yy_msg_num.setText(countBean.getCount()+"");
+//                        netWorkOAToDoMsg();//OA待办
+//
+//                    }
+//                    @Override
+//                    public void onError(Response<String> response) {
+//                        super.onError(response);
+//
+//                    }
+//                });
+//    }
+private void netWorkSystemMsg() {
 
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_countUnreadMessagesForCurrentUser)
-                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        Log.e("s",response.toString());
+    String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+    OkGo.<String>post(UrlRes.HOME_URL + UrlRes.countUserMessagesByTypeUrl)
+            .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+            .params("type","0")
+            .execute(new StringCallback() {
+                @Override
+                public void onSuccess(Response<String> response) {
+                    Log.e("系统消息数量",response.body());
+                    countBean1 = JSON.parseObject(response.body(), CountBean.class);
+//                        //yy_msg_num.setText(countBean.getCount()+"");
+                    netWorkOAToDoMsg();//OA待办
 
-                        countBean1 = JSON.parseObject(response.body(), CountBean.class);
-                        //yy_msg_num.setText(countBean.getCount()+"");
-                        netWorkOAToDoMsg();//OA待办
+                }
+                @Override
+                public void onError(Response<String> response) {
+                    super.onError(response);
+                    Log.e("s",response.toString());
+                }
+            });
 
-                    }
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-
-                    }
-                });
-    }
+}
 
     CountBean countBean2;
     /**OA消息列表*/
     private void netWorkOAToDoMsg() {
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.countUserMessagesByTypeUrl)
                 .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .params("type", "db")
-                .params("workType", "workdb")
+                .params("type", "1")
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        Log.e("s",response.toString());
-
+                        Log.e("s",response.body());
                         countBean2 = JSON.parseObject(response.body(), CountBean.class);
                         netWorkDyMsg();
                     }
@@ -620,7 +642,7 @@ public class FindPreFragment extends BaseFragment {
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-                        Log.e("sssssss",response.toString());
+
                     }
                 });
     }
@@ -628,38 +650,38 @@ public class FindPreFragment extends BaseFragment {
     CountBean countBean3;
     String count;
     private void netWorkDyMsg() {
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.countUserMessagesByTypeUrl)
                 .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                .params("type", "dy")
-                .params("workType", "workdb")
+                .params("type", "2")
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        Log.e("s",response.toString());
+                        Log.e("s",response.body());
 
                         countBean3 = JSON.parseObject(response.body(), CountBean.class);
 
-                        String s = countBean2.getCount() + Integer.parseInt(countBean1.getObj()) + countBean3.getCount() + "";
 
-
-                        if(null == s){
-                            s = "0";
+                        count = countBean2.getCount() + countBean1.getCount() + countBean3.getCount() + "";
+                        if(null == count){
+                            count = "0";
                         }
-                        SPUtils.put(MyApp.getInstance(),"count",s+"");
 
-                        count = (String) SPUtils.get(getActivity(), "count", "");
+                        SPUtils.put(MyApp.getInstance(),"count",count+"");
                         if(!count.equals("") && !"0".equals(count)){
                             remind();
                             SPUtils.get(getActivity(),"count","");
                         }else {
                             badge1.hide();
                         }
+
                     }
+
+
+
 
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
-
                     }
                 });
     }
