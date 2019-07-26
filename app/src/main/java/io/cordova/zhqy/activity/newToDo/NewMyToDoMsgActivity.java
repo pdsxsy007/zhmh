@@ -131,15 +131,15 @@ public class NewMyToDoMsgActivity extends BaseActivity2 {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-
+                        Log.e("系统消息数量",response.body());
                         CountBean countBean = JSON.parseObject(response.body(), CountBean.class);
-                        Log.e("系统消息数量",countBean.getObj());
-                        if(countBean.getObj().equals("0")){
+
+                        if(countBean.getCount() == 0){
                             system_msg_present.setText("您还有未读的系统消息");
-                            tv_msg_num.setText(countBean.getObj()+"");
+                            tv_msg_num.setText(countBean.getCount()+"");
                         }else {
-                            tv_msg_num.setText(countBean.getObj()+"");
-                            system_msg_present.setText("您还有"+countBean.getObj()+"条未读系统消息");
+                            tv_msg_num.setText(countBean.getCount()+"");
+                            system_msg_present.setText("您还有"+countBean.getCount()+"条未读系统消息");
                         }
 
                     }

@@ -22,7 +22,9 @@ import butterknife.BindView;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.adapter.MyAdapter;
+import io.cordova.zhqy.adapter.MyAdapter2;
 import io.cordova.zhqy.bean.OAMsgListBean;
+import io.cordova.zhqy.bean.OAMsgListBean2;
 import io.cordova.zhqy.utils.BaseActivity2;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
@@ -47,7 +49,7 @@ public class NewMyShenqingActivity extends BaseActivity2  {
     SmartRefreshLayout mSwipeLayout;
     @BindView(R.id.header)
     ClassicsHeader header;
-    private MyAdapter adapter;
+    private MyAdapter2 adapter;
     private LinearLayoutManager mLinearLayoutManager;
 
     String type,msgType;
@@ -108,10 +110,10 @@ public class NewMyShenqingActivity extends BaseActivity2  {
                     public void onSuccess(Response<String> response) {
                         Log.e("s",response.toString());
                         ViewUtils.cancelLoadingDialog();
-                        oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean.class);
+                        oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean2.class);
                         if(oaMsgListBean.getObj().size() > 0){
                             oaMsgListBean2.getObj().addAll(oaMsgListBean.getObj());
-                            adapter = new MyAdapter(NewMyShenqingActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
+                            adapter = new MyAdapter2(NewMyShenqingActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
                             rvMsgList.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
                             num += 1;
@@ -144,16 +146,22 @@ public class NewMyShenqingActivity extends BaseActivity2  {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("s",response.toString());
-                        oaMsgListBean2 = JSON.parseObject(response.body(), OAMsgListBean.class);
+                        oaMsgListBean2 = JSON.parseObject(response.body(), OAMsgListBean2.class);
 
                         if (oaMsgListBean2.isSuccess()) {
                             Log.i("消息列表",response.body());
                             mSwipeLayout.setVisibility(View.VISIBLE);
                             rl_empty.setVisibility(View.GONE);
-                            adapter = new MyAdapter(NewMyShenqingActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
+                            adapter = new MyAdapter2(NewMyShenqingActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
                             rvMsgList.setAdapter(adapter);
                             refreshlayout.finishRefresh();
                             num = 2;
+
+                            if(oaMsgListBean2.getObj().size() == 0){
+                                refreshlayout.finishRefresh();
+                                mSwipeLayout.setVisibility(View.GONE);
+                                rl_empty.setVisibility(View.VISIBLE);
+                            }
                         }else {
                             refreshlayout.finishRefresh();
                             mSwipeLayout.setVisibility(View.GONE);
@@ -170,8 +178,8 @@ public class NewMyShenqingActivity extends BaseActivity2  {
     }
 
 
-    OAMsgListBean oaMsgListBean;
-    OAMsgListBean oaMsgListBean2 = new OAMsgListBean();
+    OAMsgListBean2 oaMsgListBean;
+    OAMsgListBean2 oaMsgListBean2 = new OAMsgListBean2();
     private void netWorkOaMsgList() {
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.findUserMessagesByTypeUrl)
                 .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -183,12 +191,17 @@ public class NewMyShenqingActivity extends BaseActivity2  {
                     public void onSuccess(Response<String> response) {
                         Log.e("s",response.toString());
                         ViewUtils.cancelLoadingDialog();
-                        oaMsgListBean2 = JSON.parseObject(response.body(), OAMsgListBean.class);
+                        oaMsgListBean2 = JSON.parseObject(response.body(), OAMsgListBean2.class);
                         if (oaMsgListBean2.isSuccess()) {
                             mSwipeLayout.setVisibility(View.VISIBLE);
                             rl_empty.setVisibility(View.GONE);
-                            adapter = new MyAdapter(NewMyShenqingActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
+                            adapter = new MyAdapter2(NewMyShenqingActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
                             rvMsgList.setAdapter(adapter);
+                            if(oaMsgListBean2.getObj().size() == 0){
+                                mSwipeLayout.finishRefresh();
+                                mSwipeLayout.setVisibility(View.GONE);
+                                rl_empty.setVisibility(View.VISIBLE);
+                            }
                             num = 2;
                         }else {
                             mSwipeLayout.setVisibility(View.GONE);

@@ -27,6 +27,8 @@ import butterknife.BindView;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.adapter.MyRefrshAdapter;
+import io.cordova.zhqy.adapter.MyRefrshAdapter2;
+import io.cordova.zhqy.bean.OAMsgListBean2;
 import io.cordova.zhqy.bean.SysMsgBean;
 import io.cordova.zhqy.utils.BaseActivity2;
 import io.cordova.zhqy.utils.MyApp;
@@ -54,7 +56,7 @@ public class NewSystemMsgActivity extends BaseActivity2 {
     int num = 1,pageSize = 20;
     String msgType;
     String type;
-    private MyRefrshAdapter adapter;
+    private MyRefrshAdapter2 adapter;
     @Override
     protected int getResourceId() {
         return  R.layout.oa_msg_activity;
@@ -161,7 +163,7 @@ public class NewSystemMsgActivity extends BaseActivity2 {
                     public void onSuccess(Response<String> response) {
                         Log.e("SysMsg加载更多页面",num+"");
                         Log.e("SysMsg加载更多",response.body());
-                        SysMsgBean sysMsgBean2 = JSON.parseObject(response.body(), SysMsgBean.class);
+                        OAMsgListBean2 sysMsgBean2 = JSON.parseObject(response.body(), OAMsgListBean2.class);
                             ViewUtils.cancelLoadingDialog();
                         if (sysMsgBean2.getObj().size() > 0) {
                             Log.i("消息列表",response.body());
@@ -205,11 +207,11 @@ public class NewSystemMsgActivity extends BaseActivity2 {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("SysMsg",response.body());
-                        sysMsgBean = JSON.parseObject(response.body(), SysMsgBean.class);
+                        sysMsgBean = JSON.parseObject(response.body(), OAMsgListBean2.class);
 
                         if (sysMsgBean.isSuccess()) {
                             Log.i("消息列表",response.body());
-                            adapter = new MyRefrshAdapter(NewSystemMsgActivity.this,R.layout.item_to_do_my_msg,sysMsgBean.getObj());
+                            adapter = new MyRefrshAdapter2(NewSystemMsgActivity.this,R.layout.item_to_do_my_msg,sysMsgBean.getObj());
                             rvMsgList.setAdapter(adapter);
                             num = 2;
                             refreshlayout.finishRefresh();
@@ -226,6 +228,11 @@ public class NewSystemMsgActivity extends BaseActivity2 {
                                     return false;
                                 }
                             });
+                            if(sysMsgBean.getObj().size() == 0){
+                                refreshlayout.finishRefresh();
+                                mSwipeRefresh.setVisibility(View.GONE);
+                                rl_empty.setVisibility(View.VISIBLE);
+                            }
                         }else {
                             mSwipeRefresh.setVisibility(View.GONE);
                             rl_empty.setVisibility(View.VISIBLE);
@@ -239,7 +246,7 @@ public class NewSystemMsgActivity extends BaseActivity2 {
                 });
     }
 
-    SysMsgBean sysMsgBean;
+    OAMsgListBean2 sysMsgBean;
     private void netWorkSysMsgList() {
         String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.findUserMessagesByTypeUrl)
@@ -251,15 +258,20 @@ public class NewSystemMsgActivity extends BaseActivity2 {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("SysMsg",response.body());
-                        sysMsgBean = JSON.parseObject(response.body(), SysMsgBean.class);
+                        sysMsgBean = JSON.parseObject(response.body(), OAMsgListBean2.class);
                         ViewUtils.cancelLoadingDialog();
                         if (sysMsgBean.isSuccess()) {
                             Log.i("消息列表",response.body());
-                            adapter = new MyRefrshAdapter(NewSystemMsgActivity.this,R.layout.item_to_do_my_msg,sysMsgBean.getObj());
+                            adapter = new MyRefrshAdapter2(NewSystemMsgActivity.this,R.layout.item_to_do_my_msg,sysMsgBean.getObj());
                             rvMsgList.setAdapter(adapter);
                             num = 2;
                             mSwipeRefresh.setVisibility(View.VISIBLE);
                             rl_empty.setVisibility(View.GONE);
+                            if(sysMsgBean.getObj().size() == 0){
+                                mSwipeRefresh.finishRefresh();
+                                mSwipeRefresh.setVisibility(View.GONE);
+                                rl_empty.setVisibility(View.VISIBLE);
+                            }
                         }else {
                             mSwipeRefresh.setVisibility(View.GONE);
                             rl_empty.setVisibility(View.VISIBLE);

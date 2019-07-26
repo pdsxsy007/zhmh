@@ -1,5 +1,9 @@
 package io.cordova.zhqy.activity.newToDo;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -22,7 +26,9 @@ import butterknife.BindView;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.adapter.MyAdapter;
+import io.cordova.zhqy.adapter.MyAdapter2;
 import io.cordova.zhqy.bean.OAMsgListBean;
+import io.cordova.zhqy.bean.OAMsgListBean2;
 import io.cordova.zhqy.utils.BaseActivity2;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
@@ -46,7 +52,7 @@ public class NewOaMsgActivity extends BaseActivity2  {
     @BindView(R.id.rl_empty)
     RelativeLayout rl_empty;
 
-    private MyAdapter adapter;
+    private MyAdapter2 adapter;
     private LinearLayoutManager mLinearLayoutManager;
 
     String type,msgType;
@@ -70,10 +76,40 @@ public class NewOaMsgActivity extends BaseActivity2  {
         rvMsgList.setLayoutManager(mLinearLayoutManager);
         ViewUtils.createLoadingDialog(this);
         netWorkOaMsgList();
-
+        registerBoradcastReceiver();
         header.setEnableLastTime(false);
     }
 
+    public void registerBoradcastReceiver() {
+        IntentFilter myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction("refreshMsg2");
+        //注册广播
+        registerReceiver(broadcastReceiver, myIntentFilter);
+    }
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+            if(action.equals("refreshMsg")){
+                String state = intent.getStringExtra("state");
+                if(state.equals("0")){
+                    num = 1;
+                    netWorkOaMsgList();
+                }else {
+//                    mLinearLayoutManager.scrollToPositionWithOffset(rvMsgList.getLayoutManager().find, 0);
+                }
+
+
+            }
+        }
+    };
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
 
     @Override
     protected void initListener() {
@@ -105,10 +141,10 @@ public class NewOaMsgActivity extends BaseActivity2  {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("s",response.toString());
-                        oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean.class);
+                        oaMsgListBean = JSON.parseObject(response.body(), OAMsgListBean2.class);
                         if(oaMsgListBean.getObj().size() > 0){
                             oaMsgListBean2.getObj().addAll(oaMsgListBean.getObj());
-                            adapter = new MyAdapter(NewOaMsgActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
+                            adapter = new MyAdapter2(NewOaMsgActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
                             rvMsgList.setAdapter(adapter);
                             adapter.notifyDataSetChanged();
                             num += 1;
@@ -140,17 +176,24 @@ public class NewOaMsgActivity extends BaseActivity2  {
                     @Override
                     public void onSuccess(Response<String> response) {
                         Log.e("s",response.toString());
-                        oaMsgListBean2 = JSON.parseObject(response.body(), OAMsgListBean.class);
+                        oaMsgListBean2 = JSON.parseObject(response.body(), OAMsgListBean2.class);
                         if (oaMsgListBean2.isSuccess()) {
                             Log.i("消息列表",response.body());
-                            //setRvOAMsgList();
-                            adapter = new MyAdapter(NewOaMsgActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
 
-                            rvMsgList.setAdapter(adapter);
-                            refreshlayout.finishRefresh();
-                            num = 2;
-                            mSwipeLayout.setVisibility(View.VISIBLE);
-                            rl_empty.setVisibility(View.GONE);
+                            if(oaMsgListBean2.getObj().size() == 0){
+                                mSwipeLayout.finishRefresh();
+                                mSwipeLayout.setVisibility(View.GONE);
+                                rl_empty.setVisibility(View.VISIBLE);
+                            }else {
+                                //setRvOAMsgList();
+                                adapter = new MyAdapter2(NewOaMsgActivity.this, R.layout.item_to_do_my_msg, oaMsgListBean2.getObj());
+
+                                rvMsgList.setAdapter(adapter);
+                                refreshlayout.finishRefresh();
+                                num = 2;
+                                mSwipeLayout.setVisibility(View.VISIBLE);
+                                rl_empty.setVisibility(View.GONE);
+                            }
                         }else {
                             refreshlayout.finishRefresh();
                             mSwipeLayout.setVisibility(View.GONE);
@@ -167,8 +210,8 @@ public class NewOaMsgActivity extends BaseActivity2  {
     }
 
 
-    OAMsgListBean oaMsgListBean;
-    OAMsgListBean oaMsgListBean2 = new OAMsgListBean();
+    OAMsgListBean2 oaMsgListBean;
+    OAMsgListBean2 oaMsgListBean2 = new OAMsgListBean2();
     private void netWorkOaMsgList() {
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.findUserMessagesByTypeUrl)
                 .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -178,17 +221,24 @@ public class NewOaMsgActivity extends BaseActivity2  {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        Log.e("s",response.toString());
+                        Log.i("消息列表",response.body());
                         ViewUtils.cancelLoadingDialog();
-                        oaMsgListBean2 = JSON.parseObject(response.body(), OAMsgListBean.class);
+                        oaMsgListBean2 = JSON.parseObject(response.body(), OAMsgListBean2.class);
                         if (oaMsgListBean2.isSuccess()) {
-                            Log.i("消息列表",response.body());
+                            if(oaMsgListBean2.getObj().size() == 0){
+                                mSwipeLayout.finishRefresh();
+                                mSwipeLayout.setVisibility(View.GONE);
+                                rl_empty.setVisibility(View.VISIBLE);
+                            }
+
                             //setRvOAMsgList();
-                            adapter = new MyAdapter(NewOaMsgActivity.this,R.layout.item_to_do_my_msg,oaMsgListBean2.getObj());
-                            rvMsgList.setAdapter(adapter);
-                            num = 2;
-                            mSwipeLayout.setVisibility(View.VISIBLE);
-                            rl_empty.setVisibility(View.GONE);
+                            else {
+                                adapter = new MyAdapter2(NewOaMsgActivity.this, R.layout.item_to_do_my_msg, oaMsgListBean2.getObj());
+                                rvMsgList.setAdapter(adapter);
+                                num = 2;
+                                mSwipeLayout.setVisibility(View.VISIBLE);
+                                rl_empty.setVisibility(View.GONE);
+                            }
                         }else {
                             mSwipeLayout.setVisibility(View.GONE);
                             rl_empty.setVisibility(View.VISIBLE);
