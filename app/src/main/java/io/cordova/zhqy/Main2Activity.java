@@ -132,6 +132,8 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static android.content.pm.PackageManager.PERMISSION_GRANTED;
+import static io.cordova.zhqy.UrlRes.HOME2_URL;
+import static io.cordova.zhqy.UrlRes.changePwdUrl;
 import static io.cordova.zhqy.UrlRes.insertPortalPositionUrl;
 import static io.cordova.zhqy.activity.SplashActivity.getLocalVersionName;
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
@@ -197,13 +199,13 @@ public class Main2Activity extends BaseActivity3 {
         badge1.hide();
         Log.d("TAG", " registrationId : " + MyApp.registrationId);
 
-        //mainRadioGroup.check(R.id.rb_home_page);
+        mainRadioGroup.check(R.id.rb_home_page);
 
         insertPortalAccessLog = "1";
         if (isHome){
             netInsertPortal(insertPortalAccessLog);
         }
-        //cameraTask2();
+
         //setPermission();
 
         setListener();
@@ -219,26 +221,7 @@ public class Main2Activity extends BaseActivity3 {
 
     }
 
-    private void cameraTask2() {
-        /*Manifest.permission.READ_PHONE_STATE,
-                //Manifest.permission.SYSTEM_ALERT_WINDOW,
-                Manifest.permission.READ_EXTERNAL_STORAGE,
-                Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission. RECEIVE_WAP_PUSH,
-                Manifest.permission. MANAGE_DOCUMENTS,
-                Manifest.permission. MEDIA_CONTENT_CONTROL*/
-        if (EasyPermissions.hasPermissions(this, Manifest.permission.READ_PHONE_STATE,Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission. RECEIVE_WAP_PUSH,
-                Manifest.permission. MANAGE_DOCUMENTS,
-                Manifest.permission. MEDIA_CONTENT_CONTROL
-        )) {
 
-        } else {//没有相应权限，获取相机权限
-            // Ask for one permission
-
-        }
-    }
 
     private void showNewSuDialog() {
         userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
@@ -271,15 +254,12 @@ public class Main2Activity extends BaseActivity3 {
                                     String type = obj.getType();
                                     if(type.equals("0")){//弹出修改密码
                                         Intent intent = new Intent(Main2Activity.this, ChangeUpdatePwdWebActivity.class);
-                                        intent.putExtra("appUrl","http://kys.zzuli.edu.cn/authentication/authentication/views/appNative/changePwd.html");
+                                        intent.putExtra("appUrl",HOME2_URL+changePwdUrl);
                                         startActivity(intent);
                                     }
                                 }
                             }
                         }
-
-
-
 
                     }
                     @Override
@@ -471,7 +451,7 @@ public class Main2Activity extends BaseActivity3 {
 
     public void registerBoradcastReceiver() {
         IntentFilter myIntentFilter = new IntentFilter();
-        myIntentFilter.addAction("refresh2");
+        myIntentFilter.addAction("refresh3");
         //注册广播
         registerReceiver(broadcastReceiver, myIntentFilter);
     }
@@ -482,8 +462,9 @@ public class Main2Activity extends BaseActivity3 {
         @Override
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
-            if(action.equals("refresh2")){
+            if(action.equals("refresh3")){
                 String faceNewActivity = intent.getStringExtra("FaceNewActivity");
+                Log.e("imageid",imageid+"");
                 if(imageid == 0){
                     if(faceNewActivity != null){
                         imageid = 1;
@@ -504,15 +485,16 @@ public class Main2Activity extends BaseActivity3 {
     };
 
     public void upToServer(String sresult){
-        OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.addFaceUrl)
+        OkGo.<String>post(HOME2_URL+ UrlRes.addFaceUrl)
                 .params( "openId","123456")
                 .params( "memberId",(String) SPUtils.get(MyApp.getInstance(), "userId", ""))
                 .params( "img",sresult )
+                .params( "code","newstudentfacecode" )
                 .execute(new StringCallback(){
                     @Override
                     public void onSuccess(Response<String> response) {
                         ViewUtils.cancelLoadingDialog();
-                        Log.e("上传图片",response.body());
+                        Log.e("上传图片zhuye",response.body());
                         AddFaceBean faceBean = JsonUtil.parseJson(response.body(),AddFaceBean.class);
                         boolean success = faceBean.getSuccess();
                         String msg = faceBean.getMsg();
@@ -525,12 +507,14 @@ public class Main2Activity extends BaseActivity3 {
                             m_Dialog2.dismiss();
                         }else {
                             ToastUtils.showToast(Main2Activity.this,msg);
+                            imageid = 0;
                         }
                     }
 
                     @Override
                     public void onError(Response<String> response) {
                         super.onError(response);
+                        imageid = 0;
                         ViewUtils.cancelLoadingDialog();
                         T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
                     }
@@ -1022,7 +1006,7 @@ public class Main2Activity extends BaseActivity3 {
         }
 
 
-
+        //imageid = 0;
 
     }
 
@@ -1046,7 +1030,7 @@ public class Main2Activity extends BaseActivity3 {
         }
 
 
-        OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
+        OkGo.<String>get(HOME2_URL +"/cas/casApiLoginController")
                 .params("openid","123456")
                 .params("username",s1)
                 .params("password",s2)
@@ -1511,7 +1495,7 @@ public class Main2Activity extends BaseActivity3 {
 
 
             String tgc = (String) SPUtils.get(Main2Activity.this, "TGC", "");
-            CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgc,getApplication());
+            CookieUtils.syncCookie(HOME2_URL,"CASTGC="+tgc,getApplication());
 
 
         }

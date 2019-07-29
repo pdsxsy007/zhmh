@@ -84,6 +84,8 @@ import io.reactivex.functions.Consumer;
 import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
+import static io.cordova.zhqy.UrlRes.HOME2_URL;
+import static io.cordova.zhqy.UrlRes.HOME_URL;
 import static io.cordova.zhqy.activity.FaceActivity.bitmapToBase64;
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 
@@ -301,7 +303,7 @@ public class LoginActivity2 extends BaseActivity {
        ;
         try {
             String imei =  AesEncryptUtile.encrypt((String) SPUtils.get(this, "imei", ""), key);
-            OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
+            OkGo.<String>get(HOME2_URL +"/cas/casApiLoginController")
                     .params("openid","123456")
                     .params("username",s1)
                     .params("password",s2)
@@ -323,7 +325,8 @@ public class LoginActivity2 extends BaseActivity {
                                     String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
 
                                     webView.setWebViewClient(mWebViewClient);
-                                    webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
+                                    //webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
+                                    webView.loadUrl(HOME_URL+"/portal/login/appLogin");
                                     String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
                                     SPUtils.put(MyApp.getInstance(),"time",Calendar.getInstance().getTimeInMillis()+"");
                                     SPUtils.put(MyApp.getInstance(),"userId",userId);
@@ -340,6 +343,9 @@ public class LoginActivity2 extends BaseActivity {
                                     intent.setAction("refresh2");
                                     sendBroadcast(intent);
 
+                                    Intent intent2 = new Intent();
+                                    intent2.setAction("refresh3");
+                                    sendBroadcast(intent2);
 
                                     //本地存储账号用户指纹登录时显示账号信息
                                     StringBuffer stringBuffer = new StringBuffer();
@@ -421,7 +427,8 @@ public class LoginActivity2 extends BaseActivity {
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
 
-            CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgt,getApplication());
+            //CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgt,getApplication());
+            CookieUtils.syncCookie(HOME2_URL,"CASTGC="+tgt,getApplication());
 
         }
 
@@ -539,7 +546,7 @@ public class LoginActivity2 extends BaseActivity {
             SPUtils.put(MyApp.getInstance(),"phone",AesEncryptUtile.decrypt(uname)+"");
             SPUtils.put(MyApp.getInstance(),"pwd",AesEncryptUtile.decrypt(pwd)+"");
             String imei =  AesEncryptUtile.encrypt((String) SPUtils.get(this, "imei", ""), key);
-            OkGo.<String>get(UrlRes.HOME2_URL +"/cas/casApiLoginController")
+            OkGo.<String>get(HOME2_URL +"/cas/casApiLoginController")
                     .params("openid","123456")
                     .params("username",uname)
                     .params("password",pwd)
@@ -567,8 +574,8 @@ public class LoginActivity2 extends BaseActivity {
                                     SPUtils.put(MyApp.getInstance(),"userId",userId);
                                     SPUtils.put(MyApp.getInstance(),"personName",userName);
                                     SPUtils.put(MyApp.getInstance(),"TGC",tgt);
-                                    SPUtils.put(MyApp.getInstance(),"username",AesEncryptUtile.decrypt(uname)+"");
-                                    SPUtils.put(MyApp.getInstance(),"password",AesEncryptUtile.decrypt(pwd)+"");
+                                    SPUtils.put(MyApp.getInstance(),"username",uname+"");
+                                    SPUtils.put(MyApp.getInstance(),"password",pwd+"");
 
 
 
@@ -593,6 +600,18 @@ public class LoginActivity2 extends BaseActivity {
                             }else {
                                 T.showShort(MyApp.getInstance(),loginBean.getMsg());
                             }
+                        }
+
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            ViewUtils.cancelLoadingDialog();
+                        }
+
+                        @Override
+                        public void onFinish() {
+                            super.onFinish();
+                            ViewUtils.cancelLoadingDialog();
                         }
                     });
         } catch (Exception e) {
@@ -729,7 +748,7 @@ public class LoginActivity2 extends BaseActivity {
     }
 
     private void checkYiJianData(String content) {
-        OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.loginTokenVerifyUrl)
+        OkGo.<String>post(HOME2_URL+ UrlRes.loginTokenVerifyUrl)
                 .params( "openId","123456")
                 .params( "loginToken",content)
                 .execute(new StringCallback(){
@@ -889,7 +908,7 @@ public class LoginActivity2 extends BaseActivity {
 //                }
                         try {
                             String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
-                            OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.getPassByFaceUrl)
+                            OkGo.<String>post(HOME2_URL+ UrlRes.getPassByFaceUrl)
                                     .params( "openId","123456")
                                     .params( "secret",secret)
                                     .params( "img",s )
@@ -929,6 +948,7 @@ public class LoginActivity2 extends BaseActivity {
                                                     Log.e("调试2",response.body());
                                                     ToastUtils.showToast(LoginActivity2.this,msg);
                                                     ViewUtils.cancelLoadingDialog();
+                                                    imageid = 0;
                                                 }
                                             }catch (Exception e){
                                                 e.printStackTrace();
@@ -940,9 +960,10 @@ public class LoginActivity2 extends BaseActivity {
                                         @Override
                                         public void onError(Response<String> response) {
                                             super.onError(response);
-                                            SPUtils.put(getApplicationContext(),"isloading2","112");
+                                            SPUtils.put(getApplicationContext(),"isloading2","");
                                             T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
                                             ViewUtils.cancelLoadingDialog();
+                                            imageid = 0;
                                         }
                                     });
                         } catch (Exception e) {
