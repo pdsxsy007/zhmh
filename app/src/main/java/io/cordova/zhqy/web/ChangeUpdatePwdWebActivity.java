@@ -102,7 +102,13 @@ import me.samlss.lighter.interfaces.OnLighterListener;
 import me.samlss.lighter.parameter.Direction;
 import me.samlss.lighter.parameter.LighterParameter;
 import me.samlss.lighter.parameter.MarginOffset;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
+import static io.cordova.zhqy.UrlRes.HOME2_URL;
+import static io.cordova.zhqy.UrlRes.HOME_URL;
+import static io.cordova.zhqy.UrlRes.addPortalReadingAccessUrl;
+import static io.cordova.zhqy.UrlRes.functionInvocationLogUrl;
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 import static io.cordova.zhqy.utils.MyApp.getInstance;
 
@@ -114,7 +120,7 @@ import static io.cordova.zhqy.utils.MyApp.getInstance;
  */
 
 @SuppressLint("Registered")
-public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
+public class ChangeUpdatePwdWebActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
     protected AgentWeb mAgentWeb;
 
     @BindView(R.id.webView)
@@ -123,7 +129,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
     @BindView(R.id.layout_close)
     RelativeLayout rvClose;
 
-     @BindView(R.id.tv_title)
+    @BindView(R.id.tv_title)
     TextView mTitleTextView;
     @BindView(R.id.rl_no)
     RelativeLayout rl_no;
@@ -133,6 +139,9 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
 
     @BindView(R.id.ll_shoushi)
     RelativeLayout ll_shoushi;
+
+    @BindView(R.id.layout_back)
+    RelativeLayout layout_back;
 
     private LinearLayout mLinearLayout;
     String appServiceUrl, tgc,appId,search,oaMsg;
@@ -154,17 +163,13 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
     GestureDetector gestureDetector;
     protected static final float FLIP_DISTANCE = 400;
 
-    @BindView(R.id.iv_back)
-    ImageView iv_back;
-
     @SuppressLint("WrongConstant")
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
         ButterKnife.bind(this);
-        iv_back.setVisibility(View.GONE);
-
+        gestureDetector = new GestureDetector(this,this);
         mLinearLayout = (LinearLayout) this.findViewById(R.id.container);
         rvClose.setVisibility(View.GONE);
 
@@ -176,7 +181,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
 
         appName = getIntent().getStringExtra("appName");
         scan = getIntent().getStringExtra("scan");
-
+        layout_back.setVisibility(View.GONE);
         mTitleTextView.setText(appName);
         if (!StringUtils.isEmpty(oaMsg)){
             if (!appServiceUrl.contains("fromnewcas=Y")){
@@ -195,7 +200,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
             rbSc.setVisibility(View.GONE);
         }
         String tgc = (String) SPUtils.get(ChangeUpdatePwdWebActivity.this, "TGC", "");
-        CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgc,getApplication());
+        CookieUtils.syncCookie(HOME2_URL,"CASTGC="+tgc,getApplication());
         mAgentWeb = AgentWeb.with(this)
                 .setAgentWebParent(mLinearLayout, new LinearLayout.LayoutParams(-1, -1))
                 .useDefaultIndicator(-1, 3)//设置进度条颜色与高度，-1为默认值，高度为2，单位为dp。
@@ -212,11 +217,13 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
                 .createAgentWeb()
                 .ready()
                 .go(appServiceUrl);
+
+
         mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);
         mAgentWeb.getJsInterfaceHolder().addJavaObject("android",new AndroidInterface());
 
 
-        //netWorkIsCollection();
+        netWorkIsCollection();
         initListener();
 
         String home05 = (String) SPUtils.get(MyApp.getInstance(), "home05", "");
@@ -231,44 +238,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
 
     }
 
-    private void ceshiData() {
-        String username = (String) SPUtils.get(MyApp.getInstance(), "personName", "");
-        String userId  = null;
-        try {
-            userId = AesEncryptUtile.encrypt(username+ "_"+ Calendar.getInstance().getTimeInMillis(),"123456789hanpeng");
-            OkGo.<String>post("http://192.168.30.68:8080/portal/mobile/functionInvocationLog/")
-                    .params("invocationLogAppId","454644646565")
-                    .params("invocationLogMember",userId)
-                    .params("invocationLogFunction","snNOOs8l9FHPEQeshem/+0w665pCYJCrsf0D4zRPSOg=")
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onSuccess(Response<String> response) {
 
-                            Log.e("js调用扫码",response.body());
-
-                            AppOrthBean appOrthBean = JsonUtil.parseJson(response.body(),AppOrthBean.class);
-                            boolean success = appOrthBean.getSuccess();
-                            if(success == true){
-                                String invocationLogFunction = appOrthBean.getObj().getInvocationLogFunction();
-                                if("方法名".equals(invocationLogFunction)){
-
-                                    //执行该方法
-                                }
-                            }else {
-                                ToastUtils.showToast(ChangeUpdatePwdWebActivity.this,"没有使用该功能的权限!");
-                            }
-                        }
-                        @Override
-                        public void onError(Response<String> response) {
-                            super.onError(response);
-                            Log.e("s",response.toString());
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void setGuideView() {
 
@@ -298,18 +268,18 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
 
     BaseBean appTime;
     private void networkAppStatTime() {
-        OkGo.<String>post(UrlRes.HOME_URL+ UrlRes.APP_Time)
+        OkGo.<String>post(HOME_URL+ UrlRes.APP_Time)
                 .params( "responseTime",time )
                 .params( "responseAppId",appId)
                 .execute(new StringCallback(){
                     @Override
                     public void onSuccess(Response<String> response) {
                         //handleResponse(response);
-                            Log.e("Tag",response.body());
-                            appTime = JSON.parseObject(response.body(),BaseBean.class);
-                            if (appTime.isSuccess()) {
-                                isFirst = false;
-                            }
+                        Log.e("Tag",response.body());
+                        appTime = JSON.parseObject(response.body(),BaseBean.class);
+                        if (appTime.isSuccess()) {
+                            isFirst = false;
+                        }
                     }
 
                     @Override
@@ -327,7 +297,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
      * 请求检测是否收藏页面
      * */
     private void netWorkIsCollection() {
-        OkGo.<String>post(UrlRes.HOME_URL+ UrlRes.Query_IsCollection)
+        OkGo.<String>post(HOME_URL+ UrlRes.Query_IsCollection)
                 .params( "version","1.0" )
                 .params( "collectionAppId",appId )
                 .params( "userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -374,14 +344,13 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
 
     /**请求收藏*/
     private void networkCollection() {
-        OkGo.<String>post(UrlRes.HOME_URL+ UrlRes.Add_Collection)
+        OkGo.<String>post(HOME_URL+ UrlRes.Add_Collection)
                 .params( "version","1.0" )
                 .params( "collectionAppId",appId )
                 .params( "userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .execute(new StringCallback(){
                     @Override
                     public void onSuccess(Response<String> response) {
-                        //handleResponse(response);
                         Log.e("tag",response.body());
                         baseBean = JSON.parseObject(response.body(), BaseBean.class);
                         if (baseBean.isSuccess()){
@@ -409,14 +378,13 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
 
     /**取消收藏*/
     private void cancelCollection() {
-        OkGo.<String>post(UrlRes.HOME_URL+ UrlRes.Cancel_Collection)
+        OkGo.<String>post(HOME_URL+ UrlRes.Cancel_Collection)
                 .params( "version","1.0" )
                 .params( "collectionAppId",appId )
                 .params( "userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .execute(new StringCallback(){
                     @Override
                     public void onSuccess(Response<String> response) {
-                        //handleResponse(response);
                         Log.e("tag",response.body());
                         baseBean = JSON.parseObject(response.body(), BaseBean.class);
                         if (baseBean.isSuccess()){
@@ -449,9 +417,9 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
     public void onViewClicked(View view) {
         switch (view.getId()) {
             case R.id.iv_back:
-            if (!mAgentWeb.back()){
-
-            }
+                if (!mAgentWeb.back()){
+                    ChangeUpdatePwdWebActivity.this.finish();
+                }
                 break;
             case R.id.iv_close:
                 ChangeUpdatePwdWebActivity.this.finish();
@@ -680,18 +648,13 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
             Log.e("content",json.toString());
             String content = AesEncryptUtile.encrypt(s3, key);
 
-            OkGo.<String>post("http://192.168.30.30:8081/portal/mobile/portalReadingAccess/addPortalReadingAccess")
+            OkGo.<String>post(HOME_URL+addPortalReadingAccessUrl)
                     .params("json", content)
                     .execute(new StringCallback() {
                         @Override
                         public void onSuccess(Response<String> response) {
                             Log.e("s",response.toString());
-                           /* FaceBean2 faceBean2 = JsonUtil.parseJson(response.toString(),FaceBean2.class);
 
-                            boolean success = faceBean2.getSuccess();
-                            if(success == true){
-
-                            }*/
                         }
 
                         @Override
@@ -765,7 +728,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
             //   do you work
 
             if (newProgress == 100 && start > 0){
-                 end =   Calendar.getInstance().getTimeInMillis();
+                end =   Calendar.getInstance().getTimeInMillis();
                 time =(end - start) +"";
             }
 
@@ -985,10 +948,10 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
 
     /**扫码*/
     private static final int QR_CODE = 55846;
-
+    private Handler deliver = new Handler(Looper.getMainLooper());
     /**Js调用内部类*/
     public class AndroidInterface {
-        private Handler deliver = new Handler(Looper.getMainLooper());
+
 
         /**震动响铃*/
         @JavascriptInterface
@@ -1030,67 +993,43 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
             });
             Log.i("Info", "Thread:" + Thread.currentThread());
         }
+
+
+        /**进入扫描二维码页面*/
+        @JavascriptInterface
+        public void nativeScanQRCode(final String invocationLogAppId,final String invocationLogFunction) {
+            ceshiData(invocationLogAppId,invocationLogFunction,"nativeScanQRCode");
+
+        }
+        /**手机定位坐标*/
+        @JavascriptInterface
+        public void nativeGetLocation(final String invocationLogAppId,final String invocationLogFunction) {
+            ceshiData(invocationLogAppId,invocationLogFunction, "nativeGetLocation");
+
+            Log.i("Info", "Thread:" + Thread.currentThread());
+        }
+        /**关闭当前页面*/
+        @JavascriptInterface
+        public void nativeCloseCurrentPage(final String invocationLogAppId,final String invocationLogFunction) {
+            ceshiData(invocationLogAppId,invocationLogFunction, "nativeCloseCurrentPage");
+
+            Log.i("Info", "Thread:" + Thread.currentThread());
+        }
+
+
         /**关闭当前页面*/
         @JavascriptInterface
         public void closeCurrentPage() {
             deliver.post(new Runnable() {
                 @Override
                 public void run() {
-                   finish();
+                    finish();
                 }
             });
             Log.i("Info", "Thread:" + Thread.currentThread());
         }
 
-        /**进入扫描二维码页面*/
-        @JavascriptInterface
-        public void scanQRCode() {
 
-            //String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
-           /* String username = (String) SPUtils.get(MyApp.getInstance(), "personName", "");
-            String userId  = null;
-            try {
-                userId = AesEncryptUtile.encrypt(username+ "_"+ Calendar.getInstance().getTimeInMillis(),"123456789hanpeng");
-                OkGo.<String>post("http://192.168.30.68:8080/portal/mobile/functionInvocationLog/addInvocationLog")
-                        .params("invocationLogAppId","56fe5d26add74f10")
-                        .params("invocationLogMember",userId)
-                        .params("invocationLogFunction","snNOOs8l9FHPEQeshem/+0w665pCYJCrsf0D4zRPSOg=")
-                        .execute(new StringCallback() {
-                            @Override
-                            public void onSuccess(Response<String> response) {
-
-                                Log.e("js调用扫码",response.body());
-
-                            }
-                            @Override
-                            public void onError(Response<String> response) {
-                                super.onError(response);
-                                Log.e("s",response.toString());
-                            }
-                        });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-
-
-            //OkGo.<String>post(UrlRes.HOME_URL + UrlRes.functionInvocationLogUrl)
-
-           /* deliver.post(new Runnable() {
-                @Override
-                public void run() {
-                    qrPermission();
-                    if (allowedScan){
-                        onScanQR();
-                    }else {
-                        Toast.makeText(getApplicationContext(),"请允许权限后尝试",Toast.LENGTH_SHORT).show();
-                        qrPermission();
-                    }
-
-
-                }
-            });*/
-
-        }
         /**手机定位坐标*/
         @JavascriptInterface
         public void getLocation() {
@@ -1104,6 +1043,28 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
         }
 
 
+
+        /**进入扫描二维码页面*/
+        @JavascriptInterface
+        public void ScanQRCode() {
+
+
+            deliver.post(new Runnable() {
+                @Override
+                public void run() {
+                    qrPermission();
+                    if (allowedScan){
+                        onScanQR();
+                    }else {
+                        Toast.makeText(getApplicationContext(),"请允许权限后尝试",Toast.LENGTH_SHORT).show();
+                        qrPermission();
+                    }
+
+
+                }
+            });
+
+        }
     }
 
 
@@ -1229,6 +1190,91 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
     }
 
 
+    private void ceshiData(String appid, String function, final String typeName) {
+        String username = (String) SPUtils.get(MyApp.getInstance(), "personName", "");
+        String userId  = null;
+        try {
+            userId = AesEncryptUtile.encrypt(username+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
+            OkGo.<String>post(HOME_URL+functionInvocationLogUrl)
+                    .params("invocationLogAppId",appid)
+                    .params("invocationLogMember",userId)
+                    .params("invocationLogFunction",function)
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+
+                            Log.e("js调用扫码",response.body());
+
+                            AppOrthBean appOrthBean = JsonUtil.parseJson(response.body(),AppOrthBean.class);
+                            boolean success = appOrthBean.getSuccess();
+                            if(success == true){
+                                String invocationLogFunction = appOrthBean.getObj().getInvocationLogFunction();
+                                if(typeName.equals(invocationLogFunction)){
+                                    if(invocationLogFunction.equals("nativeScanQRCode")){
+                                        deliver.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                cameraTask();
+                                                /*qrPermission();
+                                                if (allowedScan){
+                                                    onScanQR();
+                                                }else {
+                                                    Toast.makeText(getApplicationContext(),"请允许权限后尝试",Toast.LENGTH_SHORT).show();
+                                                    qrPermission();
+                                                }*/
+
+
+                                            }
+                                        });
+                                    }else if(invocationLogFunction.equals("nativeGetLocation")){
+                                        deliver.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                onLoctionCoordinate();
+                                            }
+                                        });
+                                    }else if(invocationLogFunction.equals("nativeCloseCurrentPage")){
+                                        deliver.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                finish();
+                                            }
+                                        });
+                                    }
+
+                                }
+                            }else {
+                                ToastUtils.showToast(ChangeUpdatePwdWebActivity.this,"没有使用该功能的权限!");
+                            }
+                        }
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            Log.e("s",response.toString());
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static final int RC_CAMERA_PERM = 123;
+
+    @AfterPermissionGranted(RC_CAMERA_PERM)
+    public void cameraTask() {
+        if (EasyPermissions.hasPermissions(ChangeUpdatePwdWebActivity.this, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Have permission, do the thing!
+
+            onScanQR();
+            ;//调用相机照相
+        } else {//没有相应权限，获取相机权限
+            // Ask for one permission
+            EasyPermissions.requestPermissions(this, "获取照相机权限",
+                    RC_CAMERA_PERM, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
 
     @Override
     protected void onPause() {
@@ -1271,7 +1317,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
 
         // Android 5.0 (API level 21)以上版本会触发该方法，该方法为公开方法
         @SuppressWarnings("all")
-        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, FileChooserParams fileChooserParams) {
+        public boolean onShowFileChooser(WebView webView, ValueCallback<Uri[]> filePathCallback, WebChromeClient.FileChooserParams fileChooserParams) {
             if (Build.VERSION.SDK_INT >= 21) {
                 final boolean allowMultiple = fileChooserParams.getMode() == FileChooserParams.MODE_OPEN_MULTIPLE;//是否支持多选
                 openFileInput(null, filePathCallback, allowMultiple);
@@ -1387,7 +1433,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
 
     private void netInsertPortal(final String insertPortalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(this);
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
+        OkGo.<String>post(HOME_URL + UrlRes.Four_Modules)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
                 .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
@@ -1409,6 +1455,77 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity  {
     }
 
 
+    @Override
+    public boolean onDown(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+       /* if(motionEvent.getX() - motionEvent1.getX() > FLIP_DISTANCE)
+        {
+            Toast.makeText(this, "左滑", Toast.LENGTH_SHORT).show();
+            return true;
+        }*/
+        float x = motionEvent1.getX();
+        float x1 = motionEvent.getX();
+        Log.e("x",x+"");
+        Log.e("x1",x1+"");
+        if(motionEvent1.getX() - motionEvent.getX() > FLIP_DISTANCE)
+        {
+            /*Toast.makeText(this, "右滑", Toast.LENGTH_SHORT).show();
+            onBackPressed();*/
+            boolean b = mAgentWeb.getWebCreator().getWebView().canGoBack();
+            if(b){
+                mAgentWeb.back();
+
+                Log.e("ACTION_MOVE","ACTION_MOVE");
+
+            }else {
+                finish();
+                Log.e("ACTION_MOVE","ACTION_MOVE---finish");
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        //TouchEvent dispatcher.
+        if (gestureDetector != null) {
+            if (gestureDetector.onTouchEvent(ev))
+                //If the gestureDetector handles the event, a swipe has been executed and no more needs to be done.
+                return true;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return gestureDetector.onTouchEvent(event);
+    }
 
     @Override
     public void onBackPressed() {
