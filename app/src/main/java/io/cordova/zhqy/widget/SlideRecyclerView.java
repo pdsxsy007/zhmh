@@ -21,6 +21,9 @@ import android.widget.Scroller;
 
 public class SlideRecyclerView extends RecyclerView {
 
+
+
+
     private static final String TAG = "SlideRecyclerView";
     private static final int INVALID_POSITION = -1; // 触摸到的点不在子View范围内
     private static final int INVALID_CHILD_WIDTH = -1;  // 子ItemView不含两个子View
