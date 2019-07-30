@@ -424,9 +424,9 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
                         sendBroadcast(intent);
                         Intent intent1 = new Intent(AppSetting.this,Main3Activity.class);
                         startActivity(intent1);
-                        finish();
+                        //finish();
 
-
+                        FinishActivity.clearActivity();
 
                     }
                 });

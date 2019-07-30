@@ -175,7 +175,12 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
     @Override
     protected void onResume() {
         super.onResume();
+        String isloadingUp = (String) SPUtils.get(ShengWuActivity.this, "isloadingUp", "");
+        if(!isloadingUp .equals("")){
+            SPUtils.put(getApplicationContext(),"isloadingUp","");
+            ViewUtils.createLoadingDialog2(ShengWuActivity.this,true,"人脸上传中");
 
+        }
 
     }
 
@@ -640,12 +645,11 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
 
 
     public void upToServer(String sresult){
-//        String sresult = imageToBase64(file.getAbsolutePath());
-        ViewUtils.createLoadingDialog(ShengWuActivity.this);
         OkGo.<String>post(UrlRes.HOME2_URL+ UrlRes.addFaceUrl)
                 .params( "openId","123456")
                 .params( "memberId",userId)
                 .params( "img",sresult )
+                .params( "code","" )
                 .execute(new StringCallback(){
                     @Override
                     public void onSuccess(Response<String> response) {
@@ -659,7 +663,9 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
                             ToastUtils.showToast(ShengWuActivity.this,msg);
                         }else {
                             ToastUtils.showToast(ShengWuActivity.this,msg);
+                            imageid = 0;
                         }
+                        ViewUtils.cancelLoadingDialog();
                     }
 
                     @Override
@@ -667,6 +673,7 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
                         super.onError(response);
                         ViewUtils.cancelLoadingDialog();
                         T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
+                        imageid = 0;
                     }
                 });
     }
@@ -705,23 +712,7 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
                 });
     }
 
-    public static boolean isCameraUseable() {
-        boolean canUse =true;
-        Camera mCamera =null;
-        try{
-            mCamera = Camera.open();
-// setParameters 是针对魅族MX5。MX5通过Camera.open()拿到的Camera对象不为null
-            Camera.Parameters mParameters = mCamera.getParameters();
-            mCamera.setParameters(mParameters);
-        }catch(Exception e) {
-            canUse =false;
-        }
-        if(mCamera !=null) {
-        mCamera.release();
-        }
 
-        return canUse;
-        }
     /**
      *
      * @param requestCode

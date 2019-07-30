@@ -225,8 +225,8 @@ public class CodeBindActivity extends BaseActivity2 implements View.OnClickListe
                                     SPUtils.put(MyApp.getInstance(),"userId",userId);
                                     SPUtils.put(MyApp.getInstance(),"personName",userName);
                                     SPUtils.put(getApplicationContext(),"TGC",tgt);
-                                    SPUtils.put(MyApp.getInstance(),"username",AesEncryptUtile.decrypt(uname)+"");
-                                    SPUtils.put(MyApp.getInstance(),"password",AesEncryptUtile.decrypt(pwd)+"");
+                                    SPUtils.put(MyApp.getInstance(),"username",uname+"");
+                                    SPUtils.put(MyApp.getInstance(),"password",pwd+"");
 
 
                                     FinishActivity.clearActivity();

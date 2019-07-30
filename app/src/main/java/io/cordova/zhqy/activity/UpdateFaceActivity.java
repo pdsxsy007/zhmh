@@ -93,7 +93,7 @@ public class UpdateFaceActivity extends BaseActivity {
                 Log.e("test","检测2");
                 //检测到人脸后的回调方法
                 finish();
-                //SPUtils.put(getApplicationContext(),"isloading3","113");
+                SPUtils.put(getApplicationContext(),"isloadingUp","114");
                 fullBitmap = bm;
                 Message message = new Message();
                 message.obj = fullBitmap;
@@ -107,6 +107,8 @@ public class UpdateFaceActivity extends BaseActivity {
             }
         });
     }
+
+    private int imageid = 0;
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -148,17 +150,17 @@ public class UpdateFaceActivity extends BaseActivity {
                     Bitmap scaledBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);; // 解码文件
                     String s = bitmapToBase64(scaledBitmap);
                     SPUtils.put(UpdateFaceActivity.this,"bitmap2",s);
-                    Intent intent = new Intent();
-                    intent.setAction("facedata");
-                    intent.putExtra("UpdateFaceActivity","UpdateFaceActivity");
-                    sendBroadcast(intent);
+                    if(imageid == 0){
+                        Intent intent = new Intent();
+                        intent.setAction("facedata");
+                        intent.putExtra("UpdateFaceActivity","UpdateFaceActivity");
+                        sendBroadcast(intent);
+                        imageid  = 1;
+                    }
+
                 }
             }.start();
 
-
-           /* Intent intent = new Intent(FaceNewActivity.this,NewStudentPrgActivity.class);
-            startActivity(intent);
-            finish();*/
 
         }
     };

@@ -136,7 +136,7 @@ public class WebLayout4 implements IWebLayout {
             Log.e("userAgent", s);
         }
 
-       /* initPop();
+        initPop();
         mWebView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -160,7 +160,7 @@ public class WebLayout4 implements IWebLayout {
                 }
                 return true;
             }
-        });*/
+        });
 
 
 

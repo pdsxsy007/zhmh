@@ -4,7 +4,6 @@ import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.location.Location;
@@ -17,23 +16,18 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.Gravity;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.MotionEvent;
-import android.view.VelocityTracker;
 import android.view.View;
 import android.view.Window;
 import android.webkit.DownloadListener;
 import android.webkit.JavascriptInterface;
 import android.webkit.SslErrorHandler;
 import android.webkit.ValueCallback;
-import android.webkit.WebBackForwardList;
 import android.webkit.WebChromeClient;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebSettings;
@@ -46,11 +40,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
-import com.cxz.swipelibrary.SwipeBackActivity;
-import com.cxz.swipelibrary.SwipeBackActivityBase;
-import com.cxz.swipelibrary.SwipeBackActivityHelper;
-import com.cxz.swipelibrary.SwipeBackLayout;
-import com.cxz.swipelibrary.Utils;
 import com.google.gson.Gson;
 import com.just.agentweb.AbsAgentWebSettings;
 import com.just.agentweb.AgentWeb;
@@ -61,7 +50,6 @@ import com.just.agentweb.WebListenerManager;
 import com.just.agentweb.download.AgentWebDownloader;
 import com.just.agentweb.download.DefaultDownloadImpl;
 import com.just.agentweb.download.DownloadListenerAdapter;
-import com.just.agentweb.download.DownloadingService;
 import com.jwsd.libzxing.OnQRCodeListener;
 import com.jwsd.libzxing.QRCodeManager;
 import com.lzy.okgo.OkGo;
@@ -86,14 +74,11 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import gdut.bsx.share2.Share2;
 import gdut.bsx.share2.ShareContentType;
-import io.cordova.zhqy.Main2Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
-import io.cordova.zhqy.activity.LoginActivity;
 import io.cordova.zhqy.activity.LoginActivity2;
 import io.cordova.zhqy.bean.AppOrthBean;
 import io.cordova.zhqy.bean.BaseBean;
-import io.cordova.zhqy.bean.CountBean;
 import io.cordova.zhqy.bean.DownLoadBean;
 import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.CookieUtils;
@@ -117,8 +102,12 @@ import me.samlss.lighter.interfaces.OnLighterListener;
 import me.samlss.lighter.parameter.Direction;
 import me.samlss.lighter.parameter.LighterParameter;
 import me.samlss.lighter.parameter.MarginOffset;
+import pub.devrel.easypermissions.AfterPermissionGranted;
+import pub.devrel.easypermissions.EasyPermissions;
 
-import static io.cordova.zhqy.activity.SplashActivity.getLocalVersionName;
+import static io.cordova.zhqy.UrlRes.HOME_URL;
+import static io.cordova.zhqy.UrlRes.addPortalReadingAccessUrl;
+import static io.cordova.zhqy.UrlRes.functionInvocationLogUrl;
 import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 import static io.cordova.zhqy.utils.MyApp.getInstance;
 
@@ -224,11 +213,13 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
                 .createAgentWeb()
                 .ready()
                 .go(appServiceUrl);
+
+
         mAgentWeb.getWebCreator().getWebView().setOverScrollMode(WebView.OVER_SCROLL_NEVER);
         mAgentWeb.getJsInterfaceHolder().addJavaObject("android",new AndroidInterface());
 
 
-        //netWorkIsCollection();
+        netWorkIsCollection();
         initListener();
 
         String home05 = (String) SPUtils.get(MyApp.getInstance(), "home05", "");
@@ -243,44 +234,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
     }
 
-    private void ceshiData() {
-        String username = (String) SPUtils.get(MyApp.getInstance(), "personName", "");
-        String userId  = null;
-        try {
-            userId = AesEncryptUtile.encrypt(username+ "_"+ Calendar.getInstance().getTimeInMillis(),"123456789hanpeng");
-            OkGo.<String>post("http://192.168.30.68:8080/portal/mobile/functionInvocationLog/")
-                    .params("invocationLogAppId","454644646565")
-                    .params("invocationLogMember",userId)
-                    .params("invocationLogFunction","snNOOs8l9FHPEQeshem/+0w665pCYJCrsf0D4zRPSOg=")
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onSuccess(Response<String> response) {
 
-                            Log.e("js调用扫码",response.body());
-
-                            AppOrthBean appOrthBean = JsonUtil.parseJson(response.body(),AppOrthBean.class);
-                            boolean success = appOrthBean.getSuccess();
-                            if(success == true){
-                                String invocationLogFunction = appOrthBean.getObj().getInvocationLogFunction();
-                                if("方法名".equals(invocationLogFunction)){
-
-                                    //执行该方法
-                                }
-                            }else {
-                                ToastUtils.showToast(BaseWebActivity4.this,"没有使用该功能的权限!");
-                            }
-                        }
-                        @Override
-                        public void onError(Response<String> response) {
-                            super.onError(response);
-                            Log.e("s",response.toString());
-                        }
-                    });
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     private void setGuideView() {
 
@@ -310,7 +264,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
     BaseBean appTime;
     private void networkAppStatTime() {
-        OkGo.<String>post(UrlRes.HOME_URL+ UrlRes.APP_Time)
+        OkGo.<String>post(HOME_URL+ UrlRes.APP_Time)
                 .params( "responseTime",time )
                 .params( "responseAppId",appId)
                 .execute(new StringCallback(){
@@ -339,7 +293,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
      * 请求检测是否收藏页面
      * */
     private void netWorkIsCollection() {
-        OkGo.<String>post(UrlRes.HOME_URL+ UrlRes.Query_IsCollection)
+        OkGo.<String>post(HOME_URL+ UrlRes.Query_IsCollection)
                 .params( "version","1.0" )
                 .params( "collectionAppId",appId )
                 .params( "userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -386,14 +340,13 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
     /**请求收藏*/
     private void networkCollection() {
-        OkGo.<String>post(UrlRes.HOME_URL+ UrlRes.Add_Collection)
+        OkGo.<String>post(HOME_URL+ UrlRes.Add_Collection)
                 .params( "version","1.0" )
                 .params( "collectionAppId",appId )
                 .params( "userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .execute(new StringCallback(){
                     @Override
                     public void onSuccess(Response<String> response) {
-                        //handleResponse(response);
                         Log.e("tag",response.body());
                         baseBean = JSON.parseObject(response.body(), BaseBean.class);
                         if (baseBean.isSuccess()){
@@ -421,14 +374,13 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
     /**取消收藏*/
     private void cancelCollection() {
-        OkGo.<String>post(UrlRes.HOME_URL+ UrlRes.Cancel_Collection)
+        OkGo.<String>post(HOME_URL+ UrlRes.Cancel_Collection)
                 .params( "version","1.0" )
                 .params( "collectionAppId",appId )
                 .params( "userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .execute(new StringCallback(){
                     @Override
                     public void onSuccess(Response<String> response) {
-                        //handleResponse(response);
                         Log.e("tag",response.body());
                         baseBean = JSON.parseObject(response.body(), BaseBean.class);
                         if (baseBean.isSuccess()){
@@ -462,7 +414,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
         switch (view.getId()) {
             case R.id.iv_back:
             if (!mAgentWeb.back()){
-
+                BaseWebActivity4.this.finish();
             }
                 break;
             case R.id.iv_close:
@@ -692,18 +644,13 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
             Log.e("content",json.toString());
             String content = AesEncryptUtile.encrypt(s3, key);
 
-            OkGo.<String>post("http://192.168.30.30:8081/portal/mobile/portalReadingAccess/addPortalReadingAccess")
+            OkGo.<String>post(HOME_URL+addPortalReadingAccessUrl)
                     .params("json", content)
                     .execute(new StringCallback() {
                         @Override
                         public void onSuccess(Response<String> response) {
                             Log.e("s",response.toString());
-                           /* FaceBean2 faceBean2 = JsonUtil.parseJson(response.toString(),FaceBean2.class);
 
-                            boolean success = faceBean2.getSuccess();
-                            if(success == true){
-
-                            }*/
                         }
 
                         @Override
@@ -997,10 +944,10 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
     /**扫码*/
     private static final int QR_CODE = 55846;
-
+    private Handler deliver = new Handler(Looper.getMainLooper());
     /**Js调用内部类*/
     public class AndroidInterface {
-        private Handler deliver = new Handler(Looper.getMainLooper());
+
 
         /**震动响铃*/
         @JavascriptInterface
@@ -1047,71 +994,21 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
         /**进入扫描二维码页面*/
         @JavascriptInterface
         public void nativeScanQRCode(final String invocationLogAppId,final String invocationLogFunction) {
-
-           /* String username = (String) SPUtils.get(MyApp.getInstance(), "personName", "");
-            String userId  = null;
-            try {
-                userId = AesEncryptUtile.encrypt(username+ "_"+ Calendar.getInstance().getTimeInMillis(),"123456789hanpeng");
-                OkGo.<String>post("http://192.168.30.68:8080/portal/mobile/functionInvocationLog/addInvocationLog")
-                        .params("invocationLogAppId","56fe5d26add74f10")
-                        .params("invocationLogMember",userId)
-                        .params("invocationLogFunction","snNOOs8l9FHPEQeshem/+0w665pCYJCrsf0D4zRPSOg=")
-                        .execute(new StringCallback() {
-                            @Override
-                            public void onSuccess(Response<String> response) {
-
-                                Log.e("js调用扫码",response.body());
-
-                            }
-                            @Override
-                            public void onError(Response<String> response) {
-                                super.onError(response);
-                                Log.e("s",response.toString());
-                            }
-                        });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }*/
-
-
-            //OkGo.<String>post(UrlRes.HOME_URL + UrlRes.functionInvocationLogUrl)
-
-           /* deliver.post(new Runnable() {
-                @Override
-                public void run() {
-                    qrPermission();
-                    if (allowedScan){
-                        onScanQR();
-                    }else {
-                        Toast.makeText(getApplicationContext(),"请允许权限后尝试",Toast.LENGTH_SHORT).show();
-                        qrPermission();
-                    }
-
-
-                }
-            });*/
+            ceshiData(invocationLogAppId,invocationLogFunction,"nativeScanQRCode");
 
         }
         /**手机定位坐标*/
         @JavascriptInterface
         public void nativeGetLocation(final String invocationLogAppId,final String invocationLogFunction) {
-            deliver.post(new Runnable() {
-                @Override
-                public void run() {
-                    onLoctionCoordinate();
-                }
-            });
+            ceshiData(invocationLogAppId,invocationLogFunction, "nativeGetLocation");
+
             Log.i("Info", "Thread:" + Thread.currentThread());
         }
         /**关闭当前页面*/
         @JavascriptInterface
-        public void nativeCloseCurrentPage() {
-            deliver.post(new Runnable() {
-                @Override
-                public void run() {
-                    finish();
-                }
-            });
+        public void nativeCloseCurrentPage(final String invocationLogAppId,final String invocationLogFunction) {
+            ceshiData(invocationLogAppId,invocationLogFunction, "nativeCloseCurrentPage");
+
             Log.i("Info", "Thread:" + Thread.currentThread());
         }
 
@@ -1289,6 +1186,91 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
     }
 
 
+    private void ceshiData(String appid, String function, final String typeName) {
+        String username = (String) SPUtils.get(MyApp.getInstance(), "personName", "");
+        String userId  = null;
+        try {
+            userId = AesEncryptUtile.encrypt(username+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
+            OkGo.<String>post(HOME_URL+functionInvocationLogUrl)
+                    .params("invocationLogAppId",appid)
+                    .params("invocationLogMember",userId)
+                    .params("invocationLogFunction",function)
+                    .execute(new StringCallback() {
+                        @Override
+                        public void onSuccess(Response<String> response) {
+
+                            Log.e("js调用扫码",response.body());
+
+                            AppOrthBean appOrthBean = JsonUtil.parseJson(response.body(),AppOrthBean.class);
+                            boolean success = appOrthBean.getSuccess();
+                            if(success == true){
+                                String invocationLogFunction = appOrthBean.getObj().getInvocationLogFunction();
+                                if(typeName.equals(invocationLogFunction)){
+                                    if(invocationLogFunction.equals("nativeScanQRCode")){
+                                        deliver.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                cameraTask();
+                                                /*qrPermission();
+                                                if (allowedScan){
+                                                    onScanQR();
+                                                }else {
+                                                    Toast.makeText(getApplicationContext(),"请允许权限后尝试",Toast.LENGTH_SHORT).show();
+                                                    qrPermission();
+                                                }*/
+
+
+                                            }
+                                        });
+                                    }else if(invocationLogFunction.equals("nativeGetLocation")){
+                                        deliver.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                onLoctionCoordinate();
+                                            }
+                                        });
+                                    }else if(invocationLogFunction.equals("nativeCloseCurrentPage")){
+                                        deliver.post(new Runnable() {
+                                            @Override
+                                            public void run() {
+                                                finish();
+                                            }
+                                        });
+                                    }
+
+                                }
+                            }else {
+                                ToastUtils.showToast(BaseWebActivity4.this,"没有使用该功能的权限!");
+                            }
+                        }
+                        @Override
+                        public void onError(Response<String> response) {
+                            super.onError(response);
+                            Log.e("s",response.toString());
+                        }
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private static final int RC_CAMERA_PERM = 123;
+
+    @AfterPermissionGranted(RC_CAMERA_PERM)
+    public void cameraTask() {
+        if (EasyPermissions.hasPermissions(BaseWebActivity4.this, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            // Have permission, do the thing!
+
+            onScanQR();
+            ;//调用相机照相
+        } else {//没有相应权限，获取相机权限
+            // Ask for one permission
+            EasyPermissions.requestPermissions(this, "获取照相机权限",
+                    RC_CAMERA_PERM, Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        }
+    }
+
 
     @Override
     protected void onPause() {
@@ -1447,7 +1429,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
     private void netInsertPortal(final String insertPortalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(this);
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
+        OkGo.<String>post(HOME_URL + UrlRes.Four_Modules)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
                 .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标

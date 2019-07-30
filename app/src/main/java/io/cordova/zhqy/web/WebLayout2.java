@@ -111,7 +111,7 @@ public class WebLayout2 implements IWebLayout {
             setting.setMixedContentMode(WebSettings.MIXED_CONTENT_ALWAYS_ALLOW);
         }
 
-        /* initPop();
+         initPop();
        mWebView.setOnLongClickListener(new View.OnLongClickListener() {
             @Override
             public boolean onLongClick(View view) {
@@ -137,7 +137,7 @@ public class WebLayout2 implements IWebLayout {
                 }
                     return true;
             }
-        });*/
+        });
 
 
     }

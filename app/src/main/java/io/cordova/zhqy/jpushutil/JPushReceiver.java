@@ -30,16 +30,16 @@ import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.StringUtils;
 import io.cordova.zhqy.utils.ToastUtils;
-import me.leolin.shortcutbadger.ShortcutBadger;
+
 
 /**
  * Created by Administrator on 2019/1/9 0009.
  *  推送接收器
  */
-@RequiresApi(api = Build.VERSION_CODES.O)
+
 public class JPushReceiver extends BroadcastReceiver {
 
-    private static final String TAG = "JPush";
+    private static final String TAG = "JPushReceiver";
     private static int mNotificationNum = 1;
     int NOTIFICATION_SHOW_SHOW_AT_MOST =5;
     private View view;

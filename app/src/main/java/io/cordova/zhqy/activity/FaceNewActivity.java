@@ -108,6 +108,9 @@ public class FaceNewActivity extends BaseActivity {
             }
         });
     }
+
+    private int imageid = 0;
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {
@@ -149,10 +152,14 @@ public class FaceNewActivity extends BaseActivity {
                     Bitmap scaledBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);; // 解码文件
                     String s = bitmapToBase64(scaledBitmap);
                     SPUtils.put(FaceNewActivity.this,"bitmapnewsd",s);
-                    Intent intent = new Intent();
-                    intent.setAction("refresh2");
-                    intent.putExtra("FaceNewActivity","FaceNewActivity");
-                    sendBroadcast(intent);
+                    if(imageid == 0){
+                        Intent intent = new Intent();
+                        intent.setAction("refresh3");
+                        intent.putExtra("FaceNewActivity","FaceNewActivity");
+                        sendBroadcast(intent);
+                        imageid  = 1;
+                    }
+
                 }
             }.start();
 
