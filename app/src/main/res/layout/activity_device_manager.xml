@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="45dp"
+        android:background="@color/colorPrimary"
+        >
+        <TextView
+            android:id="@+id/toolbar_title"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:ellipsize="end"
+            android:lines="1"
+            android:textSize="@dimen/sp16"
+            android:textColor="@android:color/white"
+            android:text="登录设备管理"
+            android:layout_centerInParent="true"
+            />
+        <ImageView
+            android:id="@+id/tv_app_setting"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:src="@mipmap/navibar_back"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="15dp"
+            />
+    </RelativeLayout>
+    <LinearLayout
+        android:layout_marginTop="@dimen/dp5"
+        android:layout_width="match_parent"
+        android:background="@color/white"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content">
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:layout_marginTop="30dp"
+            android:layout_marginLeft="@dimen/dp15"
+            android:layout_marginRight="@dimen/dp15"
+            android:layout_marginBottom="@dimen/dp10"
+            android:layout_height="wrap_content">
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="当前登录设备"
+                android:layout_marginTop="5dp"
+                android:id="@+id/login_time"
+                android:textColor="@color/black"
+                android:layout_height="wrap_content" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="诺基亚  A530"
+                android:textColor="@color/black"
+                android:id="@+id/device_name"
+                android:layout_height="wrap_content" />
+
+
+        </LinearLayout>
+        <!--<ImageView-->
+            <!--android:id="@+id/iv_main_device"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:layout_gravity="center_vertical"-->
+            <!--android:layout_marginRight="@dimen/dp15"-->
+            <!--android:layout_marginLeft="16dp"-->
+            <!--android:src="@mipmap/switch_close_icon"/>-->
+
+    </LinearLayout>
+   <TextView
+       android:layout_width="match_parent"
+       android:layout_height="30dp"
+       android:layout_marginRight="@dimen/dp50"
+       android:layout_marginLeft="@dimen/dp50"
+       android:layout_marginTop="@dimen/dp10"
+       android:textColor="@android:color/white"
+       android:text="设置本机为主设备"
+       android:id="@+id/set_device"
+       android:visibility="gone"
+       android:gravity="center"
+       android:background="@drawable/shape_button_blue"
+       />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="30dp"
+        android:layout_marginRight="@dimen/dp50"
+        android:layout_marginLeft="@dimen/dp50"
+        android:layout_marginTop="@dimen/dp10"
+        android:textColor="@android:color/white"
+        android:text="设置本机为信任设备"
+        android:visibility="gone"
+        android:id="@+id/set_device2"
+        android:gravity="center"
+        android:background="@drawable/shape_button_blue"
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="@dimen/dp10"
+        android:textColor="@color/gray"
+        android:textSize="@dimen/sp12"
+        android:text="设置主设备后，主设备可以管理其他设备"
+        android:gravity="center"
+        />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/dp20"
+
+        android:layout_height="wrap_content">
+
+     <TextView
+         android:layout_width="match_parent"
+         android:text="登录设备列表"
+         android:layout_marginLeft="@dimen/dp15"
+         android:layout_marginRight="@dimen/dp15"
+         android:textColor="@color/black"
+         android:layout_height="wrap_content" />
+
+        <io.cordova.zhqy.widget.SlideRecyclerView
+            android:id="@+id/recycler_view"
+            android:layout_marginTop="@dimen/dp10"
+            android:layout_width="match_parent"
+            android:background="@color/white"
+            android:layout_height="match_parent"/>
+    </LinearLayout>
+</LinearLayout>

@@ -27,22 +27,28 @@ import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
 
 
+import java.net.URLEncoder;
+
 import butterknife.BindView;
 import butterknife.OnClick;
 import io.cordova.zhqy.BuildConfig;
 import io.cordova.zhqy.Main2Activity;
+import io.cordova.zhqy.Main3Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
+import io.cordova.zhqy.bean.AddTrustBean;
 import io.cordova.zhqy.bean.Constants;
 import io.cordova.zhqy.bean.CurrencyBean;
 import io.cordova.zhqy.bean.UpdateBean;
 import io.cordova.zhqy.fingerprint.FingerprintHelper;
 import io.cordova.zhqy.jpushutil.NotificationsUtils;
 
+import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.BaseActivity2;
 import io.cordova.zhqy.utils.DensityUtil;
 import io.cordova.zhqy.utils.FinishActivity;
 import io.cordova.zhqy.utils.LighterHelper;
+import io.cordova.zhqy.utils.MobileInfoUtils;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.MyDataCleanManager;
 import io.cordova.zhqy.utils.SPUtil;
@@ -60,6 +66,9 @@ import me.samlss.lighter.parameter.Direction;
 import me.samlss.lighter.parameter.LighterParameter;
 import me.samlss.lighter.parameter.MarginOffset;
 import me.samlss.lighter.shape.CircleShape;
+
+import static io.cordova.zhqy.utils.AesEncryptUtile.key;
+import static okhttp3.internal.publicsuffix.PublicSuffixDatabase.get;
 
 /**
  * Created by Administrator on 2019/2/18 0018.
@@ -253,7 +262,7 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
 
     }
 
-    @OnClick({R.id.ll_version_information, R.id.ll_clear_cache, R.id.ll_feedback, R.id.ll_about, R.id.ll_sign_out})
+    @OnClick({R.id.ll_version_information, R.id.ll_clear_cache, R.id.ll_feedback, R.id.ll_about, R.id.ll_sign_out,R.id.ll_device})
     public void onViewClicked(View view) {
         Intent intent;
         switch (view.getId()) {
@@ -282,7 +291,10 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
             case R.id.ll_sign_out:
                 logOut();
                 break;
-
+            case R.id.ll_device:
+                intent = new Intent(this,DeviceManagerActivity.class);
+                startActivity(intent);
+                break;
         }
     }
     String portalVersionNumber;
@@ -309,6 +321,8 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
                     }
                 });
     }
+    private String s1;
+
 
     private MyDialog m_Dialog;
     private void logOut() {
@@ -408,7 +422,7 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
                         intent.putExtra("refreshService","dongtai");
                         intent.setAction("refresh");
                         sendBroadcast(intent);
-                        Intent intent1 = new Intent(AppSetting.this,Main2Activity.class);
+                        Intent intent1 = new Intent(AppSetting.this,Main3Activity.class);
                         startActivity(intent1);
                         finish();
 

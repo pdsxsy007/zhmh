@@ -158,7 +158,44 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp1"
         ></View>
+    <LinearLayout
+        android:id="@+id/ll_device"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
 
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="登录设备管理"
+            android:gravity="center|start"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp14"
+            android:padding="@dimen/sp12"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@mipmap/iv_go"
+            android:padding="@dimen/sp12"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            />
+        <TextView
+            android:visibility="gone"
+            android:id="@+id/tv_device"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/sp14"
+            android:textSize="@dimen/dp10"
+            android:text="V 1.1.0"/>
+    </LinearLayout>
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp1"
+        ></View>
     <LinearLayout
         android:id="@+id/ll_clear_cache"
         android:layout_width="match_parent"
