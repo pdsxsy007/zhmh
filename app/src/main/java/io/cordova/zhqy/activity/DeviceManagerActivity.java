@@ -1,7 +1,10 @@
 package io.cordova.zhqy.activity;
 
 import android.Manifest;
+import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -10,6 +13,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -43,20 +47,19 @@ public class DeviceManagerActivity extends BaseActivity {
 
     @BindView(R.id.set_device)
     TextView setDevice;
-
+    @BindView(R.id.tv_app_setting)
+    ImageView back;
     @BindView(R.id.set_device2)
     TextView xrdeviceDevice;
     @BindView(R.id.device_name)
     TextView deviceName;
-//    @BindView(R.id.login_time)
-//    TextView loginTime;
-//    @BindView(R.id.iv_main_device)
-//    ImageView mainDeviceIv;
+
     @BindView(R.id.recycler_view)
     SlideRecyclerView recyclerView;
     DeviceAdapter inventoryAdapter;
     LinearLayoutManager mLinearLayoutManager;
     List<DeviceListBean.Obj> dataList = new ArrayList<>();
+    boolean isdelete = false;
     @Override
     protected int getResourceId() {
         return R.layout.activity_device_manager;
@@ -67,13 +70,25 @@ public class DeviceManagerActivity extends BaseActivity {
         super.initView();
         mLinearLayoutManager = new LinearLayoutManager(DeviceManagerActivity.this, LinearLayout.VERTICAL, false);
         recyclerView.setLayoutManager(mLinearLayoutManager);
+        setDevice.setVisibility(View.VISIBLE);
+        xrdeviceDevice.setVisibility(View.VISIBLE);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this, DividerItemDecoration.VERTICAL);
         itemDecoration.setDrawable(ContextCompat.getDrawable(this, R.drawable.divider_inset));
         getDeviceList();
+        back.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
         setDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                addDevice();
+                Intent intent = new Intent(DeviceManagerActivity.this,CodeBind2Activity.class);
+
+                startActivityForResult(intent,1);
+//                addDevice();
+
             }
         });
         xrdeviceDevice.setOnClickListener(new View.OnClickListener() {
@@ -84,7 +99,15 @@ public class DeviceManagerActivity extends BaseActivity {
         });
         deviceName.setText(android.os.Build.MANUFACTURER + android.os.Build.DEVICE + "（本机）");
         String time = TimeUtils.timeStamp2Date( (String) SPUtils.get(MyApp.getInstance(),"time", Calendar.getInstance().getTimeInMillis()+""),"yyyy-MM-dd HH:mm:ss");
+        registerBoradcastReceiver();
+    }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(resultCode == 1){
+            addDevice();
+        }
     }
 
     private void addDevice() {
@@ -173,9 +196,69 @@ public class DeviceManagerActivity extends BaseActivity {
 
 
     }
+    public void registerBoradcastReceiver() {
+        IntentFilter myIntentFilter = new IntentFilter();
+        myIntentFilter.addAction("xianshi");
+        //注册广播
+       registerReceiver(broadcastReceiver, myIntentFilter);
+    }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        unregisterReceiver(broadcastReceiver);
+    }
+
+    private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+            if (ActivityCompat.checkSelfPermission(DeviceManagerActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+
+                return;
+            }
+            String DEVICE_ID = tm.getDeviceId();
+
+
+            if(action.equals("xianshi")){
+              if(!intent.getStringExtra("data1").equals(DEVICE_ID)){
+
+                  setDevice.setVisibility(View.VISIBLE);
+                  isdelete = false;
+
+              }else{
+                  setDevice.setVisibility(View.GONE);
+                    xrdeviceDevice.setVisibility(View.GONE);
+                  isdelete = true;
+              }
+
+            }
+        }
+    };
     private void getDeviceList(){
+        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
 
+            return;
+        }
+        final String DEVICE_ID = tm.getDeviceId();
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.trustDeviceList)
                 .params("userName",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .execute(new StringCallback(){
@@ -185,50 +268,73 @@ public class DeviceManagerActivity extends BaseActivity {
                         DeviceListBean listBean = JSON.parseObject(response.body(),DeviceListBean.class);
 
                         if(listBean.getObj()== null){
+                            dataList.clear();
+                            setDevice.setVisibility(View.VISIBLE);
+                            xrdeviceDevice.setVisibility(View.VISIBLE);
                             return;
                         }
-                        dataList.clear();
 
+                        dataList.clear();
                         dataList.addAll(listBean.getObj());
 
                         inventoryAdapter = new DeviceAdapter(DeviceManagerActivity.this,R.layout.item_device,dataList);
 
                         recyclerView.setAdapter(inventoryAdapter);
-                        xrdeviceDevice.setVisibility(View.VISIBLE);
-                        setDevice.setVisibility(View.VISIBLE);
-                        inventoryAdapter.setOnDeleteClickListener(new DeviceAdapter.OnDeleteClickLister() {
-                            @Override
-                            public void onDeleteClick(View view, int position) {
-                                inventoryAdapter.notifyDataSetChanged();
-                                Log.e("当前的位子", position+ "");
-//                                dataList.remove(position);
-                                OkGo.<String>post(UrlRes.HOME_URL + UrlRes.updateTrustDevice)
-                                        .params("portalTrustDeviceNumber", dataList.get(position).getPortalTrustDeviceNumber())
-                                        .params("portalTrustDeviceType", dataList.get(position).getPortalTrustDeviceType())
-                                        .params("portalTrustDeviceName",dataList.get(position).getPortalTrustDeviceName())
-                                        .params("portalTrustDeviceInfo", dataList.get(position).getPortalTrustDeviceInfo())
-                                        .params("portalTrustDeviceMaster",dataList.get(position).getPortalTrustDeviceMaster())
-                                        .params("portalTrustDeviceDelete",1 )
-                                        .params("portalTrustDeviceId",dataList.get(position).getPortalTrustDeviceId())
-                                        .params("userName",(String) SPUtils.get(MyApp.getInstance(),"userId","")).execute(new StringCallback() {
+                        for(int i=0;i<dataList.size();i++){
+                            if(DEVICE_ID.equals(dataList.get(i).getPortalTrustDeviceNumber())) {
+                                xrdeviceDevice.setVisibility(View.GONE);
+
+                            }
+                        }
+
+                                inventoryAdapter.setOnDeleteClickListener(new DeviceAdapter.OnDeleteClickLister() {
                                     @Override
-                                    public void onSuccess(Response<String> response) {
-                                        Log.e("删除的结果为：",response.body());
-                                        AddTrustBean addTrustBean = JSON.parseObject(response.body(),AddTrustBean.class);
-                                        if(addTrustBean.isSuccess()){
-                                            ToastUtils.showToast(DeviceManagerActivity.this,addTrustBean.getMsg());
-                                            getDeviceList();
+                                    public void onDeleteClick(View view, int position) {
+                                        inventoryAdapter.notifyDataSetChanged();
+                                        Log.e("当前的位子", position+ "");
+                                            if(isdelete == true){
+                                                if(DEVICE_ID.equals(dataList.get(position).getPortalTrustDeviceNumber())) {
+                                                    ToastUtils.showToast(getApplicationContext(),"不能删除主设备");
+                                                }else{
+                                                    OkGo.<String>post(UrlRes.HOME_URL + UrlRes.updateTrustDevice)
+                                                            .params("portalTrustDeviceNumber", dataList.get(position).getPortalTrustDeviceNumber())
+                                                            .params("portalTrustDeviceType", dataList.get(position).getPortalTrustDeviceType())
+                                                            .params("portalTrustDeviceName", dataList.get(position).getPortalTrustDeviceName())
+                                                            .params("portalTrustDeviceInfo", dataList.get(position).getPortalTrustDeviceInfo())
+                                                            .params("portalTrustDeviceMaster", dataList.get(position).getPortalTrustDeviceMaster())
+                                                            .params("portalTrustDeviceDelete", 1)
+                                                            .params("portalTrustDeviceId", dataList.get(position).getPortalTrustDeviceId())
+                                                            .params("userName", (String) SPUtils.get(MyApp.getInstance(), "userId", "")).execute(new StringCallback() {
+                                                        @Override
+                                                        public void onSuccess(Response<String> response) {
+                                                            Log.e("删除的结果为：", response.body());
+                                                            AddTrustBean addTrustBean = JSON.parseObject(response.body(), AddTrustBean.class);
+                                                            if (addTrustBean.isSuccess()) {
+                                                                ToastUtils.showToast(DeviceManagerActivity.this, addTrustBean.getMsg());
+                                                                getDeviceList();
+                                                            }
+
+                                                        }
+
+
+                                                        @Override
+                                                        public void onError(Response<String> response) {
+                                                            super.onError(response);
+                                                        }
+                                                    });
+                                                }
+
+                                            }else{
+                                                ToastUtils.showToast(getApplicationContext(),"当前设备无删除权限");
+                                            }
+
                                         }
 
-                                    }
-
-                                    @Override
-                                    public void onError(Response<String> response) {
-                                        super.onError(response);
-                                    }
+//                                    }
                                 });
-                            }
-                        });
+
+
+
 
                     }
 
