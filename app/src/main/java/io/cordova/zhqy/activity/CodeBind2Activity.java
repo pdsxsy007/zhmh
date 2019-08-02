@@ -93,12 +93,11 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
         super.initView();
         tvTitle.setText("安全验证");
         userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
-
+        phone = getIntent().getStringExtra("phone");
 //        phone = (String) SPUtils.get(MyApp.getInstance(), "phone", "");
         username = (String) SPUtils.get(MyApp.getInstance(), "username", "");
 
-        getData();
-
+        tv_phone.setText("设置主设备需要进行短信验证,已向("+phone+")发送验证码");
         layout_back.setOnClickListener(this);
         btn_login.setOnClickListener(this);
 
@@ -211,38 +210,5 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
 
         }
 
-    }
-    private void getData() {
-        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.User_Msg)
-                .params("userId", (String) SPUtils.get(MyApp.getInstance(), "userId", ""))
-                .execute(new StringCallback() {
-                    @Override
-                    public void onSuccess(Response<String> response) {
-                        userMsgBean = JSON.parseObject(response.body(), UserMsgBean.class);
-                        ViewUtils.cancelLoadingDialog();
-                        if (userMsgBean.isSuccess()) {
-                            if (userMsgBean.getObj() != null) {
-
-
-
-                                phone = userMsgBean.getObj().getModules().getMemberPhone();
-                                tv_phone.setText("设置主设备需要进行短信验证,已向("+phone+")发送验证码");
-
-                                getCode();
-                            } else {
-                                ToastUtils.showToast(CodeBind2Activity.this, "获取个人信息失败!");
-                                ViewUtils.cancelLoadingDialog();
-                            }
-                        }
-                    }
-
-
-                    @Override
-                    public void onError(Response<String> response) {
-                        super.onError(response);
-                        ViewUtils.cancelLoadingDialog();
-                        T.showShort(MyApp.getInstance(), "没有数据哦，请稍后再试");
-                    }
-                });
     }
 }

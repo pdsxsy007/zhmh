@@ -12,9 +12,13 @@ import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.Window;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.alibaba.fastjson.JSON;
@@ -32,11 +36,18 @@ import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.adapter.DeviceAdapter;
 import io.cordova.zhqy.bean.AddTrustBean;
 import io.cordova.zhqy.bean.DeviceListBean;
+import io.cordova.zhqy.bean.UserMsgBean;
 import io.cordova.zhqy.utils.BaseActivity;
+import io.cordova.zhqy.utils.DensityUtil;
+import io.cordova.zhqy.utils.MobileInfoUtils;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
+import io.cordova.zhqy.utils.ScreenSizeUtils;
+import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.TimeUtils;
 import io.cordova.zhqy.utils.ToastUtils;
+import io.cordova.zhqy.utils.ViewUtils;
+import io.cordova.zhqy.widget.MyDialog;
 import io.cordova.zhqy.widget.SlideRecyclerView;
 
 /**
@@ -53,13 +64,14 @@ public class DeviceManagerActivity extends BaseActivity {
     TextView xrdeviceDevice;
     @BindView(R.id.device_name)
     TextView deviceName;
-
+    MyDialog m_Dialog;
     @BindView(R.id.recycler_view)
     SlideRecyclerView recyclerView;
     DeviceAdapter inventoryAdapter;
     LinearLayoutManager mLinearLayoutManager;
     List<DeviceListBean.Obj> dataList = new ArrayList<>();
     boolean isdelete = false;
+    String mobile;
     @Override
     protected int getResourceId() {
         return R.layout.activity_device_manager;
@@ -84,9 +96,9 @@ public class DeviceManagerActivity extends BaseActivity {
         setDevice.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(DeviceManagerActivity.this,CodeBind2Activity.class);
 
-                startActivityForResult(intent,1);
+               getData();
+
 //                addDevice();
 
             }
@@ -97,40 +109,32 @@ public class DeviceManagerActivity extends BaseActivity {
                 addDeviceList2();
             }
         });
-        deviceName.setText(android.os.Build.MANUFACTURER + android.os.Build.DEVICE + "（本机）");
-        String time = TimeUtils.timeStamp2Date( (String) SPUtils.get(MyApp.getInstance(),"time", Calendar.getInstance().getTimeInMillis()+""),"yyyy-MM-dd HH:mm:ss");
+        deviceName.setText(android.os.Build.MANUFACTURER +" "+ android.os.Build.DEVICE + "（本机）");
+        String time = TimeUtils.timeStamp2Date((String) SPUtils.get(MyApp.getInstance(), "time", Calendar.getInstance().getTimeInMillis() + ""), "yyyy-MM-dd HH:mm:ss");
         registerBoradcastReceiver();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(resultCode == 1){
+        if (resultCode == 1) {
             addDevice();
         }
     }
 
+    /**
+     * 添加主设备
+     */
     private void addDevice() {
-        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
 
-            return;
-        }
-        String DEVICE_ID = tm.getDeviceId();
+        String DEVICE_ID = MobileInfoUtils.getIMEI(this);
           Log.e("获取到的数据为",DEVICE_ID);
 
             OkGo.<String>post(UrlRes.HOME_URL+UrlRes.addTrustDevice)
                     .params("portalTrustDeviceNumber",DEVICE_ID)
                     .params("portalTrustDeviceType","android")
                     .params("portalTrustDeviceName", android.os.Build.DEVICE )
-                    .params("portalTrustDeviceInfo",android.os.Build.MANUFACTURER + android.os.Build.DEVICE)
+                    .params("portalTrustDeviceInfo",android.os.Build.MANUFACTURER + "  "+android.os.Build.DEVICE)
                     .params("portalTrustDeviceMaster",1)
                     .params("portalTrustDeviceDelete",0)
                     .params("userName",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -154,25 +158,72 @@ public class DeviceManagerActivity extends BaseActivity {
 
 
     }
-    private void addDeviceList2(){
-        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
 
-            return;
-        }
-        String DEVICE_ID = tm.getDeviceId();
+    private  void showDialog(){
+
+        m_Dialog = new MyDialog(this, R.style.dialogdialog);
+        Window window = m_Dialog.getWindow();
+        window.setGravity(Gravity.CENTER);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_bind_main, null);
+        RelativeLayout rl_sure = view.findViewById(R.id.rl_sure);
+        RelativeLayout rl_sure1 = view.findViewById(R.id.rl_sure1);
+        TextView content = view.findViewById(R.id.message_yanzheng);
+
+        content.setText("设置主设备需要进行短信验证,是否向" + mobile +"发送验证码");
+        int width = ScreenSizeUtils.getWidth(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width - DensityUtil.dip2px(this,24),
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        m_Dialog.setContentView(view, layoutParams);
+        m_Dialog.show();
+        m_Dialog.setCanceledOnTouchOutside(true);
+        rl_sure1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                m_Dialog.dismiss();
+            }
+        });
+        rl_sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                m_Dialog.dismiss();
+                Intent intent = new Intent(DeviceManagerActivity.this, CodeBind2Activity.class);
+                intent.putExtra("phone", mobile);
+                startActivityForResult(intent, 1);
+            }
+        });
+    }
+    private  void showDialog2(){
+
+        m_Dialog = new MyDialog(this, R.style.dialogdialog);
+        Window window = m_Dialog.getWindow();
+        window.setGravity(Gravity.CENTER);
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_bind_error, null);
+        RelativeLayout rl_sure = view.findViewById(R.id.rl_sure);
+        int width = ScreenSizeUtils.getWidth(this);
+        LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width - DensityUtil.dip2px(this,24),
+                LinearLayout.LayoutParams.WRAP_CONTENT);
+        m_Dialog.setContentView(view, layoutParams);
+        m_Dialog.show();
+        m_Dialog.setCanceledOnTouchOutside(true);
+        rl_sure.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                m_Dialog.dismiss();
+
+            }
+        });
+    }
+    /**
+     * 添加信任设备
+     */
+    private void addDeviceList2(){
+       //
+        String DEVICE_ID = MobileInfoUtils.getIMEI(this);
         OkGo.<String>post(UrlRes.HOME_URL+UrlRes.addTrustDevice)
                 .params("portalTrustDeviceNumber",DEVICE_ID)
                 .params("portalTrustDeviceType","android")
                 .params("portalTrustDeviceName", android.os.Build.DEVICE )
-                .params("portalTrustDeviceInfo",android.os.Build.MANUFACTURER + android.os.Build.DEVICE)
+                .params("portalTrustDeviceInfo",android.os.Build.MANUFACTURER + " " +android.os.Build.DEVICE)
                 .params("portalTrustDeviceMaster",0)
                 .params("portalTrustDeviceDelete",0)
                 .params("userName",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -215,19 +266,8 @@ public class DeviceManagerActivity extends BaseActivity {
         public void onReceive(Context context, Intent intent) {
             String action = intent.getAction();
 
-            TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-            if (ActivityCompat.checkSelfPermission(DeviceManagerActivity.this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-                // TODO: Consider calling
-                //    ActivityCompat#requestPermissions
-                // here to request the missing permissions, and then overriding
-                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                //                                          int[] grantResults)
-                // to handle the case where the user grants the permission. See the documentation
-                // for ActivityCompat#requestPermissions for more details.
 
-                return;
-            }
-            String DEVICE_ID = tm.getDeviceId();
+            String DEVICE_ID = MobileInfoUtils.getIMEI(DeviceManagerActivity.this);
 
 
             if(action.equals("xianshi")){
@@ -245,20 +285,48 @@ public class DeviceManagerActivity extends BaseActivity {
             }
         }
     };
-    private void getDeviceList(){
-        TelephonyManager tm = (TelephonyManager) getSystemService(Context.TELEPHONY_SERVICE);
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
+    private void getData() {
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.User_Msg)
+                .params("userId", (String) SPUtils.get(MyApp.getInstance(), "userId", ""))
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        UserMsgBean   userMsgBean = JSON.parseObject(response.body(), UserMsgBean.class);
+                        ViewUtils.cancelLoadingDialog();
+                        if (userMsgBean.isSuccess()) {
+                            if (userMsgBean.getObj() != null) {
 
-            return;
-        }
-        final String DEVICE_ID = tm.getDeviceId();
+
+
+                                mobile = userMsgBean.getObj().getModules().getMemberPhone();
+                                if(mobile == null || mobile.equals("")){
+                                   showDialog2();
+                                    return;
+                                }else{
+                                    mobile = mobile.substring(0, 3) + "****" + mobile.substring(7, mobile.length());
+                                    showDialog();
+                                }
+
+
+                            } else {
+//                                ToastUtils.showToast(DeviceManagerActivity.this, "获取个人信息失败!");
+//                                ViewUtils.cancelLoadingDialog();
+                            }
+                        }
+                    }
+
+
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        ViewUtils.cancelLoadingDialog();
+                        T.showShort(MyApp.getInstance(), "没有数据哦，请稍后再试");
+                    }
+                });
+    }
+    private void getDeviceList(){
+
+        final String DEVICE_ID = MobileInfoUtils.getIMEI(this);
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.trustDeviceList)
                 .params("userName",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .execute(new StringCallback(){
