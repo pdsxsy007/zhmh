@@ -128,7 +128,7 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
     private void checkCode(String content) {
         try {
             //final String username = URLEncoder.encode(AesEncryptUtile.encrypt(content, key), "UTF-8");
-
+            ViewUtils.createLoadingDialog(CodeBind2Activity.this);
             final String type0 = URLEncoder.encode(AesEncryptUtile.encrypt("9", key), "UTF-8");
             String contact = URLEncoder.encode(AesEncryptUtile.encrypt(phone, key), "UTF-8");
             final String vcode = URLEncoder.encode(AesEncryptUtile.encrypt(content, key), "UTF-8");
@@ -140,10 +140,11 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
                     .params("type",type0)
                     .params("verificationCode",vcode)
                     .execute(new StringCallback() {
+
                         @Override
                         public void onSuccess(Response<String> response) {
                             Log.e("校验验证吗",response.body());
-
+                            ViewUtils.cancelLoadingDialog();
                             VerCodeBean verCodeBean = JsonUtil.parseJson(response.body(),VerCodeBean.class);
                             boolean success = verCodeBean.getSuccess();
                             if(success){
@@ -160,6 +161,7 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
                         @Override
                         public void onError(Response<String> response) {
                             super.onError(response);
+                            ViewUtils.cancelLoadingDialog();
 
                         }
                     });
