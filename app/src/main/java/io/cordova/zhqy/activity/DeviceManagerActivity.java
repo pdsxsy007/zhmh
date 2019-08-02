@@ -43,6 +43,7 @@ import io.cordova.zhqy.utils.MobileInfoUtils;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.ScreenSizeUtils;
+import io.cordova.zhqy.utils.SystemInfoUtils;
 import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.TimeUtils;
 import io.cordova.zhqy.utils.ToastUtils;
@@ -109,7 +110,7 @@ public class DeviceManagerActivity extends BaseActivity {
                 addDeviceList2();
             }
         });
-        deviceName.setText(android.os.Build.MANUFACTURER +" "+ android.os.Build.DEVICE + "（本机）");
+        deviceName.setText(android.os.Build.MANUFACTURER +" "+ SystemInfoUtils.getDeviceModel() + "（本机）");
         String time = TimeUtils.timeStamp2Date((String) SPUtils.get(MyApp.getInstance(), "time", Calendar.getInstance().getTimeInMillis() + ""), "yyyy-MM-dd HH:mm:ss");
         registerBoradcastReceiver();
     }
@@ -134,7 +135,7 @@ public class DeviceManagerActivity extends BaseActivity {
                     .params("portalTrustDeviceNumber",DEVICE_ID)
                     .params("portalTrustDeviceType","android")
                     .params("portalTrustDeviceName", android.os.Build.DEVICE )
-                    .params("portalTrustDeviceInfo",android.os.Build.MANUFACTURER + "  "+android.os.Build.DEVICE)
+                    .params("portalTrustDeviceInfo",android.os.Build.MANUFACTURER + "  "+SystemInfoUtils.getDeviceModel())
                     .params("portalTrustDeviceMaster",1)
                     .params("portalTrustDeviceDelete",0)
                     .params("userName",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -223,7 +224,7 @@ public class DeviceManagerActivity extends BaseActivity {
                 .params("portalTrustDeviceNumber",DEVICE_ID)
                 .params("portalTrustDeviceType","android")
                 .params("portalTrustDeviceName", android.os.Build.DEVICE )
-                .params("portalTrustDeviceInfo",android.os.Build.MANUFACTURER + " " +android.os.Build.DEVICE)
+                .params("portalTrustDeviceInfo",android.os.Build.MANUFACTURER + " " +SystemInfoUtils.getDeviceModel())
                 .params("portalTrustDeviceMaster",0)
                 .params("portalTrustDeviceDelete",0)
                 .params("userName",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
@@ -286,6 +287,7 @@ public class DeviceManagerActivity extends BaseActivity {
         }
     };
     private void getData() {
+        ViewUtils.createLoadingDialog(DeviceManagerActivity.this);
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.User_Msg)
                 .params("userId", (String) SPUtils.get(MyApp.getInstance(), "userId", ""))
                 .execute(new StringCallback() {
@@ -299,6 +301,7 @@ public class DeviceManagerActivity extends BaseActivity {
 
 
                                 mobile = userMsgBean.getObj().getModules().getMemberPhone();
+
                                 if(mobile == null || mobile.equals("")){
                                    showDialog2();
                                     return;
