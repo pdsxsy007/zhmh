@@ -51,6 +51,10 @@ import static io.cordova.zhqy.utils.AesEncryptUtile.key;
 /**
  * Created by Administrator on 2019/6/19 0019.
  * 人脸识别验证码校验页面
+ *
+ *
+ *
+ *
  */
 
 public class CodeBind2Activity extends BaseActivity2 implements View.OnClickListener {
