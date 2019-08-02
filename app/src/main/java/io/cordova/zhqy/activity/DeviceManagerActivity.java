@@ -169,8 +169,8 @@ public class DeviceManagerActivity extends BaseActivity {
         RelativeLayout rl_sure = view.findViewById(R.id.rl_sure);
         RelativeLayout rl_sure1 = view.findViewById(R.id.rl_sure1);
         TextView content = view.findViewById(R.id.message_yanzheng);
-
-        content.setText("设置主设备需要进行短信验证,是否向" + mobile +"发送验证码");
+        String phone = mobile.substring(0, 3) + "****" + mobile.substring(7, mobile.length());
+        content.setText("设置主设备需要进行短信验证,是否向" + phone +"发送验证码");
         int width = ScreenSizeUtils.getWidth(this);
         LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(width - DensityUtil.dip2px(this,24),
                 LinearLayout.LayoutParams.WRAP_CONTENT);
@@ -306,7 +306,6 @@ public class DeviceManagerActivity extends BaseActivity {
                                    showDialog2();
                                     return;
                                 }else{
-                                    mobile = mobile.substring(0, 3) + "****" + mobile.substring(7, mobile.length());
                                     showDialog();
                                 }
 
@@ -397,6 +396,8 @@ public class DeviceManagerActivity extends BaseActivity {
 
                                             }else{
                                                 ToastUtils.showToast(getApplicationContext(),"当前设备无删除权限");
+                                                recyclerView.closeMenu();
+
                                             }
 
                                         }

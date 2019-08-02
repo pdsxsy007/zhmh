@@ -96,8 +96,9 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
         phone = getIntent().getStringExtra("phone");
 //        phone = (String) SPUtils.get(MyApp.getInstance(), "phone", "");
         username = (String) SPUtils.get(MyApp.getInstance(), "username", "");
-
-        tv_phone.setText("设置主设备需要进行短信验证,已向("+phone+")发送验证码");
+        getCode(username,phone);
+        String mobile = phone.substring(0, 3) + "****" + phone.substring(7, phone.length());
+        tv_phone.setText("设置主设备需要进行短信验证,已向("+mobile+")发送验证码");
         layout_back.setOnClickListener(this);
         btn_login.setOnClickListener(this);
 
@@ -128,7 +129,7 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
         try {
             //final String username = URLEncoder.encode(AesEncryptUtile.encrypt(content, key), "UTF-8");
 
-            final String type0 = URLEncoder.encode(AesEncryptUtile.encrypt("7", key), "UTF-8");
+            final String type0 = URLEncoder.encode(AesEncryptUtile.encrypt("9", key), "UTF-8");
             String contact = URLEncoder.encode(AesEncryptUtile.encrypt(phone, key), "UTF-8");
             final String vcode = URLEncoder.encode(AesEncryptUtile.encrypt(content, key), "UTF-8");
             String userName = AesEncryptUtile.decrypt(username,key) ;
@@ -146,8 +147,8 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
                             VerCodeBean verCodeBean = JsonUtil.parseJson(response.body(),VerCodeBean.class);
                             boolean success = verCodeBean.getSuccess();
                             if(success){
-                               Intent intent = getIntent();
-                               setResult(1,intent);
+                                Intent intent = getIntent();
+                                setResult(1,intent);
                                 finish();
 
                             }else {
@@ -168,7 +169,7 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
         }
     }
 
-    private void getCode() {
+    private void getCode(String username, String phone) {
        /* dlm 用户账号
         type 验证码类型(0:手机绑定,1:邮箱绑定,2:手机找回密码,3:邮箱找回密码,4:手机号登录,5:手机解绑,6:邮箱解绑)
         contact 联系方式(手机号或邮箱)
@@ -179,13 +180,13 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
             String contact = URLEncoder.encode(AesEncryptUtile.encrypt(phone, key), "UTF-8");
             OkGo.<String>get(UrlRes.HOME2_URL +sendVerificationUrl)
                     .params("openId","123456")
-                    .params("dlm",username)
+                    .params("dlm", username)
                     .params("type",type0)
                     .params("contact",contact)
                     .execute(new StringCallback() {
                         @Override
                         public void onSuccess(Response<String> response) {
-                            Log.e("验证吗",response.body());
+                            Log.e("",response.body());
 
                             VerCodeBean verCodeBean = JsonUtil.parseJson(response.body(),VerCodeBean.class);
                             boolean success = verCodeBean.getSuccess();
