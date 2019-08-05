@@ -129,11 +129,12 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
         try {
             //final String username = URLEncoder.encode(AesEncryptUtile.encrypt(content, key), "UTF-8");
             ViewUtils.createLoadingDialog(CodeBind2Activity.this);
-            final String type0 = URLEncoder.encode(AesEncryptUtile.encrypt("9", key), "UTF-8");
+            final String type0 = URLEncoder.encode(AesEncryptUtile.encrypt("8", key), "UTF-8");
             String contact = URLEncoder.encode(AesEncryptUtile.encrypt(phone, key), "UTF-8");
             final String vcode = URLEncoder.encode(AesEncryptUtile.encrypt(content, key), "UTF-8");
-            String userName = AesEncryptUtile.decrypt(username,key) ;
-            String userid = AesEncryptUtile.encrypt(userName + "_" + Calendar.getInstance().getTimeInMillis(), key);
+            String personName = (String) SPUtils.get(MyApp.getInstance(), "personName", "");
+            //String userName = AesEncryptUtile.decrypt(username,key) ;
+            String userid = AesEncryptUtile.encrypt(personName + "_" + Calendar.getInstance().getTimeInMillis(), key);
             OkGo.<String>get(UrlRes.HOME2_URL +verificationUrl)
                     .params("openid","123456")
                     .params("memberId",userid)
@@ -180,15 +181,17 @@ public class CodeBind2Activity extends BaseActivity2 implements View.OnClickList
             //String username = URLEncoder.encode(AesEncryptUtile.encrypt(content, key), "UTF-8");
             String type0 = URLEncoder.encode(AesEncryptUtile.encrypt(type+"", key), "UTF-8");
             String contact = URLEncoder.encode(AesEncryptUtile.encrypt(phone, key), "UTF-8");
+            String personName = (String) SPUtils.get(MyApp.getInstance(), "personName", "");
+            String username1 = AesEncryptUtile.encrypt(personName + "_" + Calendar.getInstance().getTimeInMillis(), key);
             OkGo.<String>get(UrlRes.HOME2_URL +sendVerificationUrl)
                     .params("openId","123456")
-                    .params("dlm", username)
+                    .params("dlm", username1)
                     .params("type",type0)
                     .params("contact",contact)
                     .execute(new StringCallback() {
                         @Override
                         public void onSuccess(Response<String> response) {
-                            Log.e("",response.body());
+                            Log.e("sdsd",response.body());
 
                             VerCodeBean verCodeBean = JsonUtil.parseJson(response.body(),VerCodeBean.class);
                             boolean success = verCodeBean.getSuccess();
