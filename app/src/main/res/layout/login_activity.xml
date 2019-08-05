@@ -102,7 +102,7 @@
                             android:textCursorDrawable="@null"
                             android:padding="@dimen/dp12"
                             android:singleLine="true"
-                            android:text=""
+                            android:text="2012016"
                             android:textColor="@color/gray2"
                             android:textSize="@dimen/sp13"
                             android:gravity="center|start"/>
@@ -143,7 +143,7 @@
                             android:textCursorDrawable="@null"
                             android:padding="@dimen/dp12"
                             android:singleLine="true"
-                            android:text=""
+                            android:text="nic@2017"
                             android:textColor="@color/gray2"
                             android:textSize="@dimen/sp13"
                             android:gravity="center|start"

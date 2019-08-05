@@ -128,7 +128,7 @@
             android:screenOrientation="portrait">
         </activity>
 
-        <activity android:name="io.cordova.zhqy.Main2Activity"
+        <activity android:name="io.cordova.zhqy.Main3Activity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -195,7 +195,8 @@
             android:screenOrientation="portrait"/>
         <activity android:name="io.cordova.zhqy.activity.LoginActivity2"
             android:screenOrientation="portrait"
-            android:windowSoftInputMode="adjustResize"
+            android:windowSoftInputMode="stateVisible|adjustResize"
+
             />
         <activity android:name=".web.BaseWebActivity3"
             android:screenOrientation="portrait"/>
@@ -352,6 +353,8 @@
             android:name="com.tencent.connect.common.AssistActivity"
             android:theme="@android:style/Theme.Translucent.NoTitleBar"
             android:configChanges="orientation|keyboardHidden|screenSize"/>
+        <activity android:name=".Main2Activity" />
+        <activity android:name=".activity.DeviceManagerActivity" />
 
         <meta-data
             android:name="UMENG_APPKEY"

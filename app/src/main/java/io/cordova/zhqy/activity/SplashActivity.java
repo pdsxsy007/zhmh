@@ -37,6 +37,7 @@ import java.util.Calendar;
 import butterknife.BindView;
 import cn.jpush.android.api.JPushInterface;
 import io.cordova.zhqy.Main2Activity;
+import io.cordova.zhqy.Main3Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.bean.Constants;
@@ -162,7 +163,7 @@ public class SplashActivity extends AppCompatActivity {
                                     SPUtils.put(getApplicationContext(),"password",s2);
                                /* webView.setWebViewClient(mWebViewClient);
                                 webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");*/
-                                    Intent intent = new Intent(MyApp.getInstance(),Main2Activity.class);
+                                    Intent intent = new Intent(MyApp.getInstance(),Main3Activity.class);
                                     intent.putExtra("userId",userName);
                                     startActivity(intent);
                                     finish();

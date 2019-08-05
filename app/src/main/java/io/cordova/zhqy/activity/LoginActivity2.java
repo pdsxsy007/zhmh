@@ -58,6 +58,7 @@ import cn.jiguang.verifysdk.api.JVerificationInterface;
 import cn.jiguang.verifysdk.api.JVerifyUIConfig;
 import cn.jiguang.verifysdk.api.VerifyListener;
 import io.cordova.zhqy.Main2Activity;
+import io.cordova.zhqy.Main3Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.bean.Constants;
@@ -271,11 +272,11 @@ public class LoginActivity2 extends BaseActivity {
 
                 break;
             case R.id.btn_login_3:
-             //   netExit();
+                //   netExit();
                 break;
             case R.id.iv_close:
                 if(update != null){
-                    Intent intent = new Intent(LoginActivity2.this,Main2Activity.class);
+                    Intent intent = new Intent(LoginActivity2.this,Main3Activity.class);
                     startActivity(intent);
                     finish();
                 }else {
@@ -438,7 +439,7 @@ public class LoginActivity2 extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if(update != null){
-                Intent intent = new Intent(LoginActivity2.this,Main2Activity.class);
+                Intent intent = new Intent(LoginActivity2.this,Main3Activity.class);
                 startActivity(intent);
                 finish();
             }else {
@@ -883,7 +884,7 @@ public class LoginActivity2 extends BaseActivity {
         IntentFilter myIntentFilter = new IntentFilter();
         myIntentFilter.addAction("facerefresh");
         //注册广播
-       registerReceiver(broadcastReceiver, myIntentFilter);
+        registerReceiver(broadcastReceiver, myIntentFilter);
 
 
 

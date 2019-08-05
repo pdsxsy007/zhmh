@@ -1,6 +1,7 @@
 package io.cordova.zhqy.activity;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -21,7 +22,9 @@ import android.text.TextUtils;
 import android.util.Base64;
 import android.util.Log;
 import android.view.View;
+import android.view.WindowManager;
 import android.webkit.CookieManager;
+import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -147,6 +150,8 @@ public class FaceActivity extends BaseActivity {
           }
       });
     }
+
+
     private Handler handler = new Handler(){
         @Override
         public void handleMessage(Message msg) {

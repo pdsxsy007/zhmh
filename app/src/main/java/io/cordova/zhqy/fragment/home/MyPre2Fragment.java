@@ -328,10 +328,11 @@ public class MyPre2Fragment extends BaseFragment {
                                             sb.append(userMsgBean.getObj().getModules().getRolecodes().get(i).getRoleCode()).append(",");
                                         }
 
+                                        String ss = sb.substring(0, sb.lastIndexOf(","));
+                                        Log.e("TAG",ss);
+                                        SPUtils.put(MyApp.getInstance(),"rolecodes",ss);
                                     }
-                                    String ss = sb.substring(0, sb.lastIndexOf(","));
-                                    Log.e("TAG",ss);
-                                    SPUtils.put(MyApp.getInstance(),"rolecodes",ss);
+
                                      /*获取头像*/
                                     netGetUserHead();
                                     netWorkMyData();//我的信息
@@ -371,30 +372,50 @@ public class MyPre2Fragment extends BaseFragment {
     CountBean countBean2;
     /**OA消息列表*/
     OAMsgListBean oaMsgListBean;
+//    private void netWorkOAToDoMsg() {
+//        try{
+//            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
+//                    .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+//                    .params("type", "db")
+//                    .params("workType", "workdb")
+//                    .execute(new StringCallback() {
+//                        @Override
+//                        public void onSuccess(Response<String> response) {
+//                            Log.e("s",response.toString());
+//
+//                            countBean2 = JSON.parseObject(response.body(), CountBean.class);
+//                            netWorkDyMsg();
+//                        }
+//
+//                        @Override
+//                        public void onError(Response<String> response) {
+//                            super.onError(response);
+//
+//                        }
+//                    });
+//        }catch (Exception e){
+//
+//        }
+//
+//    }
     private void netWorkOAToDoMsg() {
-        try{
-            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
-                    .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                    .params("type", "db")
-                    .params("workType", "workdb")
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onSuccess(Response<String> response) {
-                            Log.e("s",response.toString());
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.countUserMessagesByTypeUrl)
+                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .params("type", "1")
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("s",response.body());
+                        countBean2 = JSON.parseObject(response.body(), CountBean.class);
+                        netWorkDyMsg();
+                    }
 
-                            countBean2 = JSON.parseObject(response.body(), CountBean.class);
-                            netWorkDyMsg();
-                        }
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
 
-                        @Override
-                        public void onError(Response<String> response) {
-                            super.onError(response);
-
-                        }
-                    });
-        }catch (Exception e){
-
-        }
+                    }
+                });
 
     }
     /**OA消息列表填充*/
@@ -782,7 +803,9 @@ public class MyPre2Fragment extends BaseFragment {
     @Override
     public void onResume() {
         super.onResume();
-
+//        count = (String) SPUtils.get(getActivity(), "count", "");
+////        tvMyToDoMsgNum.setText(count);
+//        badge1.setText(count); // 需要显示的提醒类容
         if (netState.isConnect(getActivity())){
             //ToastUtils.showToast(getActivity(),"onResume");
             initLoadPage();
@@ -795,50 +818,122 @@ public class MyPre2Fragment extends BaseFragment {
     CountBean countBean1;
     /** 获取消息数量*/
 
+//    private void netWorkSystemMsg() {
+//
+//        try {
+//            String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+//            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_countUnreadMessagesForCurrentUser)
+//                    .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+//                    .execute(new StringCallback() {
+//                        @Override
+//                        public void onSuccess(Response<String> response) {
+//                            Log.e("s",response.toString());
+//
+//                            countBean1 = JSON.parseObject(response.body(), CountBean.class);
+//                            //yy_msg_num.setText(countBean.getCount()+"");
+//                            netWorkOAToDoMsg();//OA待办
+//
+//                        }
+//                        @Override
+//                        public void onError(Response<String> response) {
+//                            super.onError(response);
+//
+//                        }
+//                    });
+//        }catch (Exception e){
+//
+//        }
+//
+//    }
+
     private void netWorkSystemMsg() {
 
-        try {
-            String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
-            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_countUnreadMessagesForCurrentUser)
-                    .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                    .execute(new StringCallback() {
-                        @Override
-                        public void onSuccess(Response<String> response) {
-                            Log.e("s",response.toString());
+        String userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
+        OkGo.<String>post(UrlRes.HOME_URL + UrlRes.countUserMessagesByTypeUrl)
+                .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .params("type","0")
+                .execute(new StringCallback() {
+                    @Override
+                    public void onSuccess(Response<String> response) {
+                        Log.e("系统消息数量",response.body());
+                        countBean1 = JSON.parseObject(response.body(), CountBean.class);
+//                        //yy_msg_num.setText(countBean.getCount()+"");
+                        netWorkOAToDoMsg();//OA待办
 
-                            countBean1 = JSON.parseObject(response.body(), CountBean.class);
-                            //yy_msg_num.setText(countBean.getCount()+"");
-                            netWorkOAToDoMsg();//OA待办
-
-                        }
-                        @Override
-                        public void onError(Response<String> response) {
-                            super.onError(response);
-
-                        }
-                    });
-        }catch (Exception e){
-
-        }
+                    }
+                    @Override
+                    public void onError(Response<String> response) {
+                        super.onError(response);
+                        Log.e("s",response.toString());
+                    }
+                });
 
     }
     CountBean countBean3;
     String count;
+//    private void netWorkDyMsg() {
+//        try {
+//            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
+//                    .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+//                    .params("type", "dy")
+//                    .params("workType", "workdb")
+//                    .execute(new StringCallback() {
+//                        @Override
+//                        public void onSuccess(Response<String> response) {
+//                            Log.e("s",response.toString());
+//
+//                            countBean3 = JSON.parseObject(response.body(), CountBean.class);
+//
+//
+//                            count = countBean2.getCount() + Integer.parseInt(countBean1.getObj()) + countBean3.getCount() + "";
+//                            if(null == count){
+//                                count = "0";
+//                            }
+//
+//                            SPUtils.put(MyApp.getInstance(),"count",count+"");
+//                            if(!count.equals("") && !"0".equals(count)){
+//                                remind();
+//                                SPUtils.get(getActivity(),"count","");
+//                            }else {
+//                                badge1.hide();
+//                            }
+//                            tvMyToDoMsgNum.setText(count);
+//                        /*tvMyToDoMsgNum.setText(count);
+//                        remind();
+//                        if(count.equals("0")){
+//
+//                            badge1.hide();
+//                        }else {
+//                            badge1.show();
+//                        }*/
+//                        }
+//
+//                        @Override
+//                        public void onError(Response<String> response) {
+//                            super.onError(response);
+//
+//                        }
+//                    });
+//        }catch (Exception e){
+//
+//        }
+//
+//    }
+
     private void netWorkDyMsg() {
-        try {
-            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Query_count)
+
+            OkGo.<String>post(UrlRes.HOME_URL + UrlRes.countUserMessagesByTypeUrl)
                     .params("userId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
-                    .params("type", "dy")
-                    .params("workType", "workdb")
+                    .params("type", "2")
                     .execute(new StringCallback() {
                         @Override
                         public void onSuccess(Response<String> response) {
-                            Log.e("s",response.toString());
+                            Log.e("s",response.body());
 
                             countBean3 = JSON.parseObject(response.body(), CountBean.class);
 
 
-                            count = countBean2.getCount() + Integer.parseInt(countBean1.getObj()) + countBean3.getCount() + "";
+                            count = countBean2.getCount() + countBean1.getCount() + countBean3.getCount() + "";
                             if(null == count){
                                 count = "0";
                             }
@@ -851,29 +946,17 @@ public class MyPre2Fragment extends BaseFragment {
                                 badge1.hide();
                             }
                             tvMyToDoMsgNum.setText(count);
-                        /*tvMyToDoMsgNum.setText(count);
-                        remind();
-                        if(count.equals("0")){
 
-                            badge1.hide();
-                        }else {
-                            badge1.show();
-                        }*/
                         }
+
 
                         @Override
                         public void onError(Response<String> response) {
                             super.onError(response);
-
                         }
                     });
-        }catch (Exception e){
-
-        }
 
     }
-
-
     @Override
     public void onHiddenChanged(boolean hidden) {
         super.onHiddenChanged(hidden);
@@ -882,7 +965,7 @@ public class MyPre2Fragment extends BaseFragment {
 
         String count = (String) SPUtils.get(getActivity(),"count","");
         Log.e("count-------",count);
-        //badge1.setText(count);
+//        badge1.setText(count);
 
         //ToastUtils.showToast(getActivity(),"onHiddenChanged");
         if (!isLogin){

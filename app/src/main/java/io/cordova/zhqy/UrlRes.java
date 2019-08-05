@@ -14,15 +14,15 @@ public class UrlRes {
     /**
      * 服务器地址
      */
-    public static String HOME_URL ="http://iapp.zzuli.edu.cn";
-        //public static String HOME_URL ="http://192.168.30.30:8081";  //郭亚东
-       // public static String HOME_URL ="http://192.168.30.28:8090";  //毛兵
+    //public static String HOME_URL ="http://iapp.zzuli.edu.cn";
+        public static String HOME_URL ="http://192.168.30.30:8081";  //郭亚东
+//        public static String HOME_URL ="http://192.168.30.28:8090";  //毛兵
 
 
 
     /*tgt  相关*/
-    public static String HOME2_URL ="http://kys.zzuli.edu.cn";
-       // public static String HOME2_URL ="http://192.168.30.30:8080";  //郭亚东
+    //public static String HOME2_URL ="http://kys.zzuli.edu.cn";
+        public static String HOME2_URL ="http://192.168.30.30:8080";  //郭亚东
     //public static String HOME2_URL ="http://192.168.30.28:8090";  //毛兵
 
 
@@ -201,8 +201,21 @@ public class UrlRes {
      */
     public static String findUserMessagesByTypeUrl="/portal/mobile/weiMessage/findUserMessagesByType";
 
+
     /**
-     * 新生跳转到修改密码页面
+     *
+     信任设备增加
      */
-    public static String changePwdUrl="/authentication/authentication/views/appNative/changePwd.html";
+
+    public static String addTrustDevice = "/portal/mobile/trustDeviceManage/addTrustDevice";
+
+    /**
+     信任设备查询
+     */
+    public static String trustDeviceList = "/portal/mobile/trustDeviceManage/trustDeviceList";
+
+    /**
+     信任设备查询
+     */
+    public static String updateTrustDevice = "/portal/mobile/trustDeviceManage/updateTrustDevice";
 }
