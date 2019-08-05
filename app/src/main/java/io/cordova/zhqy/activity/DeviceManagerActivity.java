@@ -395,6 +395,7 @@ public class DeviceManagerActivity extends BaseActivity {
                                                 }
 
                                             }else{
+                                                recyclerView.closeMenu();
                                                 ToastUtils.showToast(getApplicationContext(),"当前设备无删除权限");
                                                 recyclerView.closeMenu();
 
