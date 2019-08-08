@@ -70,6 +70,7 @@
                     android:textColor="@color/black"
                     android:layout_marginTop="@dimen/dp8"
                     android:inputType="textPassword"
+                    android:text=""
                     />
                 <View
                     android:layout_width="match_parent"
@@ -106,6 +107,7 @@
                     android:textColor="@color/black"
                     android:layout_marginTop="@dimen/dp8"
                     android:inputType="textPassword"
+                    android:text=""
                     />
                 <View
                     android:layout_width="match_parent"
@@ -188,6 +190,7 @@
                     android:textColor="@color/black"
                     android:layout_marginTop="@dimen/dp8"
                     android:inputType="textPassword"
+                    android:text=""
                     />
                 <View
                     android:layout_width="match_parent"

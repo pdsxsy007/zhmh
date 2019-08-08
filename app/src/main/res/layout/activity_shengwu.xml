@@ -13,7 +13,7 @@
         style="@style/view2"/>
 
     <LinearLayout
-        android:visibility="visible"
+        android:visibility="gone"
         android:id="@+id/ll_finger"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

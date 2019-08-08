@@ -181,7 +181,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@null"
-                    android:hint="邮箱地址"
+                    android:hint=""
                     android:textSize="@dimen/sp14"
                     android:textColorHint="@color/hintColor"
                     android:textColor="@color/black"
@@ -230,7 +230,17 @@
                        android:layout_width="match_parent"
                        android:layout_height="match_parent">
 
+                       <Button
+                           android:id="@+id/btn"
+                           android:layout_width="110dp"
+                           android:layout_height="40dp"
+                           android:text="获取验证码"
+                           android:background="@drawable/shape_button_blue"
+                           android:layout_alignParentRight="true"
+                           android:textColor="@color/white"
+                           />
                        <RelativeLayout
+                           android:visibility="gone"
                            android:id="@+id/rl_code"
                            android:layout_width="110dp"
                            android:layout_height="40dp"
