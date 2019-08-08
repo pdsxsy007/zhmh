@@ -661,11 +661,12 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
                         ViewUtils.cancelLoadingDialog();
                         if(success == true){
                             ToastUtils.showToast(ShengWuActivity.this,msg);
+                            imageid = 0;
                         }else {
                             ToastUtils.showToast(ShengWuActivity.this,msg);
                             imageid = 0;
                         }
-                        ViewUtils.cancelLoadingDialog();
+
                     }
 
                     @Override
@@ -749,4 +750,11 @@ public class ShengWuActivity extends BaseActivity2 implements View.OnClickListen
 
     }
 
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        unregisterReceiver(broadcastReceiver);
+    }
 }

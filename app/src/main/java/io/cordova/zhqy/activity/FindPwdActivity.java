@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -77,6 +78,9 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
     @BindView(R.id.et_code)
     EditText et_code;
 
+    @BindView(R.id.btn)
+    Button btn;
+
     private int type = 3;
 
 
@@ -93,6 +97,7 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
         ll_01.setOnClickListener(this);
         ll_02.setOnClickListener(this);
         rl_code.setOnClickListener(this);
+        btn.setOnClickListener(this);
         rl_next.setOnClickListener(this);
         tv_getcode.setOnClickListener(this);
         et_username.setOnFocusChangeListener(new View.OnFocusChangeListener() {
@@ -178,7 +183,8 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
                 }*/
                 type = 2;
                 break;
-            case R.id.rl_code:
+            //case R.id.rl_code:
+            case R.id.btn:
                 getCode();
 
 
@@ -275,7 +281,7 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
                             boolean success = verCodeBean.getSuccess();
                             if(success){
                                 int frequency = verCodeBean.getAttributes().getFrequency();
-                                CountDownTimerUtils mCountDownTimerUtils = new CountDownTimerUtils(tv_getcode, frequency*60*1000, 1000);
+                                CountDownTimerUtils mCountDownTimerUtils = new CountDownTimerUtils(btn, frequency*60*1000, 1000);
                                 mCountDownTimerUtils.start();
                             }else {
                                 ToastUtils.showToast(FindPwdActivity.this,verCodeBean.getMsg());
@@ -315,9 +321,9 @@ public class FindPwdActivity extends BaseActivity implements View.OnClickListene
                                     String memberMailbox = memberBean.getObj().getMemberMailbox();
                                     String memberPhone = memberBean.getObj().getMemberPhone();
                                     if(type ==3 ){
-                                        et_type.setText(memberMailbox);
+                                        //et_type.setText(memberMailbox);
                                     }else {
-                                        et_type.setText(memberPhone);
+                                        //et_type.setText(memberPhone);
                                     }
 
                                 }

@@ -287,7 +287,8 @@ public class MyPre2Fragment extends BaseFragment {
             case R.id.rv_my_to_do_msg:
             case R.id.tv_app_msg:
                 if (isLogin){
-                    intent = new Intent(MyApp.getInstance(), NewMyToDoMsgActivity.class);
+                    //intent = new Intent(MyApp.getInstance(), NewMyToDoMsgActivity.class);
+                    intent = new Intent(MyApp.getInstance(), MyToDoMsgActivity.class);
                     startActivity(intent);
                 }
                 break;
@@ -295,7 +296,7 @@ public class MyPre2Fragment extends BaseFragment {
                 if (isLogin){
                     intent = new Intent(MyApp.getInstance(), AppSetting.class);
                     startActivity(intent);
-                    //FinishActivity.addActivity(getActivity());
+                    FinishActivity.addActivity(getActivity());
                 }
                 break;
             case R.id.exit_login:
@@ -323,15 +324,19 @@ public class MyPre2Fragment extends BaseFragment {
                                     tvUserName.setText(userMsgBean.getObj().getModules().getMemberNickname());
 
                                     StringBuilder sb = new StringBuilder();
-                                    if (userMsgBean.getObj().getModules().getRolecodes().size() > 0){
-                                        for (int i = 0; i < userMsgBean.getObj().getModules().getRolecodes().size(); i++) {
-                                            sb.append(userMsgBean.getObj().getModules().getRolecodes().get(i).getRoleCode()).append(",");
+                                    if(userMsgBean.getObj().getModules().getRolecodes()!= null){
+
+                                        if (userMsgBean.getObj().getModules().getRolecodes().size() > 0){
+                                            for (int i = 0; i < userMsgBean.getObj().getModules().getRolecodes().size(); i++) {
+                                                sb.append(userMsgBean.getObj().getModules().getRolecodes().get(i).getRoleCode()).append(",");
+                                            }
+                                            String ss = sb.substring(0, sb.lastIndexOf(","));
+                                            Log.e("TAG",ss);
+                                            SPUtils.put(MyApp.getInstance(),"rolecodes",ss);
                                         }
 
                                     }
-                                    String ss = sb.substring(0, sb.lastIndexOf(","));
-                                    Log.e("TAG",ss);
-                                    SPUtils.put(MyApp.getInstance(),"rolecodes",ss);
+
                                      /*获取头像*/
                                     netGetUserHead();
                                     netWorkMyData();//我的信息

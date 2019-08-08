@@ -69,6 +69,7 @@ import gdut.bsx.share2.ShareContentType;
 
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.activity.LoginActivity;
+import io.cordova.zhqy.activity.LoginActivity2;
 import io.cordova.zhqy.activity.MyShenqingActivity;
 import io.cordova.zhqy.activity.OaMsgActivity;
 import io.cordova.zhqy.activity.ShengWuActivity;
@@ -656,7 +657,7 @@ public class HomePreFragment extends BaseFragment {
                         //controlLog.append("\n\n(结果)" + result);
                         Log.e("QRCodeManager = ",result);
                         if(!isLogin){
-                            Intent intent = new Intent(MyApp.getInstance(), LoginActivity.class);
+                            Intent intent = new Intent(MyApp.getInstance(), LoginActivity2.class);
                             startActivity(intent);
                         }else {
 

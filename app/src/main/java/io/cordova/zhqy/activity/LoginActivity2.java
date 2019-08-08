@@ -16,7 +16,9 @@ import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.View;
 import android.webkit.CookieManager;
 import android.webkit.WebResourceRequest;
@@ -32,6 +34,7 @@ import android.widget.Toast;
 
 import com.alibaba.fastjson.JSON;
 import com.bumptech.glide.Glide;
+import com.cxz.swipelibrary.Utils;
 import com.lzy.okgo.OkGo;
 import com.lzy.okgo.callback.StringCallback;
 import com.lzy.okgo.model.Response;
@@ -60,6 +63,7 @@ import cn.jiguang.verifysdk.api.VerifyListener;
 import io.cordova.zhqy.Main2Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
+import io.cordova.zhqy.bean.AddTrustBean;
 import io.cordova.zhqy.bean.Constants;
 import io.cordova.zhqy.bean.FaceBean;
 import io.cordova.zhqy.bean.FaceBean2;
@@ -71,10 +75,13 @@ import io.cordova.zhqy.utils.BaseActivity;
 import io.cordova.zhqy.utils.CookieUtils;
 import io.cordova.zhqy.utils.FinishActivity;
 import io.cordova.zhqy.utils.JsonUtil;
+import io.cordova.zhqy.utils.LoginBaseActivity;
+import io.cordova.zhqy.utils.MobileInfoUtils;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtil;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.StringUtils;
+import io.cordova.zhqy.utils.SystemInfoUtils;
 import io.cordova.zhqy.utils.T;
 import io.cordova.zhqy.utils.ToastUtils;
 import io.cordova.zhqy.utils.ViewUtils;
@@ -93,7 +100,7 @@ import static io.cordova.zhqy.utils.AesEncryptUtile.key;
  * Created by Administrator on 2018/11/15 0015.
  */
 
-public class LoginActivity2 extends BaseActivity {
+public class LoginActivity2 extends LoginBaseActivity implements GestureDetector.OnGestureListener{
     @BindView(R.id.et_phoneNum)
     EditText etPhoneNum;
     @BindView(R.id.et_password)
@@ -131,7 +138,8 @@ public class LoginActivity2 extends BaseActivity {
     private Object W;
     private String s1;
     private String s2;
-
+    GestureDetector gestureDetector;
+    protected static final float FLIP_DISTANCE = 400;
     @Override
     protected int getResourceId() {
         return R.layout.login_activity;
@@ -141,7 +149,7 @@ public class LoginActivity2 extends BaseActivity {
     protected void initSystemBar() {
         super.initSystemBar();
 
-
+        gestureDetector = new GestureDetector(this,this);
         tv_find_pwd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -210,40 +218,7 @@ public class LoginActivity2 extends BaseActivity {
         registerBoradcastReceiver();
     }
 
-    /**请求权限*/
-    private void setPermission() {
-        //同时请求多个权限
-        RxPermissions rxPermission = new RxPermissions(this);
-        rxPermission
-                .requestEach(Manifest.permission.READ_EXTERNAL_STORAGE,
-                        Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                        Manifest.permission.CAMERA
-                )
-                .subscribe(new Consumer<Permission>() {
-                    @Override
-                    public void accept(Permission permission) throws Exception {
-                        if (permission.granted) {
-                            // 用户已经同意该权限
-                            Log.e("用户已经同意该权限", permission.name + " is granted.");
-//                            Intent intent = new Intent(MyApp.getInstance(), QRScanActivity.class);
-//                            startActivity(intent);
-                            allowedScan = true;
-                            //   Log.d(TAG, permission.name + " is granted.");
-                        } else if (permission.shouldShowRequestPermissionRationale) {
-                            Log.e("用户拒绝了该权限", permission.name + " is denied. More info should be provided.");
-                            // 用户拒绝了该权限，没有选中『不再询问』（Never ask again）,那么下次再次启动时，还会提示请求权限的对话框
-                            //   Log.d(TAG, permission.name + " is denied. More info should be provided.");
-                            allowedScan = false;
-                        } else {
-                            // 用户拒绝了该权限，并且选中『不再询问』
-                            //   Log.d(TAG, permission.name + " is denied.");
-                            Log.e("用户拒绝了该权限", permission.name + permission.name + " is denied.");
-                            allowedScan = true;
-                        }
-                    }
-                });
-    }
-    GetUserIdBean getUserIdBean;
+
 
     @OnClick({R.id.l_1, R.id.btn_login,R.id.btn_login_3,R.id.iv_close})
     public void onViewClicked(View view) {
@@ -337,7 +312,14 @@ public class LoginActivity2 extends BaseActivity {
 
 
 
-                                    finish();
+                                    if(update != null){
+                                        Intent intent = new Intent(LoginActivity2.this,Main2Activity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }else {
+                                        finish();
+                                    }
+
                                     Intent intent = new Intent();
                                     intent.putExtra("refreshService","dongtai");
                                     intent.setAction("refresh2");
@@ -442,13 +424,14 @@ public class LoginActivity2 extends BaseActivity {
                 startActivity(intent);
                 finish();
             }else {
-                this.finish();
+                finish();
             }
         }
 
         return super.onKeyDown(keyCode, event);
 
     }
+
 
     /**
      * 登陆  获取授权
@@ -579,12 +562,21 @@ public class LoginActivity2 extends BaseActivity {
 
 
 
-                                    finish();
+                                    if(update != null){
+                                        Intent intent = new Intent(LoginActivity2.this,Main2Activity.class);
+                                        startActivity(intent);
+                                        finish();
+                                    }else {
+                                        finish();
+                                    }
                                     Intent intent = new Intent();
                                     intent.putExtra("refreshService","dongtai");
                                     intent.setAction("refresh2");
                                     sendBroadcast(intent);
 
+                                    Intent intent2 = new Intent();
+                                    intent2.setAction("refresh3");
+                                    sendBroadcast(intent2);
 
                                     //本地存储账号用户指纹登录时显示账号信息
                                     StringBuffer stringBuffer = new StringBuffer();
@@ -621,6 +613,69 @@ public class LoginActivity2 extends BaseActivity {
 
 
 
+    }
+
+    @Override
+    public boolean onDown(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public void onShowPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onSingleTapUp(MotionEvent motionEvent) {
+        return false;
+    }
+
+    @Override
+    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        return false;
+    }
+
+    @Override
+    public void onLongPress(MotionEvent motionEvent) {
+
+    }
+
+    @Override
+    public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
+        float x = motionEvent1.getX();
+        float x1 = motionEvent.getX();
+        Log.e("x",x+"");
+        Log.e("x1",x1+"");
+        if(motionEvent1.getX() - motionEvent.getX() > FLIP_DISTANCE)
+        {
+
+            if(update != null){
+                Intent intent = new Intent(LoginActivity2.this,Main2Activity.class);
+                startActivity(intent);
+                finish();
+            }else {
+                finish();
+            }
+
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public boolean dispatchTouchEvent(MotionEvent ev) {
+        //TouchEvent dispatcher.
+        if (gestureDetector != null) {
+            if (gestureDetector.onTouchEvent(ev))
+                //If the gestureDetector handles the event, a swipe has been executed and no more needs to be done.
+                return true;
+        }
+        return super.dispatchTouchEvent(ev);
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        return gestureDetector.onTouchEvent(event);
     }
 
 
@@ -818,6 +873,7 @@ public class LoginActivity2 extends BaseActivity {
             SPUtils.put(this,"bitmap","");
             Intent intent = new Intent(this,FaceActivity.class);
             startActivityForResult(intent,99);
+            imageid = 0;
             ;//调用相机照相
         } else {//没有相应权限，获取相机权限
             // Ask for one permission
@@ -896,16 +952,13 @@ public class LoginActivity2 extends BaseActivity {
             String action = intent.getAction();
 
             if(action.equals("facerefresh")){
+                Log.e("imageid",imageid+"");
                 String FaceActivity = intent.getStringExtra("FaceActivity");
                 if(imageid == 0){
                     if(FaceActivity != null){
                         imageid = 1;
                         String s = (String)SPUtils.get(LoginActivity2.this, "bitmap", "");
-
-
                         String imei = (String) SPUtils.get(LoginActivity2.this, "imei", "");
-
-//                }
                         try {
                             String secret  = AesEncryptUtile.encrypt(Calendar.getInstance().getTimeInMillis()+ "_"+"123456",key);
                             OkGo.<String>post(HOME2_URL+ UrlRes.getPassByFaceUrl)
@@ -918,7 +971,7 @@ public class LoginActivity2 extends BaseActivity {
                                         @Override
                                         public void onStart(Request<String, ? extends Request> request) {
                                             super.onStart(request);
-//                                    ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
+                                            // ViewUtils.createLoadingDialog2(LoginActivity2.this,true,"人脸识别中");
                                         }
 
                                         @Override
@@ -932,8 +985,10 @@ public class LoginActivity2 extends BaseActivity {
                                                 if(success == true){
                                                     Log.e("调试1",response.body());
                                                     Boolean verification = faceBean.getObj().getVerification();
+
                                                     if(verification == false){
                                                         netWorkLogin2(faceBean.getObj().getUserName(),faceBean.getObj().getPassWord(), "9");
+
                                                     }else {
                                                         ViewUtils.cancelLoadingDialog();
                                                         Intent intent = new Intent(LoginActivity2.this,CodeBindActivity.class);
@@ -977,6 +1032,9 @@ public class LoginActivity2 extends BaseActivity {
             }
         }
     };
+
+
+
 
     /**
      *

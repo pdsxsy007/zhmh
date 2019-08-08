@@ -120,7 +120,7 @@ import static io.cordova.zhqy.utils.MyApp.getInstance;
  */
 
 @SuppressLint("Registered")
-public class ChangeUpdatePwdWebActivity extends AppCompatActivity implements GestureDetector.OnGestureListener {
+public class ChangeUpdatePwdWebActivity extends AppCompatActivity {
     protected AgentWeb mAgentWeb;
 
     @BindView(R.id.webView)
@@ -169,7 +169,6 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity implements Ges
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_web);
         ButterKnife.bind(this);
-        gestureDetector = new GestureDetector(this,this);
         mLinearLayout = (LinearLayout) this.findViewById(R.id.container);
         rvClose.setVisibility(View.GONE);
 
@@ -541,7 +540,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity implements Ges
 
                 @Override
                 public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-                    Log.e("myurl",request.getUrl().toString());
+
                     return super.shouldOverrideUrlLoading(view, request);
 
                 }
@@ -1455,77 +1454,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity implements Ges
     }
 
 
-    @Override
-    public boolean onDown(MotionEvent motionEvent) {
-        return false;
-    }
 
-    @Override
-    public void onShowPress(MotionEvent motionEvent) {
-
-    }
-
-    @Override
-    public boolean onSingleTapUp(MotionEvent motionEvent) {
-        return false;
-    }
-
-    @Override
-    public boolean onScroll(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-        return false;
-    }
-
-    @Override
-    public void onLongPress(MotionEvent motionEvent) {
-
-    }
-
-    @Override
-    public boolean onFling(MotionEvent motionEvent, MotionEvent motionEvent1, float v, float v1) {
-       /* if(motionEvent.getX() - motionEvent1.getX() > FLIP_DISTANCE)
-        {
-            Toast.makeText(this, "左滑", Toast.LENGTH_SHORT).show();
-            return true;
-        }*/
-        float x = motionEvent1.getX();
-        float x1 = motionEvent.getX();
-        Log.e("x",x+"");
-        Log.e("x1",x1+"");
-        if(motionEvent1.getX() - motionEvent.getX() > FLIP_DISTANCE)
-        {
-            /*Toast.makeText(this, "右滑", Toast.LENGTH_SHORT).show();
-            onBackPressed();*/
-            boolean b = mAgentWeb.getWebCreator().getWebView().canGoBack();
-            if(b){
-                mAgentWeb.back();
-
-                Log.e("ACTION_MOVE","ACTION_MOVE");
-
-            }else {
-                finish();
-                Log.e("ACTION_MOVE","ACTION_MOVE---finish");
-            }
-
-            return true;
-        }
-        return false;
-    }
-
-    @Override
-    public boolean dispatchTouchEvent(MotionEvent ev) {
-        //TouchEvent dispatcher.
-        if (gestureDetector != null) {
-            if (gestureDetector.onTouchEvent(ev))
-                //If the gestureDetector handles the event, a swipe has been executed and no more needs to be done.
-                return true;
-        }
-        return super.dispatchTouchEvent(ev);
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        return gestureDetector.onTouchEvent(event);
-    }
 
     @Override
     public void onBackPressed() {
