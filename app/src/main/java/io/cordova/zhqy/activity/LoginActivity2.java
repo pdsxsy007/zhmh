@@ -126,7 +126,7 @@ public class LoginActivity2 extends BaseActivity {
 
     @BindView(R.id.rl)
     InputMethodLayout rl;
-     @BindView(R.id.gantan)
+    @BindView(R.id.gantan)
     ImageView  gantanImg;
     int scrollViewHeight;
 
@@ -191,12 +191,12 @@ public class LoginActivity2 extends BaseActivity {
                 }
             }
         });
-    gantanImg.setOnClickListener(new View.OnClickListener() {
-        @Override
-        public void onClick(View view) {
-            showDialogs();
-        }
-    });
+        gantanImg.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDialogs();
+            }
+        });
     }
     String update;
     boolean allowedScan = false;
@@ -298,7 +298,7 @@ public class LoginActivity2 extends BaseActivity {
     LoginBean loginBean;
     String tgt;
 
-    /**推送设置弹窗*/
+    /**设置弹窗*/
     private void showDialogs() {
         if (mAlertDialog == null) {
             mAlertDialog = new android.support.v7.app.AlertDialog.Builder(this)
@@ -332,7 +332,7 @@ public class LoginActivity2 extends BaseActivity {
             e.printStackTrace();
         }
 
-       ;
+        ;
         try {
             String imei =  AesEncryptUtile.encrypt((String) SPUtils.get(this, "imei", ""), key);
             OkGo.<String>get(HOME2_URL +"/cas/casApiLoginController")

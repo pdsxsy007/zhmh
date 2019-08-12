@@ -64,6 +64,6 @@ public class CountDownTimerUtils extends CountDownTimer {
         mTextView.setText("重新发送");
         mTextView.setClickable(true);//重新获得点击
         //mTextView.setBackgroundResource(R.drawable.bg_identify_code_normal);  //还原背景色
-        mTextView.setTextColor(Color.parseColor("#1d4481"));
+        mTextView.setTextColor(Color.parseColor("#ffffff"));
     }
 }

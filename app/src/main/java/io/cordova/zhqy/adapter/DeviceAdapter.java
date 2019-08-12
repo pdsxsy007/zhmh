@@ -46,14 +46,16 @@ public class DeviceAdapter extends CommonAdapter<DeviceListBean.Obj> {
 
 
     @Override
-    protected void convert(ViewHolder holder, final DeviceListBean.Obj obj, int position) {
+    protected void convert(ViewHolder holder, final DeviceListBean.Obj obj, final int position) {
 
-        /*holder.setOnClickListener((R.id.tv_delete, new View.OnClickListener() {
+        holder.setOnClickListener(R.id.tv_delete, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
+                if (mDeleteClickListener != null) {
+                    mDeleteClickListener.onDeleteClick(view, position);
+                }
             }
-        })*/
+        });
         TelephonyManager tm = (TelephonyManager) mContext.getSystemService(Context.TELEPHONY_SERVICE);
         if (ActivityCompat.checkSelfPermission(mContext, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
             // TODO: Consider calling

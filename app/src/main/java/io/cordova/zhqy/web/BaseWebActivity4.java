@@ -171,6 +171,8 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
         tgc = (String) SPUtils.get(getApplicationContext(), "TGC", "");
         appServiceUrl = getIntent().getStringExtra("appUrl");
+
+
         appId = getIntent().getStringExtra("appId");
         search = getIntent().getStringExtra("search");//微应用地址'
         oaMsg = getIntent().getStringExtra("oaMsg");//oa 消息

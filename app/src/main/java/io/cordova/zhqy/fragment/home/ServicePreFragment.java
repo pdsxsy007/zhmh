@@ -611,6 +611,7 @@ public class ServicePreFragment extends BaseFragment {
                                             intent.putExtra("appId",appsBean.getAppId()+"");
                                             intent.putExtra("appName",appsBean.getAppName()+"");
                                             startActivity(intent);
+
                                         }
 
                                     }

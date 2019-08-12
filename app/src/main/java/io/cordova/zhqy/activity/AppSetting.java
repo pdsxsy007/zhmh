@@ -33,7 +33,7 @@ import butterknife.BindView;
 import butterknife.OnClick;
 import io.cordova.zhqy.BuildConfig;
 import io.cordova.zhqy.Main2Activity;
-import io.cordova.zhqy.Main3Activity;
+
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
 import io.cordova.zhqy.bean.AddTrustBean;
@@ -422,7 +422,7 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
                         intent.putExtra("refreshService","dongtai");
                         intent.setAction("refresh");
                         sendBroadcast(intent);
-                        Intent intent1 = new Intent(AppSetting.this,Main3Activity.class);
+                        Intent intent1 = new Intent(AppSetting.this,Main2Activity.class);
                         startActivity(intent1);
                         //finish();
 

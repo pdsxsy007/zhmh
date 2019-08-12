@@ -90,6 +90,7 @@ import io.cordova.zhqy.activity.ShengWuActivity;
 import io.cordova.zhqy.activity.SplashActivity;
 import io.cordova.zhqy.activity.UpdatePwdInfoActivity;
 import io.cordova.zhqy.bean.AddFaceBean;
+import io.cordova.zhqy.bean.AddTrustBean;
 import io.cordova.zhqy.bean.BaseBean;
 import io.cordova.zhqy.bean.CountBean;
 import io.cordova.zhqy.bean.CurrencyBean;
@@ -196,9 +197,6 @@ public class Main2Activity extends BaseActivity3 {
     protected void initView() {
         super.initView();
         isrRunIng = "1";
-
-
-
         showState();
 
         button4 = (Button) findViewById(R.id.btn_my);
@@ -510,10 +508,11 @@ public class Main2Activity extends BaseActivity3 {
                         ViewUtils.cancelLoadingDialog();
                         if(success == true){
                             Intent intent = new Intent(Main2Activity.this,BaseWebActivity4.class);
-                            intent.putExtra("appUrl","http://microapp.zzuli.edu.cn/microapplication/db_qy/app/newStudentDb.html");
+                            intent.putExtra("appUrl",UrlRes.newStudentDbUrl);
                             startActivity(intent);
 
                             m_Dialog2.dismiss();
+                            addDevice();
                         }else {
                             ToastUtils.showToast(Main2Activity.this,msg);
                             imageid = 0;
@@ -528,6 +527,43 @@ public class Main2Activity extends BaseActivity3 {
                         T.showShort(getApplicationContext(),"找不到服务器了，请稍后再试");
                     }
                 });
+    }
+
+    /**
+     * 添加信任设备
+     */
+    private void addDevice() {
+
+        String DEVICE_ID = MobileInfoUtils.getIMEI(this);
+        Log.e("获取到的数据为",DEVICE_ID);
+
+        OkGo.<String>post(UrlRes.HOME_URL+UrlRes.addTrustDevice)
+                .params("portalTrustDeviceNumber",DEVICE_ID)
+                .params("portalTrustDeviceType","android")
+                .params("portalTrustDeviceName", android.os.Build.DEVICE )
+                .params("portalTrustDeviceInfo",android.os.Build.MANUFACTURER + "  "+ SystemInfoUtils.getDeviceModel())
+                .params("portalTrustDeviceMaster",0)
+                .params("portalTrustDeviceDelete",0)
+                .params("userName",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
+                .execute(new StringCallback() {
+                             @Override
+                             public void onSuccess(Response<String> response) {
+                                 Log.e("添加信任",response.body());
+                                 AddTrustBean addTrustBean = JSON.parseObject(response.body(),AddTrustBean.class);
+                                 if(addTrustBean.isSuccess()){
+
+                                 }
+                             }
+
+                             @Override
+                             public void onError(Response<String> response) {
+                                 super.onError(response);
+
+                             }
+                         }
+                );
+
+
     }
 
     @Override
@@ -848,7 +884,7 @@ public class Main2Activity extends BaseActivity3 {
                 .execute(new StringCallback() {
                     @Override
                     public void onSuccess(Response<String> response) {
-                        Log.e("ss",response.body());
+                        Log.e("更新",response.body());
 
                         UpdateBean updateBean = JSON.parseObject(response.body(),UpdateBean.class);
                         String portalVersionNumber = updateBean.getObj().getPortalVersionNumber();
@@ -889,8 +925,36 @@ public class Main2Activity extends BaseActivity3 {
         });
         String update = (String) SPUtils.get(MyApp.getInstance(), "update", "");
         Log.e("update",update);
+        String a = portalVersionNumber.replace(".", "");
+        String b = localVersionName.replace(".", "");
+        int result = a.compareTo(b);
+        System.out.println(result);
+        if(result < 0){//a<b
 
-        if(localVersionName.equals(portalVersionNumber)){//最新版本
+        }else if(result == 0){ //a==b
+            showNewSuDialog();
+        }else { //a>b
+            if(update.equals(portalVersionNumber)){
+
+                showNewSuDialog();
+            }else {
+                m_Dialog.show();
+                if (portalVersionUpdate == 1) {//1代表强制更新
+
+                    isUpdate = 1;
+                    m_Dialog.setCanceledOnTouchOutside(false);
+                    m_Dialog.setCancelable(false);
+                    rl_cancel.setVisibility(View.GONE);
+                    rl_down2.setVisibility(View.GONE);
+                }else {//普通更新
+                    m_Dialog.setCanceledOnTouchOutside(false);
+                    rl_cancel.setClickable(false);
+                    isUpdate = 0;
+
+                }
+            }
+        }
+        /*if(localVersionName.equals(portalVersionNumber)){//最新版本
 
             showNewSuDialog();
 
@@ -916,7 +980,7 @@ public class Main2Activity extends BaseActivity3 {
                 }
             }
 
-        }
+        }*/
 
         rl_down.setOnClickListener(new View.OnClickListener() {
             @Override

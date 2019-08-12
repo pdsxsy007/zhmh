@@ -236,6 +236,9 @@ public class CodeBindActivity extends BaseActivity2 implements View.OnClickListe
                                     intent.setAction("refresh2");
                                     sendBroadcast(intent);
 
+                                    Intent intent2 = new Intent();
+                                    intent2.setAction("refresh3");
+                                    sendBroadcast(intent2);
 
                                     //本地存储账号用户指纹登录时显示账号信息
                                     StringBuffer stringBuffer = new StringBuffer();
@@ -311,7 +314,7 @@ public class CodeBindActivity extends BaseActivity2 implements View.OnClickListe
         @Override
         public void onPageStarted(WebView view, String url, Bitmap favicon) {
 
-            CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgt,getApplication());
+            CookieUtils.syncCookie("http://kys.zzuli.edu.cn","CASTGC="+tgt,CodeBindActivity.this);
 
         }
 

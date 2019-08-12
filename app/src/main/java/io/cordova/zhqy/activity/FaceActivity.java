@@ -194,7 +194,7 @@ public class FaceActivity extends BaseActivity {
                     Bitmap scaledBitmap = BitmapFactory.decodeByteArray(data, 0, data.length, options);; // 解码文件
                     String s = bitmapToBase64(scaledBitmap);
 
-                    // Log.e("人脸",s+"");
+                     Log.e("人脸",s+"");
                     SPUtils.put(FaceActivity.this,"bitmap",s);
                     Intent intent = new Intent();
                     intent.setAction("facerefresh");

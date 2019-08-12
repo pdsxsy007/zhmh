@@ -20,10 +20,12 @@ import butterknife.BindView;
 import io.cordova.zhqy.Main2Activity;
 import io.cordova.zhqy.R;
 import io.cordova.zhqy.UrlRes;
+import io.cordova.zhqy.bean.BaseBean;
 import io.cordova.zhqy.bean.CurrencyBean;
 import io.cordova.zhqy.utils.AesEncryptUtile;
 import io.cordova.zhqy.utils.BaseActivity;
 import io.cordova.zhqy.utils.FinishActivity;
+import io.cordova.zhqy.utils.JsonUtil;
 import io.cordova.zhqy.utils.MyApp;
 import io.cordova.zhqy.utils.SPUtils;
 import io.cordova.zhqy.utils.T;
@@ -117,8 +119,15 @@ public class UpdatePwdInfoActivity extends BaseActivity implements View.OnClickL
                                 public void onSuccess(Response<String> response) {
                                     Log.e("修改密码",response.body());
 
-                                    T.showShort(MyApp.getInstance(), "修改密码成功");
-                                    netExit();
+                                    BaseBean baseBean= JsonUtil.parseJson(response.body(),BaseBean.class);
+                                    boolean success = baseBean.isSuccess();
+                                    if(success == true){
+                                        T.showShort(MyApp.getInstance(), "修改密码成功");
+                                        netExit();
+                                    }else {
+                                        T.showShort(MyApp.getInstance(), baseBean.getMsg());
+                                    }
+
 
                                 }
 
@@ -205,13 +214,16 @@ public class UpdatePwdInfoActivity extends BaseActivity implements View.OnClickL
                         String home03 = (String) SPUtils.get(MyApp.getInstance(), "home03", "");
                         String home04 = (String) SPUtils.get(MyApp.getInstance(), "home04", "");
                         String home05 = (String) SPUtils.get(MyApp.getInstance(), "home05", "");
-
+                        String home06 = (String) SPUtils.get(MyApp.getInstance(), "home06", "");
                         //SPUtils.clear(getApplicationContext());
                         SPUtils.put(getApplicationContext(),"username","");
                         SPUtils.put(getApplicationContext(),"TGC","");
                         SPUtils.put(getApplicationContext(),"userId","");
                         SPUtils.put(getApplicationContext(),"rolecodes","");
                         SPUtils.put(getApplicationContext(),"count","0");
+                        SPUtils.put(getApplicationContext(),"bitmap","");
+                        SPUtils.put(getApplicationContext(),"bitmap2","");
+                        SPUtils.put(getApplicationContext(),"bitmapnewsd","");
 
                         if(home01.equals("1")){
                             SPUtils.put(MyApp.getInstance(),"home01","1");
@@ -228,7 +240,9 @@ public class UpdatePwdInfoActivity extends BaseActivity implements View.OnClickL
                         if(home05.equals("1")){
                             SPUtils.put(MyApp.getInstance(),"home05","1");
                         }
-
+                        if(home06.equals("1")){
+                            SPUtils.put(MyApp.getInstance(),"home06","1");
+                        }
                         Intent intent = new Intent();
                         intent.putExtra("refreshService","dongtai");
                         intent.setAction("refresh");
