@@ -12,6 +12,8 @@ import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.ColorDrawable;
+import android.net.Uri;
+import android.provider.Settings;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
@@ -124,7 +126,8 @@ public class LoginActivity2 extends BaseActivity {
 
     @BindView(R.id.rl)
     InputMethodLayout rl;
-
+     @BindView(R.id.gantan)
+    ImageView  gantanImg;
     int scrollViewHeight;
 
     private LinearLayoutManager mLinearLayoutManager;
@@ -132,6 +135,7 @@ public class LoginActivity2 extends BaseActivity {
     private Object W;
     private String s1;
     private String s2;
+    private android.support.v7.app.AlertDialog mAlertDialog;
 
     @Override
     protected int getResourceId() {
@@ -187,7 +191,12 @@ public class LoginActivity2 extends BaseActivity {
                 }
             }
         });
-
+    gantanImg.setOnClickListener(new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            showDialogs();
+        }
+    });
     }
     String update;
     boolean allowedScan = false;
@@ -276,7 +285,7 @@ public class LoginActivity2 extends BaseActivity {
                 break;
             case R.id.iv_close:
                 if(update != null){
-                    Intent intent = new Intent(LoginActivity2.this,Main3Activity.class);
+                    Intent intent = new Intent(LoginActivity2.this,Main2Activity.class);
                     startActivity(intent);
                     finish();
                 }else {
@@ -288,6 +297,28 @@ public class LoginActivity2 extends BaseActivity {
     }
     LoginBean loginBean;
     String tgt;
+
+    /**推送设置弹窗*/
+    private void showDialogs() {
+        if (mAlertDialog == null) {
+            mAlertDialog = new android.support.v7.app.AlertDialog.Builder(this)
+                    .setMessage("新生帐号为考生号，密码为身份证12-17位（帐号详情请参考应用中心用户手册）\n" +
+                            "在校生/教职工帐号为学号，默认密码为身份证12-17位")
+                    .setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+
+                            if (mAlertDialog != null) {
+                                mAlertDialog.dismiss();
+                            }
+                            //NotificationsUtils.gotoSet(getApplicationContext());
+
+                        }
+                    }).create();
+        }
+        mAlertDialog.show();
+
+    }
     private void netWorkLogin(String uname, String pwd) {
         try {
 //            URLEncoder.encode( ,"UTF-8")
@@ -439,7 +470,7 @@ public class LoginActivity2 extends BaseActivity {
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             if(update != null){
-                Intent intent = new Intent(LoginActivity2.this,Main3Activity.class);
+                Intent intent = new Intent(LoginActivity2.this,Main2Activity.class);
                 startActivity(intent);
                 finish();
             }else {

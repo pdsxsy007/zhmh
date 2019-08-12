@@ -93,19 +93,34 @@
                     <ScrollView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content">
-                        <EditText
-                            android:id="@+id/et_phoneNum"
+                        <LinearLayout
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:background="@null"
-                            android:hint="用户名"
-                            android:textCursorDrawable="@null"
-                            android:padding="@dimen/dp12"
-                            android:singleLine="true"
-                            android:text="2012016"
-                            android:textColor="@color/gray2"
-                            android:textSize="@dimen/sp13"
-                            android:gravity="center|start"/>
+                            android:orientation="horizontal"
+                            android:layout_height="wrap_content">
+                            <EditText
+                                android:id="@+id/et_phoneNum"
+                                android:layout_width="0dp"
+                                android:layout_weight="1"
+                                android:layout_height="wrap_content"
+                                android:background="@null"
+                                android:hint="用户名"
+                                android:textCursorDrawable="@null"
+                                android:padding="@dimen/dp12"
+                                android:singleLine="true"
+                                android:text="2012016"
+                                android:textColor="@color/gray2"
+                                android:textSize="@dimen/sp13"
+                                android:gravity="center|start"/>
+
+                            <ImageView
+                                android:layout_width="15dp"
+                                android:src="@mipmap/gantan"
+                                android:id="@+id/gantan"
+                                android:layout_marginRight="@dimen/dp12"
+                                android:layout_gravity="center"
+                                android:layout_height="15dp" />
+                        </LinearLayout>
+
                     </ScrollView>
                     <View
                         android:layout_width="match_parent"
