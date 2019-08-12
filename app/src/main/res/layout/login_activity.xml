@@ -89,6 +89,7 @@
                         android:textSize="@dimen/sp16"
                         android:textColor="@color/white"
                         android:padding="@dimen/sp12"
+
                         android:text="用户名"/>
                     <ScrollView
                         android:layout_width="match_parent"
