@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#1d4481</color>
-    <color name="colorPrimaryDark">#1d4481</color>
+    <color name="colorPrimary">#42adbb</color>
+    <color name="colorPrimaryDark">#42adbb</color>
     <color name="colorAccent">#FF4081</color>
 
     <color name="transparent">#00000000</color>
@@ -12,10 +12,10 @@
     <color name="theme3">#E1D3CF</color>
     <color name="theme4">#D7A19D</color>
     <!--<color name="title_bar_bg">#3B8BEE</color>-->
-    <color name="title_bar_bg">#1d4481</color>
-     <color name="login_bg">#1D2E63</color>
+    <color name="title_bar_bg">#139d7e</color>
+     <color name="login_bg">#139d7e</color>
     <!--<color name="tab_bar_text_bg">#4B987C</color>-->
-    <color name="tab_bar_text_bg">#1d4481</color>
+    <color name="tab_bar_text_bg">#139d7e</color>
     <color name="view">#F2F2F2</color>
 
     <color name="blue">#31b4e4</color>
@@ -79,4 +79,5 @@
     <color name="text_gray_color">#6f6f6f</color>
     <color name="app_theme_color">#0396ff</color>
     <color name="vtran">#60000000</color>
+    <color name="touming">#00000000</color>
 </resources>

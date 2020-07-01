@@ -21,7 +21,7 @@
             android:layout_marginTop="@dimen/dp5"
             android:src="@mipmap/close" />
 
-        <io.cordova.zhqy.face.view.RefreshProgress
+        <io.cordova.zhmh.face.view.RefreshProgress
             android:id="@+id/iv_wai"
             android:layout_width="300dp"
             android:layout_height="300dp"
@@ -30,7 +30,7 @@
             android:layout_centerInParent="true"
             />
 
-        <io.cordova.zhqy.face.view.RefreshProgress
+        <io.cordova.zhmh.face.view.RefreshProgress
             android:id="@+id/iv_nei"
             android:layout_width="280dp"
             android:layout_height="280dp"
@@ -38,7 +38,7 @@
             android:layout_centerInParent="true"
             />
 
-        <io.cordova.zhqy.face2.CameraView
+        <io.cordova.zhmh.face2.CameraView
             android:id="@+id/camera_view"
             android:layout_centerInParent="true"
             android:layout_width="match_parent"
@@ -48,7 +48,7 @@
 
 
 
-        <io.cordova.zhqy.face2.FaceView
+        <io.cordova.zhmh.face2.FaceView
             android:id="@+id/face_view"
             android:layout_centerInParent="true"
             android:visibility="gone"

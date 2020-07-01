@@ -12,9 +12,9 @@
 -->
 
     <RelativeLayout
-        android:background="@color/title_bar_bg"
+        android:background="@color/colorPrimary"
         android:layout_width="match_parent"
-        android:layout_height="45dp">
+        android:layout_height="@dimen/dp45">
         <RelativeLayout
             android:id="@+id/layout_back"
             android:layout_width="wrap_content"
@@ -166,10 +166,10 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <io.cordova.zhqy.widget.TestWebView
+    <io.cordova.zhmh.widget.TestWebView
         android:visibility="gone"
         android:id="@+id/webView"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"></io.cordova.zhqy.widget.TestWebView>
+        android:layout_height="match_parent"></io.cordova.zhmh.widget.TestWebView>
 
 </LinearLayout>

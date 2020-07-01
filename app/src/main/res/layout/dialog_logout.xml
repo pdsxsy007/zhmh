@@ -51,7 +51,7 @@
                     android:layout_height="wrap_content"
                     android:text="取消"
                     android:layout_centerInParent="true"
-                    android:textColor="@color/blue3"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     />
             </RelativeLayout>
@@ -71,7 +71,7 @@
                     android:layout_height="wrap_content"
                     android:text="确定"
                     android:layout_centerInParent="true"
-                    android:textColor="@color/blue3"
+                    android:textColor="@color/colorPrimary"
                     android:textSize="14sp"
                     />
             </RelativeLayout>

@@ -7,7 +7,7 @@
     android:background="@android:color/transparent"
  >
 
-    <io.cordova.zhqy.widget.MyWebView
+    <io.cordova.zhmh.widget.MyWebView
         android:id="@+id/webView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

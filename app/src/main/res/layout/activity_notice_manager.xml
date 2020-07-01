@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    android:orientation="vertical"
+
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false"
+    android:fitsSystemWindows="true"
+    android:background="@color/view2">
+
+    <include layout="@layout/layout_head_title_one"
+        android:id="@+id/id_title">
+    </include>
+
+    <LinearLayout
+        android:visibility="visible"
+        android:id="@+id/ll_msg_off"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="侧滑关闭"
+            android:gravity="center|start"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp14"
+            android:padding="@dimen/sp12"/>
+
+
+        <!-- <Switch
+             android:id="@+id/msg_notice"
+             android:layout_width="wrap_content"
+             android:layout_height="wrap_content"
+             android:switchMinWidth="@dimen/dp12"
+             android:padding="@dimen/dp5"
+             android:layout_gravity="center"
+             android:textOn=""
+             android:textOff=""
+             android:thumb="@drawable/thumb"
+             android:track="@drawable/track" />-->
+        <ImageView
+            android:id="@+id/msg_notice"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="@dimen/dp5"
+            android:layout_marginLeft="16dp"
+            android:src="@mipmap/switch_open_icon"/>
+
+    </LinearLayout>
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:text="该功能开启时，您在访问多层页面时，左侧滑动将直接关闭窗口返回最上层;"
+        android:textSize="@dimen/sp14"
+        android:layout_marginLeft="@dimen/dp_40"
+        android:layout_marginRight="@dimen/dp_40"
+        android:layout_marginTop="@dimen/dp_10"
+        />
+
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"
+        android:text="该功能关闭时，您在访问多层页面时，左侧滑动将逐层返回直至最后一层关闭网页返回最上层，您也可以通过左上角关闭X按钮直接关闭窗口返回最上级。"
+        android:textSize="@dimen/sp14"
+        android:layout_marginLeft="@dimen/dp_40"
+        android:layout_marginRight="@dimen/dp_40"
+       />
+</LinearLayout>

@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginLeft="@dimen/dp_40"
+    android:layout_marginRight="@dimen/dp_40"
+    android:orientation="vertical"
+    android:background="@color/touming"
+    >
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/shape_button_white"
+        android:orientation="vertical">
+
+
+
+        <ImageView
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp130"
+            android:scaleType="centerCrop"
+            android:src="@mipmap/notice"/>
+
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="您还没有开通消息通知哦"
+            android:layout_gravity="center_horizontal"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp16"
+            android:padding="16dp"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="开通消息后能第一时间获取校内"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/sp12"
+            />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="重要通知信息"
+            android:layout_marginTop="@dimen/dp3"
+            android:layout_gravity="center_horizontal"
+            android:textSize="@dimen/sp12"
+            />
+
+        <Button
+            android:id="@+id/btn_open"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp30"
+            android:background="@color/colorPrimary"
+            android:text="立即开启"
+            android:textColor="@color/white"
+            android:layout_marginTop="@dimen/dp20"
+            android:layout_marginLeft="@dimen/dp50"
+            android:layout_marginRight="@dimen/dp50"
+            android:layout_marginBottom="@dimen/dp30"
+            />
+
+
+    </LinearLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_close"
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp80"
+        >
+        <ImageView
+            android:layout_width="@dimen/dp25"
+            android:layout_height="@dimen/dp25"
+            android:layout_alignParentBottom="true"
+            android:layout_centerHorizontal="true"
+            android:layout_marginBottom="@dimen/dp5"
+            android:src="@mipmap/closenotice"/>
+    </RelativeLayout>
+</LinearLayout>

@@ -4,6 +4,7 @@
     android:layout_height="match_parent"
     android:clipToPadding="false"
     android:fitsSystemWindows="true"
+    android:background="@color/view2"
     android:orientation="vertical">
     <include layout="@layout/layout_head_title_one"
         android:id="@+id/id_title">
@@ -84,6 +85,43 @@
             android:visibility="visible"
             />
 
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp12"></View>
+    <LinearLayout
+        android:id="@+id/ll_notice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="通用设置"
+            android:gravity="center|start"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp14"
+            android:padding="@dimen/sp12"/>
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:src="@mipmap/iv_go"
+            android:padding="@dimen/sp12"
+            android:layout_gravity="center"
+            android:visibility="visible"
+            />
+        <TextView
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingRight="@dimen/sp14"
+            android:textSize="@dimen/dp10"
+            android:text="V 1.1.0"/>
     </LinearLayout>
 
 
@@ -244,6 +282,100 @@
         android:layout_width="match_parent"
         android:layout_height="@dimen/dp1"></View>
 
+    <LinearLayout
+        android:id="@+id/ll_phone_change"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tv_phone_change"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="手机号维护"
+            android:gravity="center|start"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp14"
+            android:padding="@dimen/sp12"/>
+
+        <LinearLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/sp12">
+
+            <TextView
+                android:id="@+id/tv_2"
+                android:textSize="@dimen/sp14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray1"/>
+
+            <ImageView
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@mipmap/iv_go"
+                android:paddingLeft="@dimen/sp14"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp1"></View>
+    <LinearLayout
+        android:id="@+id/ll_mail_change"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="@color/white">
+
+        <TextView
+            android:id="@+id/tv_mail_change"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="邮箱维护"
+            android:gravity="center|start"
+            android:textColor="@color/black"
+            android:textSize="@dimen/sp14"
+            android:padding="@dimen/sp12"/>
+
+        <LinearLayout
+
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:padding="@dimen/sp12">
+
+            <TextView
+                android:id="@+id/tv_3"
+                android:textSize="@dimen/sp14"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/gray1"/>
+
+            <ImageView
+                android:visibility="visible"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:src="@mipmap/iv_go"
+                android:paddingLeft="@dimen/sp14"
+                android:layout_gravity="center"/>
+
+        </LinearLayout>
+
+
+    </LinearLayout>
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp1"></View>
     <LinearLayout
         android:visibility="visible"
         android:id="@+id/ll_feedback"

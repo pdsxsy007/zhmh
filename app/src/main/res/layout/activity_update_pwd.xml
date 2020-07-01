@@ -221,6 +221,7 @@
                    android:layout_width="match_parent"
                    android:layout_height="30dp"
                    android:orientation="horizontal"
+                   android:visibility="gone"
                    >
                    <EditText
                        android:layout_width="200dp"
@@ -263,6 +264,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="1dp"
                     android:background="#EBEBF1"
+                    android:visibility="gone"
                     android:layout_marginTop="@dimen/dp5"
                     />
             </LinearLayout>

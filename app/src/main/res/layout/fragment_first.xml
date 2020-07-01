@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:tl="http://schemas.android.com/apk/res-auto"
+    xmlns:app="http://schemas.android.com/tools"
+    android:orientation="vertical"
+    app:ignore="NamespaceTypo">
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="@dimen/dp40"
+        android:background="@color/colorPrimary"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="首页"
+            android:layout_centerInParent="true"
+            android:textColor="@color/white"
+            android:textSize="16sp"
+            />
+
+        <ImageView
+            android:id="@+id/iv_qr"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
+            android:layout_marginRight="@dimen/dp20"
+            android:layout_centerVertical="true"
+            android:layout_alignParentEnd="true"
+            android:src="@mipmap/iv_qr"
+            android:visibility="visible" />
+    </RelativeLayout>
+    <com.scwang.smartrefresh.layout.SmartRefreshLayout
+        android:id="@+id/swipeLayout"
+        app:srlAccentColor="@android:color/white"
+        app:srlEnablePreviewInEditMode="true"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <com.scwang.smartrefresh.layout.header.ClassicsHeader
+            android:id="@+id/header"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"/>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true"
+            >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:descendantFocusability="blocksDescendants"
+                >
+
+                <RelativeLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="180dp">
+                    <com.youth.banner.Banner
+                        android:id="@+id/banner"
+                        android:layout_width="match_parent"
+                        android:layout_height="180dp" />
+
+                    <TextView
+                        android:id="@+id/tv_title"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text=""
+                        android:layout_alignParentBottom="true"
+                        android:layout_margin="@dimen/dp5"
+                        android:textColor="@color/white"
+                        />
+                </RelativeLayout>
+
+
+                <LinearLayout
+                    android:id="@+id/ll_my_collection"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="gone"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:layout_marginTop="14dp"
+                        android:background="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:padding="@dimen/sp12"
+                        android:text="热门应用"
+                        android:textStyle="bold"
+                        android:textSize="@dimen/sp14"
+                        android:textColor="@color/black2"/>
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/white2" />
+
+                    <android.support.v7.widget.RecyclerView
+                        android:id="@+id/my_collection_list"
+                        android:background="@color/white"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content">
+
+                    </android.support.v7.widget.RecyclerView>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="@dimen/dp0.5"
+                        android:background="#DDDDDD"
+                        />
+                </LinearLayout>
+                <TextView
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/sp12"
+                    android:text="新闻中心"
+                    android:textStyle="bold"
+                    android:textSize="@dimen/sp14"
+                    android:textColor="@color/black2"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/white2" />
+
+
+                <com.flyco.tablayout.SlidingTabLayout
+                    android:id="@+id/tl_1"
+                    android:layout_width="match_parent"
+                    android:layout_height="40dp"
+                    android:background="#ffffff"
+                    android:paddingBottom="5dp"
+                    android:paddingTop="5dp"
+                    tl:tl_tab_padding="0dp"
+
+                    tl:tl_tab_width="85dp"
+                    tl:tl_iconVisible="false"
+                    tl:tl_indicator_color="@color/colorPrimary"
+                    tl:tl_textSelectColor="@color/colorPrimary"
+                    tl:tl_textUnselectColor="#66000000"
+                    tl:tl_underline_color="#DDDDDD"
+                    tl:tl_underline_height="1dp"/>
+
+
+
+                <io.cordova.zhmh.utils.NoScrollViewPager
+                    android:id="@+id/vp_2"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"/>
+
+
+
+            </LinearLayout>
+        </ScrollView>
+    </com.scwang.smartrefresh.layout.SmartRefreshLayout>
+
+
+
+</LinearLayout>

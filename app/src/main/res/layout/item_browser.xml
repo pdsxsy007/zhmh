@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/sp8"
+    android:id="@+id/ll_click"
+    android:gravity="center_horizontal"
+
+    android:orientation="vertical">
+    <RelativeLayout
+        android:layout_width="60dp"
+        android:background="@drawable/shape_rec_blue"
+        android:layout_height="60dp">
+        <ImageView
+            android:id="@+id/iv_app_icon"
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_centerInParent="true"
+            />
+    </RelativeLayout>
+
+
+
+    <LinearLayout
+        android:layout_width="60dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginTop="@dimen/dp5"
+        android:gravity="center_horizontal"
+        >
+        <io.cordova.zhmh.widget.CenterTextView
+            android:id="@+id/tv_app_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="@dimen/sp14"
+            android:textColor="@color/black2"
+            android:text="在浏览器打开"/>
+    </LinearLayout>
+
+
+</LinearLayout>

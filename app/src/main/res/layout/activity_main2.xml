@@ -6,7 +6,6 @@
     android:clipToPadding="false"
     android:fitsSystemWindows="true"
 
-    tools:context="io.cordova.zhqy.Main2Activity"
     xmlns:android="http://schemas.android.com/apk/res/android">
 
     <FrameLayout
@@ -39,6 +38,11 @@
             android:id="@+id/rb_recommend"
             android:drawableTop="@drawable/tab_find"
             android:text="@string/tab_find"/>
+        <RadioButton
+            style="@style/radio_button"
+            android:id="@+id/rb_message"
+            android:drawableTop="@drawable/tab_msg"
+            android:text="@string/tab_msg"/>
 
         <RadioButton
             style="@style/radio_button"
@@ -66,6 +70,11 @@
             android:background="#00000000"
             android:visibility="invisible" />
 
+        <Button
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="1"
+            android:visibility="invisible" />
         <Button
             android:layout_width="0dp"
             android:layout_height="match_parent"

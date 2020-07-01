@@ -95,7 +95,7 @@ public class CaptureActivityHandler extends Handler {
         removeMessages(R.id.jwstr_decode_failed);
     }
 
-    private void restartPreviewAndDecode() {
+    public void restartPreviewAndDecode() {
         if (state == State.SUCCESS) {
             state = State.PREVIEW;
             cameraManager.requestPreviewFrame(decodeThread.getHandler(), R.id.jwstr_decode);

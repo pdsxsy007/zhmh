@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:background="@color/title_bar_bg"
+    android:background="@color/colorPrimary"
     android:layout_width="match_parent"
-    android:layout_height="45dp">
+    android:layout_height="@dimen/dp45">
 
 
     <RelativeLayout
@@ -114,11 +114,11 @@
     <!--android:src="@mipmap/iv_qr"-->
     <ImageView
         android:id="@+id/iv_qr"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
         android:layout_centerVertical="true"
         android:layout_alignParentEnd="true"
-        android:src="@mipmap/gl_sao"
+        android:src="@mipmap/iv_qr"
         android:visibility="gone" />
 
     <RelativeLayout

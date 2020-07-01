@@ -16,7 +16,9 @@
             android:alwaysRetainTaskState="true"
             android:configChanges="locale|orientation"
             android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar">
+            android:theme="@style/SplashTheme"
+
+            >
             <intent-filter>
                 <category android:name="android.intent.category.DEFAULT" />
             </intent-filter>

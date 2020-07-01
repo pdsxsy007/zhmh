@@ -22,7 +22,7 @@
             android:layout_marginTop="@dimen/dp5"
             android:src="@mipmap/close" />
 
-        <io.cordova.zhqy.face.view.RefreshProgress
+        <io.cordova.zhmh.face.view.RefreshProgress
             android:id="@+id/iv_wai"
             android:layout_width="300dp"
             android:layout_height="300dp"
@@ -31,7 +31,7 @@
             android:layout_centerInParent="true"
             />
 
-        <io.cordova.zhqy.face.view.RefreshProgress
+        <io.cordova.zhmh.face.view.RefreshProgress
             android:id="@+id/iv_nei"
             android:layout_width="280dp"
             android:layout_height="280dp"
@@ -39,13 +39,13 @@
             android:layout_centerInParent="true"
             />
 
-        <io.cordova.zhqy.face.view.CircleFrameLayout
+        <io.cordova.zhmh.face.view.CircleFrameLayout
             android:layout_width="210dp"
             android:layout_height="210dp"
 
             android:layout_centerInParent="true"
             app:radius="105dp">
-            <io.cordova.zhqy.face.CameraView
+            <io.cordova.zhmh.face.CameraView
                 android:id="@+id/camera"
                 android:visibility="visible"
                 android:layout_width="match_parent"
@@ -55,7 +55,7 @@
                 android:adjustViewBounds="true"
                 />
 
-        </io.cordova.zhqy.face.view.CircleFrameLayout>
+        </io.cordova.zhmh.face.view.CircleFrameLayout>
 
 
     </RelativeLayout>

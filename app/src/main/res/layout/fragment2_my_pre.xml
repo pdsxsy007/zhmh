@@ -9,7 +9,7 @@
     <RelativeLayout
         android:id="@+id/rl_title"
         android:layout_width="match_parent"
-        android:layout_height="45dp"
+        android:layout_height="@dimen/dp45"
         android:background="@color/colorPrimary"
         >
         <TextView
@@ -84,7 +84,7 @@
                         android:layout_height="64dp"
                         android:background="@drawable/shape_juxing_bg_white"
                         >
-                        <io.cordova.zhqy.widget.XCRoundImageView
+                        <io.cordova.zhmh.widget.XCRoundImageView
                             android:id="@+id/iv_user_head"
                             android:layout_width="65dp"
                             android:layout_height="65dp"
@@ -176,7 +176,7 @@
                         android:layout_toRightOf="@+id/te_my_collection"
                         android:layout_marginLeft="@dimen/dp8"
                         android:textSize="@dimen/sp16"
-                        android:textColor="@color/title_bar_bg"
+                        android:textColor="@color/colorPrimary"
                         android:text="0"
                         android:textStyle="bold"
                         />
@@ -212,7 +212,7 @@
                         android:layout_marginLeft="@dimen/dp8"
                         android:textSize="@dimen/sp16"
                         android:text="0"
-                        android:textColor="@color/title_bar_bg"
+                        android:textColor="@color/colorPrimary"
                         android:textStyle="bold"
                         />
                     <TextView
@@ -322,7 +322,7 @@
                 android:visibility="gone"
                 android:id="@+id/exit_login"
                 style="@style/button2"
-                android:background="@color/title_bar_bg"
+                android:background="@color/colorPrimary"
                 android:textColor="@color/white"
                 android:text="退出登录" />
         </LinearLayout>

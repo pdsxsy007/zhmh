@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shortcuts xmlns:android="http://schemas.android.com/apk/res/android">
+    <shortcut
+        android:shortcutId="add_website"
+        android:enabled="true"
+        android:icon="@mipmap/search2"
+        android:shortcutShortLabel="@string/add_new_website_short"
+        android:shortcutLongLabel="@string/add_new_website_short"
+        android:shortcutDisabledMessage="@string/disable_shortcut"
+        >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="io.cordova.zhmh"
+            android:targetClass="io.cordova.zhmh.MainActivity"
+            />
+
+  <!--  <intent
+        android:action="android.intent.action.VIEW"
+        android:targetPackage="io.cordova.zhmh"
+        android:targetClass="io.cordova.zhmh.activity.QRScanActivity"
+        />-->
+
+    <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+
+  <!--  <shortcut
+        android:shortcutId="add_website2"
+        android:enabled="true"
+        android:icon="@mipmap/search2"
+        android:shortcutShortLabel="@string/add_new_website_short2"
+        android:shortcutLongLabel="@string/add_new_website_short2"
+        android:shortcutDisabledMessage="@string/disable_shortcut2"
+        >
+        <intent
+            android:action="android.intent.action.VIEW"
+            android:targetPackage="io.cordova.zhmh"
+            android:targetClass="io.cordova.zhmh.MainActivity
+
+            />
+
+        <categories android:name="android.shortcut.conversation" />
+    </shortcut>
+-->
+</shortcuts>

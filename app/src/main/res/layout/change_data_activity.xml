@@ -45,6 +45,6 @@
     <Button
         android:id="@+id/but_ok"
         style="@style/button"
-        android:background="@color/title_bar_bg"
+        android:background="@color/colorPrimary"
         android:text="完成"/>
 </LinearLayout>

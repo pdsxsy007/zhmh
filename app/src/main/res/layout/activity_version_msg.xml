@@ -14,11 +14,11 @@
     </include>
 
 
-    <io.cordova.zhqy.widget.CustomRoundAngleImageView
+    <io.cordova.zhmh.widget.CustomRoundAngleImageView
         android:id="@+id/iv_logo"
         android:layout_width="150dp"
         android:layout_height="150dp"
-        android:src="@drawable/icon_logo"
+        android:src="@drawable/icon"
         android:layout_centerHorizontal="true"
         android:scaleType="centerCrop"
         android:layout_marginTop="85dp"/>
@@ -51,7 +51,7 @@
         android:textColor="@color/black"
         android:layout_centerHorizontal="true"
         android:layout_alignParentBottom="true"
-        android:text="郑州轻工业大学"
+        android:text="精华大学"
         android:textSize="@dimen/sp14"
         android:layout_marginBottom="60dp"/>
 

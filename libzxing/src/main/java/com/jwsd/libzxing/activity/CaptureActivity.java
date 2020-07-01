@@ -48,6 +48,7 @@ import com.jwsd.libzxing.utils.SelectAlbumUtils;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.regex.Pattern;
 
 /**
  * This activity opens the camera and does the actual scanning on a background
@@ -80,6 +81,7 @@ public class CaptureActivity extends Activity implements
     private int captureType = 0;
     private TextView tvAlbum;
     private static final int CODE_GALLERY_REQUEST = 101;
+    private TextView photo;
 
     public Handler getHandler() {
         return handler;
@@ -108,12 +110,15 @@ public class CaptureActivity extends Activity implements
         ivBack = (ImageView) findViewById(R.id.iv_back);
         ivMullt = (ImageView) findViewById(R.id.iv_mudle);
         tvAlbum = (TextView) findViewById(R.id.tv_capture_select_album_jwsd);
+        photo = (TextView) findViewById(R.id.photo);
         ivBack.setTag(123);
         ivMullt.setTag(124);
         tvAlbum.setTag(125);
+        photo.setTag(128);
         tvAlbum.setOnClickListener(this);
         ivBack.setOnClickListener(this);
         ivMullt.setOnClickListener(this);
+        photo.setOnClickListener(this);
         inactivityTimer = new InactivityTimer(this);
         beepManager = new BeepManager(this);
 
@@ -203,7 +208,21 @@ public class CaptureActivity extends Activity implements
      * @param bundle    The extras
      */
     public void handleDecode(Result rawResult, Bundle bundle) {
-        inactivityTimer.onActivity();
+
+        if (!isAllNumer(rawResult.getText())){
+            inactivityTimer.onActivity();
+            beepManager.playBeepSoundAndVibrate();
+            Intent resultIntent = new Intent();
+            bundle.putInt("width", mCropRect.width());
+            bundle.putInt("height", mCropRect.height());
+            bundle.putString("result", rawResult.getText());
+            resultIntent.putExtras(bundle);
+            this.setResult(RESULT_OK, resultIntent);
+            CaptureActivity.this.finish();
+        }else {
+            handler.restartPreviewAndDecode();
+        }
+       /* inactivityTimer.onActivity();
         beepManager.playBeepSoundAndVibrate();
         if (captureType == 0) {
             Intent resultIntent = new Intent();
@@ -215,9 +234,15 @@ public class CaptureActivity extends Activity implements
             CaptureActivity.this.finish();
         } else {
             scanDeviceSuccess(rawResult.toString(), bundle);
-        }
+        }*/
 
     }
+
+    public static boolean isAllNumer(String str){
+        Pattern pattern = Pattern.compile("[0-9]*");
+        return pattern.matcher(str).matches();
+    }
+
 
     /**
      * 扫描设备二维码成功
@@ -366,6 +391,7 @@ public class CaptureActivity extends Activity implements
                 }
                 break;
             case 125:
+            case 128:
                 //打开相册选择图片
                 Intent intent = new Intent(Intent.ACTION_GET_CONTENT);
                 intent.addCategory(Intent.CATEGORY_OPENABLE);

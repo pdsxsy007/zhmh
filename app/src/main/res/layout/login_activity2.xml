@@ -19,7 +19,7 @@
             android:background="@drawable/shape_juxing_bg_white"
             android:layout_centerInParent="true"
             >
-            <io.cordova.zhqy.widget.XCRoundImageView
+            <io.cordova.zhmh.widget.XCRoundImageView
                 android:id="@+id/iv_user_head"
                 android:layout_width="65dp"
                 android:layout_height="65dp"

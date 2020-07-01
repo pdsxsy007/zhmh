@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:orientation="vertical"
+    android:layout_marginLeft="@dimen/dp40"
+    android:layout_marginRight="@dimen/dp40"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/shape_dl2"
+
+        android:layout_height="wrap_content">
+     <TextView
+         android:layout_width="match_parent"
+         android:layout_height="wrap_content"
+         android:gravity="center"
+         android:text="隐私声明"
+         android:textStyle="bold"
+         android:layout_marginTop="@dimen/dp20"
+         android:textColor="@color/colorPrimary"
+         android:textSize="20sp"
+         />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:gravity="center"
+
+            android:layout_marginTop="@dimen/dp15"
+            android:layout_height="wrap_content">
+            <TextView
+                android:background="#A9C5FE"
+                android:layout_width="@dimen/dp20"
+                android:layout_height="@dimen/dp1"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="要认真看哦"
+                android:textColor="@color/colorPrimary"
+                android:textSize="15sp"
+                />
+
+            <TextView
+                android:background="#A9C5FE"
+                android:layout_width="@dimen/dp20"
+                android:layout_height="@dimen/dp1"/>
+        </LinearLayout>
+
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp20"
+            android:layout_gravity="center"
+            android:src="@mipmap/ys_icon"
+            android:layout_marginBottom="@dimen/dp10"
+
+            />
+    </LinearLayout>
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="vertical"
+        android:background="@drawable/shape_dl"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:textColor="#D5D5D5"
+            android:text="请阅读并知晓相关协议，并同意使用此功能。"
+            android:textSize="16sp"
+            android:layout_marginLeft="40dp"
+            android:layout_marginRight="40dp"
+            android:layout_marginTop="@dimen/dp20"
+            android:layout_height="wrap_content"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:orientation="horizontal"
+            android:layout_marginLeft="30dp"
+            android:layout_marginTop="@dimen/dp30"
+            android:layout_marginRight="30dp"
+            android:layout_height="wrap_content">
+            <CheckBox
+                android:layout_width="wrap_content"
+                android:id="@+id/agree_check"
+                android:layout_height="wrap_content">
+
+            </CheckBox>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="我已阅读并同意"
+                android:textColor="#A0A0A0"
+                android:layout_height="wrap_content"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:text="《功能说明规则》"
+                android:id="@+id/gongneng"
+                android:textSize="15sp"
+                android:textColor="@color/colorPrimary"
+                android:layout_height="wrap_content"/>
+
+
+        </LinearLayout>
+        <TextView
+            android:layout_width="match_parent"
+            android:background="@color/black"
+            android:alpha="0.2"
+            android:layout_marginTop="@dimen/dp20"
+            android:layout_height="1dp"/>
+
+
+        <TextView
+            android:layout_width="match_parent"
+            android:text="确定"
+            android:gravity="center"
+            android:textColor="#A0A0A0"
+            android:id="@+id/agree_tv"
+            android:textSize="17sp"
+            android:layout_marginTop="@dimen/dp15"
+            android:layout_marginBottom="@dimen/dp15"
+            android:layout_height="wrap_content"/>
+    </LinearLayout>
+</LinearLayout>

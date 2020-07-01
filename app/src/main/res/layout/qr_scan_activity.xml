@@ -10,14 +10,5 @@
     <View
         style="@style/view2"/>
 
-    <!--<TextView-->
-        <!--android:layout_gravity="center"-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:padding="@dimen/sp12"-->
-        <!--android:text="点我"-->
-        <!--android:textSize="@dimen/sp12"-->
-        <!--android:onClick="onScanQR"-->
-        <!--android:textColor="@color/colorAccent"-->
-        <!--/>-->
+
 </LinearLayout>

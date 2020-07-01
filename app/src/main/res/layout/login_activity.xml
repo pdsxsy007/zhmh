@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 
 
-<io.cordova.zhqy.widget.InputMethodLayout android:layout_width="match_parent"
+<io.cordova.zhmh.widget.InputMethodLayout android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#1D2E63"
+    android:background="@color/colorPrimary"
     android:id="@+id/rl"
 
     android:orientation="vertical"
@@ -33,13 +33,14 @@
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
-                    android:src="@mipmap/login_bg"
+                    android:background="@color/colorPrimary"
                     android:scaleType="fitXY"
                     android:paddingBottom="@dimen/dp20"
                     />
                 <ImageView
                     android:layout_width="match_parent"
                     android:layout_height="160dp"
+                    android:layout_marginTop="@dimen/dp10"
                     android:padding="@dimen/dp12"
                     android:src="@mipmap/login_logo"
                     android:layout_alignParentBottom="true"
@@ -110,9 +111,9 @@
                                 android:textCursorDrawable="@null"
                                 android:padding="@dimen/dp12"
                                 android:singleLine="true"
-                                android:text="2012016"
                                 android:textColor="@color/gray2"
                                 android:textSize="@dimen/sp13"
+                                android:text=""
                                 android:gravity="center|start"/>
 
                             <ImageView
@@ -161,9 +162,9 @@
                             android:textCursorDrawable="@null"
                             android:padding="@dimen/dp12"
                             android:singleLine="true"
-                            android:text="nic@2017"
                             android:textColor="@color/gray2"
                             android:textSize="@dimen/sp13"
+                            android:text=""
                             android:gravity="center|start"
                             android:inputType="textPassword"/>
                     </ScrollView>
@@ -250,4 +251,4 @@
 
 
 
-</io.cordova.zhqy.widget.InputMethodLayout>
+</io.cordova.zhmh.widget.InputMethodLayout>

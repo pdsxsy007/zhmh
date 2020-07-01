@@ -1,0 +1,56 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    >
+
+    <RelativeLayout
+        android:background="@drawable/shape_widget_top"
+
+        android:layout_width="match_parent"
+        android:layout_height="30dp">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/dp25"
+            android:orientation="horizontal"
+            >
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/icon"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dp10"
+                />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="消息中心"
+                android:textColor="@color/black"
+                android:layout_centerInParent="true"
+                android:layout_gravity="center_vertical"
+                android:layout_marginLeft="@dimen/dp10"
+                />
+
+
+        </LinearLayout>
+    </RelativeLayout>
+
+    <RelativeLayout
+        android:id="@+id/rl_login"
+        android:background="@drawable/shape_widget_bottom"
+        android:visibility="visible"
+        android:layout_width="match_parent"
+        android:layout_height="130dp">
+        <TextView
+            android:id="@+id/rl_empty"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="您尚未登录,请登录"
+            android:textColor="@color/black"
+            android:layout_centerInParent="true"
+            />
+    </RelativeLayout>
+
+
+</LinearLayout>
