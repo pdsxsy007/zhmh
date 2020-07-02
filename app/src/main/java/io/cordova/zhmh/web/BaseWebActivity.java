@@ -883,7 +883,7 @@ public class BaseWebActivity extends SwipeBackActivity {
             Log.e("content",json.toString());
             String content = AesEncryptUtile.encrypt(s3, key);
 
-            OkGo.<String>post("http://192.168.30.30:8081/portal/mobile/portalReadingAccess/addPortalReadingAccess")
+            OkGo.<String>post("http://192.168.30.30:8081/portal/mobile/portalReadingAccess/addportalReadingAccess")
                     .params("json", content)
                     .execute(new StringCallback() {
                         @Override

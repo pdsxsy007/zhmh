@@ -34,9 +34,9 @@ public class DargeFaceSearchUtils {
      */
     public static void jargeFace(AppListBean.ObjBean.ListBean appsBean, Context context){
 
-        AppListBean.ObjBean.PortalAppAuthentication portalAppAuthentication = appsBean.getPortalAppAuthentication();
+        AppListBean.ObjBean.portalAppAuthentication portalAppAuthentication = appsBean.getportalAppAuthentication();
         if(portalAppAuthentication != null){
-            String appAuthenticationFace = appsBean.getPortalAppAuthentication().getAppAuthenticationFace();
+            String appAuthenticationFace = appsBean.getportalAppAuthentication().getAppAuthenticationFace();
             if(appAuthenticationFace != null){
                 if(appAuthenticationFace .equals("1")){
                     if (appsBean.getAppUrl().contains("{memberid}")){

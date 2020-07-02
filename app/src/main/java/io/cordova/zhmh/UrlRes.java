@@ -26,7 +26,7 @@ public class UrlRes {
     public static String HOME4_URL ="http://platform.gilight.cn";
 
     /*图片前缀*/
-    public static String HOME3_URL ="http://platform.gilight.cn/portal/public/getImg?path=";
+    public static String HOME3_URL ="http://platform.gilight.cn/portalnew/public/getImg?path=";
 
 //    /**
 //     * 新生跳转到修改密码页面
@@ -36,13 +36,13 @@ public class UrlRes {
      *  获取极光绑定ID
      * portal/mobile/login
      * */
-    public static String Registration_Id = "/portal/mobile/equipment/add";
+    public static String Registration_Id = "/portalnew/mobile/equipment/add";
 
     /**
      * 解除极光绑定ID
      * portal/mobile/login
      * */
-    public static String Relieve_Registration_Id = "/portal/mobile/equipment/del";
+    public static String Relieve_Registration_Id = "/portalnew/mobile/equipment/del";
 
     /**
      * 退出登录*/
@@ -51,17 +51,17 @@ public class UrlRes {
     /**
      * 应用列表
      * */
-    public static String APP_List ="/portal/mobile/findAppList";
+    public static String APP_List ="/portalnew/mobile/findAppList";
 
     /**
      * 应用服务列表
      * */
-    public static String Service_APP_List ="/portal/mobile/memberApp/getMemberApp";
+    public static String Service_APP_List ="/portalnew/mobile/memberApp/getMemberApp";
 
     /**
      * 个人信息
      * */
-    public static String User_Msg ="/portal/mobile/casMember/getMemberByUsername";
+    public static String User_Msg ="/portalnew/mobile/casMember/getMemberByUsername";
 
     /**
      * 获取用户头像
@@ -70,57 +70,57 @@ public class UrlRes {
     /**
      *  获取服务器返回的图片地址
      * */
-    public static String Get_Img_uri ="/portal/mobile/casMember/updateUserInfo";
+    public static String Get_Img_uri ="/portalnew/mobile/casMember/updateUserInfo";
     /**
      *
      * 上传图片到服务器
      * */
-    public static String Upload_Img ="/portal/mobile/public/photoUpload";
+    public static String Upload_Img ="/portalnew/mobile/public/photoUpload";
     /**
      * 系统信息
      * */
 
-    public static String System_Msg_List ="/portal/mobile/weiMessage/listMessageIniDtoForCurrentUser";
+    public static String System_Msg_List ="/portalnew/mobile/weiMessage/listMessageIniDtoForCurrentUser";
 
     /**我的收藏*/
-    public static String My_Collection ="/portal/mobile/collectionApp/findCollectionAppList";
+    public static String My_Collection ="/portalnew/mobile/collectionApp/findCollectionAppList";
 
     /**添加收藏*/
-    public static String Add_Collection ="/portal/mobile/collectionApp/addCollectionApp";
+    public static String Add_Collection ="/portalnew/mobile/collectionApp/addCollectionApp";
 
     /**取消收藏*/
-    public static String Cancel_Collection ="/portal/mobile/collectionApp/delCollectionApp";
+    public static String Cancel_Collection ="/portalnew/mobile/collectionApp/delCollectionApp";
 
     /**查询应用收藏状态*/
-    public static String Query_IsCollection ="/portal/mobile/collectionApp/isCollectionApp";
+    public static String Query_IsCollection ="/portalnew/mobile/collectionApp/isCollectionApp";
     /**统计当前访问目标（四大模块） */
-    public static String Four_Modules ="/portal/mobile/portalAccessLog/insertPortalAccessLog";
+    public static String Four_Modules ="/portalnew/mobile/portalAccessLog/insertportalAccessLog";
     /**统计应用响应时间 */
-    public static String APP_Time ="/portal/mobile/response/responseTime";
+    public static String APP_Time ="/portalnew/mobile/response/responseTime";
     /**统计应用访问量*/
-    public static String APP_Click_Number ="/portal/mobile/statistical/appAccessStatistical";
+    public static String APP_Click_Number ="/portalnew/mobile/statistical/appAccessStatistical";
     /**OA*/
-    public static String Query_count="/portal/mobile/oa/workFolwDbCount";
+    public static String Query_count="/portalnew/mobile/oa/workFolwDbCount";
 
     /**OA*/
-    public static String Query_workFolwDbList="/portal/mobile/oa/workFolwDbList";
+    public static String Query_workFolwDbList="/portalnew/mobile/oa/workFolwDbList";
     /**
      统计该用户未读的消息数量*/
-    public static String Query_countUnreadMessagesForCurrentUser="/portal/mobile/weiMessage/countUnreadMessagesForCurrentUser";
+    public static String Query_countUnreadMessagesForCurrentUser="/portalnew/mobile/weiMessage/countUnreadMessagesForCurrentUser";
 
     /**
      * 更新
      */
-    public static String getNewVersionInfo="/portal/mobile/config/getNewVersionInfo";
+    public static String getNewVersionInfo="/portalnew/mobile/config/getNewVersionInfo";
     /**
      * 查看消息接口
      */
-    public static String searchMessageById="/portal/mobile/weiMessage/getMessageIniDtoForCurrentUserByDetailId";
+    public static String searchMessageById="/portalnew/mobile/weiMessage/getMessageIniDtoForCurrentUserByDetailId";
 
     /**
      * 上传手机信息
      */
-    public static String addMobileInfoUrl="/portal/mobile/equipment/addMobile";
+    public static String addMobileInfoUrl="/portalnew/mobile/equipment/addMobile";
 
     /**
      * 输入账号获取邮箱或者手机号
@@ -160,12 +160,12 @@ public class UrlRes {
     /**
      * 获取下载类型
      */
-    public static String getDownLoadTypeUrl="/portal/mobile/config/getDownLoadType";
+    public static String getDownLoadTypeUrl="/portalnew/mobile/config/getDownLoadType";
 
     /**
      * app授权接口
      */
-    public static String functionInvocationLogUrl="/portal/mobile/functionInvocationLog/addInvocationLog";
+    public static String functionInvocationLogUrl="/portalnew/mobile/functionInvocationLog/addInvocationLog";
 
     /**
      * 人脸识别
@@ -185,33 +185,33 @@ public class UrlRes {
     /**
      * webview上传位置阅读时间等信息
      */
-    public static String addPortalReadingAccessUrl="/portal/mobile/portalReadingAccess/addPortalReadingAccess";
+    public static String addportalReadingAccessUrl="/portalnew/mobile/portalReadingAccess/addportalReadingAccess";
 
     /**
      * 5分钟一次上传信息
      */
-    public static String insertPortalPositionUrl="/portal/mobile/portalPosition/insertPortalPosition";
+    public static String insertportalPositionUrl="/portalnew/mobile/portalPosition/insertportalPosition";
 
     /**
      * 新生报到是否弹出人脸识别
      */
-    public static String jugdeFaceUrl="/portal/mobile/newStudentRegister/jugdeFace";
+    public static String jugdeFaceUrl="/portalnew/mobile/newStudentRegister/jugdeFace";
 
     /**
      * 是否强制修改密码
      */
-    public static String newStudentUpdatePwdStateUrl="/portal/mobile/newStudentRegister/newStudentUpdatePwdState";
+    public static String newStudentUpdatePwdStateUrl="/portalnew/mobile/newStudentRegister/newStudentUpdatePwdState";
 
 
     /**
      * 新消息数量
      */
-    public static String countUserMessagesByTypeUrl="/portal/mobile/weiMessage/countUserMessagesByType";
+    public static String countUserMessagesByTypeUrl="/portalnew/mobile/weiMessage/countUserMessagesByType";
 
     /**
      * 新消息列表
      */
-    public static String findUserMessagesByTypeUrl="/portal/mobile/weiMessage/findUserMessagesByType";
+    public static String findUserMessagesByTypeUrl="/portalnew/mobile/weiMessage/findUserMessagesByType";
 
 
     /**
@@ -219,17 +219,17 @@ public class UrlRes {
      信任设备增加
      */
 
-    public static String addTrustDevice = "/portal/mobile/trustDeviceManage/addTrustDevice";
+    public static String addTrustDevice = "/portalnew/mobile/trustDeviceManage/addTrustDevice";
 
     /**
      信任设备查询
      */
-    public static String trustDeviceList = "/portal/mobile/trustDeviceManage/trustDeviceList";
+    public static String trustDeviceList = "/portalnew/mobile/trustDeviceManage/trustDeviceList";
 
     /**
      信任设备查询
      */
-    public static String updateTrustDevice = "/portal/mobile/trustDeviceManage/updateTrustDevice";
+    public static String updateTrustDevice = "/portalnew/mobile/trustDeviceManage/updateTrustDevice";
     /**
      * 新生跳转到修改密码页面
      */
@@ -242,25 +242,25 @@ public class UrlRes {
     /**
      热门应用
      */
-    public static String findHeatAppListUrl= "/portal/mobile/collectionApp/findHeatAppList";
+    public static String findHeatAppListUrl= "/portalnew/mobile/collectionApp/findHeatAppList";
     /**
      新闻
      */
-    public static String getNewsDetailsUrl= "/portal/mobile/news/getNewsDetails";
+    public static String getNewsDetailsUrl= "/portalnew/mobile/news/getNewsDetails";
 
     /**
      新闻
      */
-    public static String findNewsUrl= "/portal/mobile/news/findNews";
+    public static String findNewsUrl= "/portalnew/mobile/news/findNews";
     /**
      轮播图
      */
-    public static String findBroadcastListUrl= "/portal/mobile/broadcast/findBroadcastList";
+    public static String findBroadcastListUrl= "/portalnew/mobile/broadcast/findBroadcastList";
 
     /**
      * 桌面小插件获取学生或者老师一周的课程表
      */
     public static String getMobileCourseUrl= "/microapplication/api/mobile/getMobileCourse";
 
-    public static String huanxingUrl = "http://iapp.zzuli.edu.cn/portal/portal-app/app-5/huanxing.html";
+    public static String huanxingUrl = "http://iapp.zzuli.edu.cn/portalnew/portal-app/app-5/huanxing.html";
 }

@@ -106,7 +106,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 
 import static io.cordova.zhmh.UrlRes.HOME2_URL;
 import static io.cordova.zhmh.UrlRes.HOME_URL;
-import static io.cordova.zhmh.UrlRes.addPortalReadingAccessUrl;
+import static io.cordova.zhmh.UrlRes.addportalReadingAccessUrl;
 import static io.cordova.zhmh.UrlRes.functionInvocationLogUrl;
 import static io.cordova.zhmh.utils.AesEncryptUtile.key;
 import static io.cordova.zhmh.utils.MyApp.getInstance;
@@ -646,7 +646,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity {
             Log.e("content",json.toString());
             String content = AesEncryptUtile.encrypt(s3, key);
 
-            OkGo.<String>post(HOME_URL+addPortalReadingAccessUrl)
+            OkGo.<String>post(HOME_URL+addportalReadingAccessUrl)
                     .params("json", content)
                     .execute(new StringCallback() {
                         @Override
@@ -1285,7 +1285,7 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity {
     protected void onResume() {
         mAgentWeb.getWebLifeCycle().onResume();
         super.onResume();
-        netInsertPortal("5");
+        netInsertportal("5");
     }
 
     @Override
@@ -1429,12 +1429,12 @@ public class ChangeUpdatePwdWebActivity extends AppCompatActivity {
     }
 
 
-    private void netInsertPortal(final String insertPortalAccessLog) {
+    private void netInsertportal(final String insertportalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(this);
         OkGo.<String>post(HOME_URL + UrlRes.Four_Modules)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
-                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogTarget", insertportalAccessLog)//访问目标
                 .params("portalAccessLogVersionNumber", (String) SPUtils.get(this,"versionName", ""))//版本号
                 .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {

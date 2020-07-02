@@ -69,87 +69,87 @@ public class DeviceListBean {
         private String portalTrustDeviceInfo;
         private String portalTrustDeviceMaster;
 
-        public String getPortalTrustDeviceSourceType() {
+        public String getportalTrustDeviceSourceType() {
             return portalTrustDeviceSourceType;
         }
 
-        public void setPortalTrustDeviceSourceType(String portalTrustDeviceSourceType) {
+        public void setportalTrustDeviceSourceType(String portalTrustDeviceSourceType) {
             this.portalTrustDeviceSourceType = portalTrustDeviceSourceType;
         }
 
-        public String getPortalTrustDeviceMaster() {
+        public String getportalTrustDeviceMaster() {
             return portalTrustDeviceMaster;
         }
 
-        public void setPortalTrustDeviceMaster(String portalTrustDeviceMaster) {
+        public void setportalTrustDeviceMaster(String portalTrustDeviceMaster) {
             this.portalTrustDeviceMaster = portalTrustDeviceMaster;
         }
 
-        public String getPortalTrustDeviceId() {
+        public String getportalTrustDeviceId() {
             return portalTrustDeviceId;
         }
 
-        public void setPortalTrustDeviceId(String portalTrustDeviceId) {
+        public void setportalTrustDeviceId(String portalTrustDeviceId) {
             this.portalTrustDeviceId = portalTrustDeviceId;
         }
 
-        public String getPortalTrustDeviceMemberId() {
+        public String getportalTrustDeviceMemberId() {
             return portalTrustDeviceMemberId;
         }
 
-        public void setPortalTrustDeviceMemberId(String portalTrustDeviceMemberId) {
+        public void setportalTrustDeviceMemberId(String portalTrustDeviceMemberId) {
             this.portalTrustDeviceMemberId = portalTrustDeviceMemberId;
         }
 
-        public String getPortalTrustDeviceNumber() {
+        public String getportalTrustDeviceNumber() {
             return portalTrustDeviceNumber;
         }
 
-        public void setPortalTrustDeviceNumber(String portalTrustDeviceNumber) {
+        public void setportalTrustDeviceNumber(String portalTrustDeviceNumber) {
             this.portalTrustDeviceNumber = portalTrustDeviceNumber;
         }
 
-        public String getPortalTrustDeviceType() {
+        public String getportalTrustDeviceType() {
             return portalTrustDeviceType;
         }
 
-        public void setPortalTrustDeviceType(String portalTrustDeviceType) {
+        public void setportalTrustDeviceType(String portalTrustDeviceType) {
             this.portalTrustDeviceType = portalTrustDeviceType;
         }
 
 
 
-        public String getPortalTrustDeviceName() {
+        public String getportalTrustDeviceName() {
             return portalTrustDeviceName;
         }
 
-        public void setPortalTrustDeviceName(String portalTrustDeviceName) {
+        public void setportalTrustDeviceName(String portalTrustDeviceName) {
             this.portalTrustDeviceName = portalTrustDeviceName;
         }
 
-        public String getPortalTrustDeviceInfo() {
+        public String getportalTrustDeviceInfo() {
             return portalTrustDeviceInfo;
         }
 
-        public void setPortalTrustDeviceInfo(String portalTrustDeviceInfo) {
+        public void setportalTrustDeviceInfo(String portalTrustDeviceInfo) {
             this.portalTrustDeviceInfo = portalTrustDeviceInfo;
         }
 
 
 
-        public int getPortalTrustDeviceDelete() {
+        public int getportalTrustDeviceDelete() {
             return portalTrustDeviceDelete;
         }
 
-        public void setPortalTrustDeviceDelete(int portalTrustDeviceDelete) {
+        public void setportalTrustDeviceDelete(int portalTrustDeviceDelete) {
             this.portalTrustDeviceDelete = portalTrustDeviceDelete;
         }
 
-        public String getPortalTrustDeviceLastLoginTime() {
+        public String getportalTrustDeviceLastLoginTime() {
             return portalTrustDeviceLastLoginTime;
         }
 
-        public void setPortalTrustDeviceLastLoginTime(String portalTrustDeviceLastLoginTime) {
+        public void setportalTrustDeviceLastLoginTime(String portalTrustDeviceLastLoginTime) {
             this.portalTrustDeviceLastLoginTime = portalTrustDeviceLastLoginTime;
         }
 

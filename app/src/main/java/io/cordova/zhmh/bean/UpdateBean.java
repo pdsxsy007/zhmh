@@ -66,55 +66,55 @@ public class UpdateBean {
 
         private String portalVersionUpdateDescription;
 
-        public void setPortalVersionId(int portalVersionId){
+        public void setportalVersionId(int portalVersionId){
             this.portalVersionId = portalVersionId;
         }
-        public int getPortalVersionId(){
+        public int getportalVersionId(){
             return this.portalVersionId;
         }
-        public void setPortalVersionNumber(String portalVersionNumber){
+        public void setportalVersionNumber(String portalVersionNumber){
             this.portalVersionNumber = portalVersionNumber;
         }
-        public String getPortalVersionNumber(){
+        public String getportalVersionNumber(){
             return this.portalVersionNumber;
         }
-        public void setPortalVersionType(String portalVersionType){
+        public void setportalVersionType(String portalVersionType){
             this.portalVersionType = portalVersionType;
         }
-        public String getPortalVersionType(){
+        public String getportalVersionType(){
             return this.portalVersionType;
         }
-        public void setPortalVersionUpdate(int portalVersionUpdate){
+        public void setportalVersionUpdate(int portalVersionUpdate){
             this.portalVersionUpdate = portalVersionUpdate;
         }
-        public int getPortalVersionUpdate(){
+        public int getportalVersionUpdate(){
             return this.portalVersionUpdate;
         }
-        public void setPortalVersionDownloadAdress(String portalVersionDownloadAdress){
+        public void setportalVersionDownloadAdress(String portalVersionDownloadAdress){
             this.portalVersionDownloadAdress = portalVersionDownloadAdress;
         }
-        public String getPortalVersionDownloadAdress(){
+        public String getportalVersionDownloadAdress(){
             return this.portalVersionDownloadAdress;
         }
-        public void setPortalVersionPublisher(String portalVersionPublisher){
+        public void setportalVersionPublisher(String portalVersionPublisher){
             this.portalVersionPublisher = portalVersionPublisher;
         }
-        public String getPortalVersionPublisher(){
+        public String getportalVersionPublisher(){
             return this.portalVersionPublisher;
         }
 
-        public String getPortalVersionPublishTime() {
+        public String getportalVersionPublishTime() {
             return portalVersionPublishTime;
         }
 
-        public void setPortalVersionPublishTime(String portalVersionPublishTime) {
+        public void setportalVersionPublishTime(String portalVersionPublishTime) {
             this.portalVersionPublishTime = portalVersionPublishTime;
         }
 
-        public void setPortalVersionUpdateDescription(String portalVersionUpdateDescription){
+        public void setportalVersionUpdateDescription(String portalVersionUpdateDescription){
             this.portalVersionUpdateDescription = portalVersionUpdateDescription;
         }
-        public String getPortalVersionUpdateDescription(){
+        public String getportalVersionUpdateDescription(){
             return this.portalVersionUpdateDescription;
         }
 

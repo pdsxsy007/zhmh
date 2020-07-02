@@ -122,15 +122,15 @@ public abstract class LoginBaseActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        netInsertPortal("5");
+        netInsertportal("5");
     }
 
-    private void netInsertPortal(final String insertPortalAccessLog) {
+    private void netInsertportal(final String insertportalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(this);
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
-                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogTarget", insertportalAccessLog)//访问目标
                 .params("portalAccessLogVersionNumber", (String) SPUtils.get(this,"versionName", ""))//版本号
                 .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {

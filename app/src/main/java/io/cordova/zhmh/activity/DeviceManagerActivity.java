@@ -346,9 +346,9 @@ public class DeviceManagerActivity extends BaseActivity {
 
                         recyclerView.setAdapter(inventoryAdapter);
                         for(int i=0;i<dataList.size();i++){
-                            if(DEVICE_ID.equals(dataList.get(i).getPortalTrustDeviceNumber())) {
+                            if(DEVICE_ID.equals(dataList.get(i).getportalTrustDeviceNumber())) {
                                 xrdeviceDevice.setVisibility(View.GONE);
-                              SPUtils.put(DeviceManagerActivity.this,"data1",dataList.get(i).getPortalTrustDeviceNumber());
+                              SPUtils.put(DeviceManagerActivity.this,"data1",dataList.get(i).getportalTrustDeviceNumber());
                             }
                         }
 
@@ -359,17 +359,17 @@ public class DeviceManagerActivity extends BaseActivity {
                                         inventoryAdapter.notifyDataSetChanged();
                                         //Log.e("当前的位子", position+ "");
                                             if(isdelete == true){
-                                                if(DEVICE_ID.equals(dataList.get(position).getPortalTrustDeviceNumber())) {
+                                                if(DEVICE_ID.equals(dataList.get(position).getportalTrustDeviceNumber())) {
                                                     ToastUtils.showToast(getApplicationContext(),"不能删除主设备");
                                                 }else{
                                                     OkGo.<String>post(UrlRes.HOME_URL + UrlRes.updateTrustDevice)
-                                                            .params("portalTrustDeviceNumber", dataList.get(position).getPortalTrustDeviceNumber())
-                                                            .params("portalTrustDeviceType", dataList.get(position).getPortalTrustDeviceType())
-                                                            .params("portalTrustDeviceName", dataList.get(position).getPortalTrustDeviceName())
-                                                            .params("portalTrustDeviceInfo", dataList.get(position).getPortalTrustDeviceInfo())
-                                                            .params("portalTrustDeviceMaster", dataList.get(position).getPortalTrustDeviceMaster())
+                                                            .params("portalTrustDeviceNumber", dataList.get(position).getportalTrustDeviceNumber())
+                                                            .params("portalTrustDeviceType", dataList.get(position).getportalTrustDeviceType())
+                                                            .params("portalTrustDeviceName", dataList.get(position).getportalTrustDeviceName())
+                                                            .params("portalTrustDeviceInfo", dataList.get(position).getportalTrustDeviceInfo())
+                                                            .params("portalTrustDeviceMaster", dataList.get(position).getportalTrustDeviceMaster())
                                                             .params("portalTrustDeviceDelete", 1)
-                                                            .params("portalTrustDeviceId", dataList.get(position).getPortalTrustDeviceId())
+                                                            .params("portalTrustDeviceId", dataList.get(position).getportalTrustDeviceId())
                                                             .params("userName", (String) SPUtils.get(MyApp.getInstance(), "userId", "")).execute(new StringCallback() {
                                                         @Override
                                                         public void onSuccess(Response<String> response) {

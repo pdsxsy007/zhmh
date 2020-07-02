@@ -153,7 +153,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 import sun.misc.BASE64Encoder;
 
 import static io.cordova.zhmh.UrlRes.HOME_URL;
-import static io.cordova.zhmh.UrlRes.addPortalReadingAccessUrl;
+import static io.cordova.zhmh.UrlRes.addportalReadingAccessUrl;
 import static io.cordova.zhmh.UrlRes.functionInvocationLogUrl;
 import static io.cordova.zhmh.activity.SplashActivity.getLocalVersionName;
 import static io.cordova.zhmh.utils.AesEncryptUtile.key;
@@ -1176,7 +1176,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
             Log.e("content",json.toString());
             String content = AesEncryptUtile.encrypt(s3, key);
 
-            OkGo.<String>post(HOME_URL+addPortalReadingAccessUrl)
+            OkGo.<String>post(HOME_URL+addportalReadingAccessUrl)
                     .tag(this)
                     .params("json", content)
                     .execute(new StringCallback() {
@@ -2592,7 +2592,7 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
     protected void onResume() {
         mAgentWeb.getWebLifeCycle().onResume();
         super.onResume();
-        netInsertPortal("5");
+        netInsertportal("5");
         String isLoading2 = (String) SPUtils.get(BaseWebActivity4.this, "isloading2", "");
         Log.e("isLoading2",isLoading2);
         if(!isLoading2 .equals("")){
@@ -2698,13 +2698,13 @@ public class BaseWebActivity4 extends AppCompatActivity implements GestureDetect
 
 
 
-    private void netInsertPortal(final String insertPortalAccessLog) {
+    private void netInsertportal(final String insertportalAccessLog) {
         String imei = getIMEI(this);
         OkGo.<String>post(HOME_URL + UrlRes.Four_Modules)
                 .tag(this)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
-                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogTarget", insertportalAccessLog)//访问目标
                 .params("portalAccessLogVersionNumber", (String) SPUtils.get(this,"versionName", ""))//版本号
                 .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {

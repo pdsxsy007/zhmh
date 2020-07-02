@@ -69,29 +69,29 @@ public class DeviceAdapter extends CommonAdapter<DeviceListBean.Obj> {
                     }
                 }
             });
-            device = obj.getPortalTrustDeviceInfo();
+            device = obj.getportalTrustDeviceInfo();
             getDeviceName();
-            deviceid = obj.getPortalTrustDeviceMaster();
+            deviceid = obj.getportalTrustDeviceMaster();
             getDeviceId();
         }
 
-        if(obj.getPortalTrustDeviceMaster().equals("1")){
-            holder.setText(R.id.device_name,obj.getPortalTrustDeviceInfo() + "(主设备)");
-            if(DEVICE_ID.equals(obj.getPortalTrustDeviceNumber())){{
+        if(obj.getportalTrustDeviceMaster().equals("1")){
+            holder.setText(R.id.device_name,obj.getportalTrustDeviceInfo() + "(主设备)");
+            if(DEVICE_ID.equals(obj.getportalTrustDeviceNumber())){{
                 holder.getView(R.id.tv_main).setVisibility(View.VISIBLE);
             }}
         }else{
-            holder.setText(R.id.device_name,obj.getPortalTrustDeviceInfo());
+            holder.setText(R.id.device_name,obj.getportalTrustDeviceInfo());
         }
 
-        holder.setText(R.id.loginTime, "最近登录：" + TimeUtils.timeStamp2Date(obj.getPortalTrustDeviceLastLoginTime(),"yyyy-MM-dd HH:mm:ss"));
+        holder.setText(R.id.loginTime, "最近登录：" + TimeUtils.timeStamp2Date(obj.getportalTrustDeviceLastLoginTime(),"yyyy-MM-dd HH:mm:ss"));
 
         Intent intent2 = new Intent();
         intent2.setAction("xianshi");
-        if(obj.getPortalTrustDeviceMaster().equals("1"))
+        if(obj.getportalTrustDeviceMaster().equals("1"))
 
-//        intent2.putExtra("state",obj.getPortalTrustDeviceNumber());
-        intent2.putExtra("data1",obj.getPortalTrustDeviceNumber());
+//        intent2.putExtra("state",obj.getportalTrustDeviceNumber());
+        intent2.putExtra("data1",obj.getportalTrustDeviceNumber());
         mContext.sendBroadcast(intent2);
     }
 

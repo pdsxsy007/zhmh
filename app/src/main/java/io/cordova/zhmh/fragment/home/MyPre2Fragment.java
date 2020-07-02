@@ -589,10 +589,10 @@ public class MyPre2Fragment extends BaseFragment implements PermissionsUtil.IPer
                     holder.setVisible(R.id.iv_del,false);
                 }
 
-                if (null != objBean.getPortalAppIcon() && null != objBean.getPortalAppIcon().getTempletAppImage()){
+                if (null != objBean.getportalAppIcon() && null != objBean.getportalAppIcon().getTempletAppImage()){
 
                     Glide.with(getActivity())
-                            .load(UrlRes.HOME3_URL + objBean.getPortalAppIcon().getTempletAppImage())
+                            .load(UrlRes.HOME3_URL + objBean.getportalAppIcon().getTempletAppImage())
                             .error(getResources().getColor(R.color.app_bg))
                             .into((ImageView) holder.getView(R.id.iv_app_icon));
                 }else {
@@ -688,9 +688,9 @@ public class MyPre2Fragment extends BaseFragment implements PermissionsUtil.IPer
                         }else {
 
 
-                            ServiceAppListBean.ObjBean.AppsBean.PortalAppAuthentication portalAppAuthentication = appsBean.getPortalAppAuthentication();
+                            ServiceAppListBean.ObjBean.AppsBean.portalAppAuthentication portalAppAuthentication = appsBean.getportalAppAuthentication();
                             if(portalAppAuthentication != null){
-                                String appAuthenticationFace = appsBean.getPortalAppAuthentication().getAppAuthenticationFace();
+                                String appAuthenticationFace = appsBean.getportalAppAuthentication().getAppAuthenticationFace();
                                 if(appAuthenticationFace != null){
                                     if(!appAuthenticationFace.equals("0")){
                                         permissionsUtil=  PermissionsUtil
@@ -804,10 +804,10 @@ public class MyPre2Fragment extends BaseFragment implements PermissionsUtil.IPer
             @Override
             protected void convert(ViewHolder holder, final ServiceAppListBean.ObjBean.AppsBean appsBean, int position) {
                 holder.setText(R.id.tv_app_name, appsBean.getAppName());
-                if (null != appsBean.getPortalAppIcon() && null != appsBean.getPortalAppIcon().getTempletAppImage()){
+                if (null != appsBean.getportalAppIcon() && null != appsBean.getportalAppIcon().getTempletAppImage()){
 
                     Glide.with(getActivity())
-                            .load(UrlRes.HOME3_URL + appsBean.getPortalAppIcon().getTempletAppImage())
+                            .load(UrlRes.HOME3_URL + appsBean.getportalAppIcon().getTempletAppImage())
                             .error(getResources().getColor(R.color.app_bg))
                             .into((ImageView) holder.getView(R.id.iv_app_icon));
                 }else {
@@ -911,9 +911,9 @@ public class MyPre2Fragment extends BaseFragment implements PermissionsUtil.IPer
 
                                 }else {
 
-                                    ServiceAppListBean.ObjBean.AppsBean.PortalAppAuthentication portalAppAuthentication = appsBean.getPortalAppAuthentication();
+                                    ServiceAppListBean.ObjBean.AppsBean.portalAppAuthentication portalAppAuthentication = appsBean.getportalAppAuthentication();
                                     if(portalAppAuthentication != null){
-                                        String appAuthenticationFace = appsBean.getPortalAppAuthentication().getAppAuthenticationFace();
+                                        String appAuthenticationFace = appsBean.getportalAppAuthentication().getAppAuthenticationFace();
                                         if(appAuthenticationFace != null){
                                             if(!appAuthenticationFace.equals("0")){
                                                 permissionsUtil=  PermissionsUtil
@@ -1096,17 +1096,17 @@ public class MyPre2Fragment extends BaseFragment implements PermissionsUtil.IPer
             badge1.hide();
         }else {
             netWorkSystemMsg();
-            netInsertPortal("4");
+            netInsertportal("4");
         }
 
     }
 
-    private void netInsertPortal(final String insertPortalAccessLog) {
+    private void netInsertportal(final String insertportalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(getActivity());
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
-                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogTarget", insertportalAccessLog)//访问目标
                 .params("portalAccessLogVersionNumber", (String) SPUtils.get(getActivity(),"versionName", ""))//版本号
                 .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {

@@ -278,7 +278,7 @@ public class ServicePreFragment extends BaseFragment implements PermissionsUtil.
                                         String appImages = obj.get(i).getAppImages();
                                         int appIntranet = obj.get(i).getAppIntranet();
                                         Object appSecret = obj.get(i).getAppSecret();
-                                        MyCollectionBean.ObjBean.PortalAppIconBean portalAppIcon = obj.get(i).getPortalAppIcon();
+                                        MyCollectionBean.ObjBean.portalAppIconBean portalAppIcon = obj.get(i).getportalAppIcon();
                                         if(appAndroidSchema != null){
                                             appsBean.setAppAndroidSchema(appAndroidSchema);
                                         }
@@ -291,14 +291,14 @@ public class ServicePreFragment extends BaseFragment implements PermissionsUtil.
                                         if(appImages != null){
                                             appsBean.setAppImages(appImages);
                                         }
-                                        ServiceAppListBean.ObjBean.AppsBean.PortalAppIconBean portalAppIconBean = new ServiceAppListBean.ObjBean.AppsBean.PortalAppIconBean();
+                                        ServiceAppListBean.ObjBean.AppsBean.portalAppIconBean portalAppIconBean = new ServiceAppListBean.ObjBean.AppsBean.portalAppIconBean();
                                         if(portalAppIcon != null){
-                                            String templetAppImage = obj.get(i).getPortalAppIcon().getTempletAppImage();
+                                            String templetAppImage = obj.get(i).getportalAppIcon().getTempletAppImage();
                                             if(templetAppImage != null){
                                                 portalAppIconBean.setTempletAppImage(templetAppImage);
                                             }
                                         }
-                                        appsBean.setPortalAppIcon(portalAppIconBean);
+                                        appsBean.setportalAppIcon(portalAppIconBean);
                                         listsApp.add(appsBean);
                                     }
                                     List<ServiceAppListBean.ObjBean> objBeans = new ArrayList<>();
@@ -501,10 +501,10 @@ public class ServicePreFragment extends BaseFragment implements PermissionsUtil.
                     protected void convert(ViewHolder holder, final ServiceAppListBean.ObjBean.AppsBean appsBean, int position) {
                         holder.setText(R.id.tv_app_name, appsBean.getAppName());
 
-                        if (null != appsBean.getPortalAppIcon() && null != appsBean.getPortalAppIcon().getTempletAppImage()){
+                        if (null != appsBean.getportalAppIcon() && null != appsBean.getportalAppIcon().getTempletAppImage()){
 
                             Glide.with(getActivity())
-                                    .load(UrlRes.HOME3_URL + appsBean.getPortalAppIcon().getTempletAppImage())
+                                    .load(UrlRes.HOME3_URL + appsBean.getportalAppIcon().getTempletAppImage())
                                     .error(getResources().getColor(R.color.app_bg))
                                     .into((ImageView) holder.getView(R.id.iv_app_icon));
                         }else {
@@ -631,9 +631,9 @@ public class ServicePreFragment extends BaseFragment implements PermissionsUtil.
                                             }
 
                                         }else {
-                                            ServiceAppListBean.ObjBean.AppsBean.PortalAppAuthentication portalAppAuthentication = appsBean.getPortalAppAuthentication();
+                                            ServiceAppListBean.ObjBean.AppsBean.portalAppAuthentication portalAppAuthentication = appsBean.getportalAppAuthentication();
                                             if(portalAppAuthentication != null){
-                                                String appAuthenticationFace = appsBean.getPortalAppAuthentication().getAppAuthenticationFace();
+                                                String appAuthenticationFace = appsBean.getportalAppAuthentication().getAppAuthenticationFace();
                                                 if(appAuthenticationFace != null ){
                                                     if(!appAuthenticationFace.equals("0")){
                                                         permissionsUtil=  PermissionsUtil
@@ -954,23 +954,23 @@ public class ServicePreFragment extends BaseFragment implements PermissionsUtil.
 
             return;
         }else{  // 在最前端显示 相当于调用了onResume();
-            netInsertPortal("3");
+            netInsertportal("3");
             registerBoradcastReceiver();
             registerBoradcastReceiver2();
             if (isLogin){
                 webView.setWebViewClient(mWebViewClient);
-                webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
+                webView.loadUrl("http://iapp.zzuli.edu.cn/portalnew/login/appLogin");
             }
         }
 
     }
 
-    private void netInsertPortal(final String insertPortalAccessLog) {
+    private void netInsertportal(final String insertportalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(getActivity());
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
-                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogTarget", insertportalAccessLog)//访问目标
                 .params("portalAccessLogVersionNumber", (String) SPUtils.get(getActivity(),"versionName", ""))//版本号
                 .params("portalAccessLogOperatingSystem", "ANDROID")
                 .execute(new StringCallback() {

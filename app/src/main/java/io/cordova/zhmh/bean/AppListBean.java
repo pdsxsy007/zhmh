@@ -317,11 +317,11 @@ public class AppListBean {
             private int appLoginFlag;
             private Object appModulesId;
             private String appUrl;
-            private PortalAppIconBean portalAppIcon ;
+            private portalAppIconBean portalAppIcon ;
             private String systemName;
             private Object iconCount;
             private Object systemIdList;
-            private PortalAppAuthentication portalAppAuthentication;
+            private portalAppAuthentication portalAppAuthentication;
             public String getAppSecret() {
                 return appSecret;
             }
@@ -332,11 +332,11 @@ public class AppListBean {
 
 
 
-            public PortalAppAuthentication getPortalAppAuthentication() {
+            public portalAppAuthentication getportalAppAuthentication() {
                 return portalAppAuthentication;
             }
 
-            public void setPortalAppAuthentication(PortalAppAuthentication portalAppAuthentication) {
+            public void setportalAppAuthentication(portalAppAuthentication portalAppAuthentication) {
                 this.portalAppAuthentication = portalAppAuthentication;
             }
 
@@ -492,11 +492,11 @@ public class AppListBean {
                 this.appUrl = appUrl;
             }
 
-            public PortalAppIconBean getPortalAppIcon() {
+            public portalAppIconBean getportalAppIcon() {
                 return portalAppIcon;
             }
 
-            public void setPortalAppIcon(PortalAppIconBean portalAppIcon) {
+            public void setportalAppIcon(portalAppIconBean portalAppIcon) {
                 this.portalAppIcon = portalAppIcon;
             }
 
@@ -524,7 +524,7 @@ public class AppListBean {
                 this.systemIdList = systemIdList;
             }
 
-            public static class PortalAppIconBean {
+            public static class portalAppIconBean {
                 /**
                  * templetId : null
                  * templetCode : null
@@ -591,7 +591,7 @@ public class AppListBean {
             }
         }
 
-        public static class PortalAppAuthentication {
+        public static class portalAppAuthentication {
             private String appAuthenticationAppId;
 
             private String appAuthenticationFace;

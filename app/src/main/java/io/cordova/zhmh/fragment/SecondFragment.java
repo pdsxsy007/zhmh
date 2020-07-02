@@ -345,7 +345,7 @@ public class SecondFragment extends BaseFragment {
         }else{  // 在最前端显示 相当于调用了onResume();
             getNewsData(getView());
             isLogin = !StringUtils.isEmpty((String) SPUtils.get(MyApp.getInstance(),"username",""));
-            netInsertPortal("2");
+            netInsertportal("2");
             String count = (String) SPUtils.get(getActivity(),"count","");
             //Log.e("count-------",count);
             //badge1.setText(count);
@@ -363,12 +363,12 @@ public class SecondFragment extends BaseFragment {
         }
     }
 
-    private void netInsertPortal(final String insertPortalAccessLog) {
+    private void netInsertportal(final String insertportalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(getActivity());
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(MyApp.getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(MyApp.getInstance(),"imei",""))//设备ID
-                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogTarget", insertportalAccessLog)//访问目标
                 .params("portalAccessLogVersionNumber", (String) SPUtils.get(getActivity(),"versionName", ""))//版本号
                 .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {

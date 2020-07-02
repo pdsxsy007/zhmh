@@ -81,7 +81,7 @@ public class MyAdapter2 extends CommonAdapter<OAMsgListBean2.ObjBean> {
                         .into(iv);
                 break;
         }
-//        if(s.getPortalMessageDetailList().get(0).getMessageDetailState() == 0){//未读
+//        if(s.getportalMessageDetailList().get(0).getMessageDetailState() == 0){//未读
 //            holder.setTextColor(R.id.tv_name,Color.parseColor("#000000"));
 //            holder.setTextColor(R.id.tv_present,Color.parseColor("#000000"));
 //            holder.setVisible(R.id.rl_jiaobiao,true);
@@ -155,7 +155,7 @@ public class MyAdapter2 extends CommonAdapter<OAMsgListBean2.ObjBean> {
 
                                 Intent intent2 = new Intent();
                                 intent2.setAction("refreshMsg");
-                                intent2.putExtra("state",s.getPortalMessageDetailList().get(0).getMessageDetailState()+"");
+                                intent2.putExtra("state",s.getportalMessageDetailList().get(0).getMessageDetailState()+"");
                                 mContext.sendBroadcast(intent2);
 
                             }
@@ -168,10 +168,10 @@ public class MyAdapter2 extends CommonAdapter<OAMsgListBean2.ObjBean> {
 
             }
         });
-//        if(s.getPortalMessageDetailList().size() != 0){
+//        if(s.getportalMessageDetailList().size() != 0){
 //            Intent intent2 = new Intent();
 //            intent2.setAction("refreshMsg2");
-//            intent2.putExtra("state",s.getPortalMessageDetailList().get(0).getMessageDetailState()+"");
+//            intent2.putExtra("state",s.getportalMessageDetailList().get(0).getMessageDetailState()+"");
 //            mContext.sendBroadcast(intent2);
 //        }
 

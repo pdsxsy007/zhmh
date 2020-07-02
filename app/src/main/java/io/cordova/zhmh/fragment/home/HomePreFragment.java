@@ -314,7 +314,7 @@ public class HomePreFragment extends BaseFragment {
                 .interceptUnkownUrl() //拦截找不到相关页面的Url AgentWeb 3.0.0 加入。
                 .createAgentWeb()//创建AgentWeb。
                 .ready()//设置 WebSettings。
-                .go("http://platform.gilight.cn/portal/portal-app/app-8/index.html");//http://platform.gilight.cn/portal/portal-app/app-8/index.html
+                .go("http://platform.gilight.cn/portalnew/portal-app/app-8/index.html");//http://platform.gilight.cn/portal/portal-app/app-8/index.html
 
 
         mAgentWeb.getAgentWebSettings().getWebSettings().setUseWideViewPort(true);
@@ -352,7 +352,7 @@ public class HomePreFragment extends BaseFragment {
                 url = request.getUrl().toString();
             }
 
-            if (!url.equals("http://platform.gilight.cn/portal/portal-app/app-8/index.html")){
+            if (!url.equals("http://platform.gilight.cn/portalnew/portal-app/app-8/index.html")){
                 Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
                 intent.putExtra("appUrl",url);
 //                    intent.putExtra("appId",listBean.getAppId()+"");
@@ -367,7 +367,7 @@ public class HomePreFragment extends BaseFragment {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-            if (!url.equals("http://platform.gilight.cn/portal/portal-app/app-8/index.html")){
+            if (!url.equals("http://platform.gilight.cn/portalnew/portal-app/app-8/index.html")){
                 Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
                 intent.putExtra("appUrl",url);
 //                    intent.putExtra("appId",listBean.getAppId()+"");
@@ -693,17 +693,17 @@ public class HomePreFragment extends BaseFragment {
         if(hidden){
 
         }else {
-            netInsertPortal("1");
+            netInsertportal("1");
             setWeb();
         }
     }
 
-    private void netInsertPortal(final String insertPortalAccessLog) {
+    private void netInsertportal(final String insertportalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(getActivity());
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
-                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogTarget", insertportalAccessLog)//访问目标
                 .params("portalAccessLogVersionNumber", (String) SPUtils.get(getActivity(),"versionName", ""))//版本号
                 .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {

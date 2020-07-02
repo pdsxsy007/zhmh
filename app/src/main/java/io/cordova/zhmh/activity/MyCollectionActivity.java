@@ -149,10 +149,10 @@ public class MyCollectionActivity extends BaseActivity2 implements PermissionsUt
 //                        .into((ImageView) holder.getView(R.id.iv_lock_open));
 
                 holder.setText(R.id.tv_app_name,objBean.getAppName());
-                if (null != objBean.getPortalAppIcon() && null != objBean.getPortalAppIcon().getTempletAppImage()){
+                if (null != objBean.getportalAppIcon() && null != objBean.getportalAppIcon().getTempletAppImage()){
 
                     Glide.with(getApplicationContext())
-                            .load(UrlRes.HOME3_URL + objBean.getPortalAppIcon().getTempletAppImage())
+                            .load(UrlRes.HOME3_URL + objBean.getportalAppIcon().getTempletAppImage())
                             .error(R.mipmap.message_icon1)
                             .into((ImageView) holder.getView(R.id.iv_app_icon));
                 }else {
@@ -176,7 +176,7 @@ public class MyCollectionActivity extends BaseActivity2 implements PermissionsUt
                             }else {
                                 intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
                             }
-                            ServiceAppListBean.ObjBean.AppsBean.PortalAppAuthentication portalAppAuthentication = collectionBean.getObj().get(position).getPortalAppAuthentication();
+                            ServiceAppListBean.ObjBean.AppsBean.portalAppAuthentication portalAppAuthentication = collectionBean.getObj().get(position).getportalAppAuthentication();
                             if(portalAppAuthentication != null){
                                 String appAuthenticationFace = portalAppAuthentication.getAppAuthenticationFace();
                                 if(appAuthenticationFace != null){

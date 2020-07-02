@@ -92,7 +92,7 @@ public class OAMsgListBean2 {
         private int messageType;
         private String messageThirdSendTime;
 
-        private List<PortalMessageDetailList> portalMessageDetailList;
+        private List<portalMessageDetailList> portalMessageDetailList;
 
         public String getMessageId() {
             return messageId;
@@ -182,15 +182,15 @@ public class OAMsgListBean2 {
             this.messageThirdSendTime = messageThirdSendTime;
         }
 
-        public List<PortalMessageDetailList> getPortalMessageDetailList() {
+        public List<portalMessageDetailList> getportalMessageDetailList() {
             return portalMessageDetailList;
         }
 
-        public void setPortalMessageDetailList(List<PortalMessageDetailList> portalMessageDetailList) {
+        public void setportalMessageDetailList(List<portalMessageDetailList> portalMessageDetailList) {
             this.portalMessageDetailList = portalMessageDetailList;
         }
 
-        public static class PortalMessageDetailList{
+        public static class portalMessageDetailList{
             private String messageDetailId;
             private String messageDetailMessageId;
             private String messageDetailChecker;

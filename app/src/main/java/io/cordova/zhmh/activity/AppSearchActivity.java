@@ -236,10 +236,10 @@ public class AppSearchActivity extends BaseActivity2 implements PermissionsUtil.
                 holder.setText(R.id.tv_app_come,"来源 ：" +listBean.getSystemName());
                 holder.setVisible(R.id.iv_del,true);
 
-                if (null != listBean.getPortalAppIcon() && null != listBean.getPortalAppIcon().getTempletAppImage()){
+                if (null != listBean.getportalAppIcon() && null != listBean.getportalAppIcon().getTempletAppImage()){
 
                     Glide.with(getApplicationContext())
-                            .load(UrlRes.HOME3_URL + listBean.getPortalAppIcon().getTempletAppImage())
+                            .load(UrlRes.HOME3_URL + listBean.getportalAppIcon().getTempletAppImage())
                             .error(getResources().getColor(R.color.app_bg))
                             .into((ImageView) holder.getView(R.id.iv_app_img));
                 }else {
@@ -337,7 +337,7 @@ public class AppSearchActivity extends BaseActivity2 implements PermissionsUtil.
                                         DargeFaceSearchUtils.cameraTask(listBean,AppSearchActivity.this);
                                     }
 */
-                                        AppListBean.ObjBean.PortalAppAuthentication portalAppAuthentication = listBean.getPortalAppAuthentication();
+                                        AppListBean.ObjBean.portalAppAuthentication portalAppAuthentication = listBean.getportalAppAuthentication();
                                         if(portalAppAuthentication != null){
                                             String appAuthenticationFace = portalAppAuthentication.getAppAuthenticationFace();
                                             if(appAuthenticationFace != null){

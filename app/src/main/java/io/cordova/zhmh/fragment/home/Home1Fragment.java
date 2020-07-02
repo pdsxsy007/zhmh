@@ -571,10 +571,10 @@ public class Home1Fragment extends BaseFragment implements PermissionsUtil.IPerm
                     }
                 }
 
-                if (null != objBean.getPortalAppIcon() && null != objBean.getPortalAppIcon().getTempletAppImage()){
+                if (null != objBean.getportalAppIcon() && null != objBean.getportalAppIcon().getTempletAppImage()){
 
                     Glide.with(getActivity())
-                            .load(UrlRes.HOME3_URL + objBean.getPortalAppIcon().getTempletAppImage())
+                            .load(UrlRes.HOME3_URL + objBean.getportalAppIcon().getTempletAppImage())
                             .into((ImageView) holder.getView(R.id.iv_app_icon));
                 }else {
                     Glide.with(getActivity())
@@ -668,9 +668,9 @@ public class Home1Fragment extends BaseFragment implements PermissionsUtil.IPerm
                         }else {
 
 
-                            ServiceAppListBean.ObjBean.AppsBean.PortalAppAuthentication portalAppAuthentication = appsBean.getPortalAppAuthentication();
+                            ServiceAppListBean.ObjBean.AppsBean.portalAppAuthentication portalAppAuthentication = appsBean.getportalAppAuthentication();
                             if(portalAppAuthentication != null){
-                                String appAuthenticationFace = appsBean.getPortalAppAuthentication().getAppAuthenticationFace();
+                                String appAuthenticationFace = appsBean.getportalAppAuthentication().getAppAuthenticationFace();
                                 if(appAuthenticationFace != null){
                                     if(!appAuthenticationFace.equals("0")){
                                         permissionsUtil=  PermissionsUtil

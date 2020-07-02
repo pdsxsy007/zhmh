@@ -205,14 +205,14 @@ public class ServiceAppListBean {
             private Object iconCount;
             private Object systemIdList;
 
-            private PortalAppIconBean portalAppIcon;
-            private PortalAppAuthentication portalAppAuthentication;
+            private portalAppIconBean portalAppIcon;
+            private portalAppAuthentication portalAppAuthentication;
 
-            public PortalAppAuthentication getPortalAppAuthentication() {
+            public portalAppAuthentication getportalAppAuthentication() {
                 return portalAppAuthentication;
             }
 
-            public void setPortalAppAuthentication(PortalAppAuthentication portalAppAuthentication) {
+            public void setportalAppAuthentication(portalAppAuthentication portalAppAuthentication) {
                 this.portalAppAuthentication = portalAppAuthentication;
             }
 
@@ -410,15 +410,15 @@ public class ServiceAppListBean {
                 this.systemIdList = systemIdList;
             }
 
-            public PortalAppIconBean getPortalAppIcon() {
+            public portalAppIconBean getportalAppIcon() {
                 return portalAppIcon;
             }
 
-            public void setPortalAppIcon(PortalAppIconBean portalAppIcon) {
+            public void setportalAppIcon(portalAppIconBean portalAppIcon) {
                 this.portalAppIcon = portalAppIcon;
             }
 
-            public static class PortalAppIconBean {
+            public static class portalAppIconBean {
 
                 private Object templetId;
                 private Object templetCode;
@@ -476,7 +476,7 @@ public class ServiceAppListBean {
                 }
             }
 
-            public static class PortalAppAuthentication {
+            public static class portalAppAuthentication {
                 private String appAuthenticationAppId;
 
                 private String appAuthenticationFace;

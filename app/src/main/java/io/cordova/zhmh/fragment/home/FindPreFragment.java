@@ -239,7 +239,7 @@ public class FindPreFragment extends BaseFragment {
                 .interceptUnkownUrl() //拦截找不到相关页面的Url AgentWeb 3.0.0 加入。
                 .createAgentWeb()//创建AgentWeb。
                 .ready()//设置 WebSettings。
-                .go("http://platform.gilight.cn/portal/portal-app/app-8/news.html");
+                .go("http://platform.gilight.cn/portalnew/portal-app/app-8/news.html");
 
     }
 
@@ -305,7 +305,7 @@ public class FindPreFragment extends BaseFragment {
                 url = request.getUrl().toString();
             }
 
-            if (!url.equals("http://platform.gilight.cn/portal/portal-app/app/news_find.html")){
+            if (!url.equals("http://platform.gilight.cn/portalnew/portal-app/app/news_find.html")){
                 Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
                 intent.putExtra("appUrl",url);
 //                    intent.putExtra("appId",listBean.getAppId()+"");
@@ -320,7 +320,7 @@ public class FindPreFragment extends BaseFragment {
         @Override
         public boolean shouldOverrideUrlLoading(WebView view, String url) {
 
-            if (!url.equals("http://platform.gilight.cn/portal/portal-app/app/news_find.html")){
+            if (!url.equals("http://platform.gilight.cn/portalnew/portal-app/app/news_find.html")){
                 Intent intent = new Intent(MyApp.getInstance(), BaseWebActivity4.class);
                 intent.putExtra("appUrl",url);
 //                    intent.putExtra("appId",listBean.getAppId()+"");
@@ -564,7 +564,7 @@ public class FindPreFragment extends BaseFragment {
 
         }else{  // 在最前端显示 相当于调用了onResume();
             isLogin = !StringUtils.isEmpty((String) SPUtils.get(MyApp.getInstance(),"username",""));
-            netInsertPortal("2");
+            netInsertportal("2");
             String count = (String) SPUtils.get(getActivity(),"count","");
             //Log.e("count-------",count);
             //badge1.setText(count);
@@ -668,13 +668,13 @@ public class FindPreFragment extends BaseFragment {
                 });
     }
 
-    private void netInsertPortal(final String insertPortalAccessLog) {
+    private void netInsertportal(final String insertportalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(getActivity());
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
                 .tag(this)
                 .params("portalAccessLogMemberId",(String) SPUtils.get(getInstance(),"userId",""))
                 .params("portalAccessLogEquipmentId",(String) SPUtils.get(getInstance(),"imei",""))//设备ID
-                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogTarget", insertportalAccessLog)//访问目标
                 .params("portalAccessLogVersionNumber", (String) SPUtils.get(getActivity(),"versionName", ""))//版本号
                 .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {

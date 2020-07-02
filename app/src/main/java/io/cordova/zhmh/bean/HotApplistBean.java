@@ -108,7 +108,7 @@ public class HotApplistBean {
         private int appLoginFlag;
         private Object appModulesId;
         private String appUrl;
-        private PortalAppIconBean portalAppIcon;
+        private portalAppIconBean portalAppIcon;
         private Object systemName;
         private Object iconCount;
         private Object systemIdList;
@@ -265,11 +265,11 @@ public class HotApplistBean {
             this.appUrl = appUrl;
         }
 
-        public PortalAppIconBean getPortalAppIcon() {
+        public portalAppIconBean getportalAppIcon() {
             return portalAppIcon;
         }
 
-        public void setPortalAppIcon(PortalAppIconBean portalAppIcon) {
+        public void setportalAppIcon(portalAppIconBean portalAppIcon) {
             this.portalAppIcon = portalAppIcon;
         }
 
@@ -297,7 +297,7 @@ public class HotApplistBean {
             this.systemIdList = systemIdList;
         }
 
-        public static class PortalAppIconBean {
+        public static class portalAppIconBean {
             /**
              * templetId : null
              * templetCode : null

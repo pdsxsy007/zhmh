@@ -84,18 +84,18 @@ public class MyCollectionBean {
         private int appLoginFlag;
         private Object appModulesId;
         private String appUrl;
-        private PortalAppIconBean portalAppIcon;
+        private portalAppIconBean portalAppIcon;
         private Object systemName;
         private Object iconCount;
         private Object systemIdList;
         private Object appSecret;
-        private ServiceAppListBean.ObjBean.AppsBean.PortalAppAuthentication portalAppAuthentication;
+        private ServiceAppListBean.ObjBean.AppsBean.portalAppAuthentication portalAppAuthentication;
 
-        public ServiceAppListBean.ObjBean.AppsBean.PortalAppAuthentication getPortalAppAuthentication() {
+        public ServiceAppListBean.ObjBean.AppsBean.portalAppAuthentication getportalAppAuthentication() {
             return portalAppAuthentication;
         }
 
-        public void setPortalAppAuthentication(ServiceAppListBean.ObjBean.AppsBean.PortalAppAuthentication portalAppAuthentication) {
+        public void setportalAppAuthentication(ServiceAppListBean.ObjBean.AppsBean.portalAppAuthentication portalAppAuthentication) {
             this.portalAppAuthentication = portalAppAuthentication;
         }
         public Object getAppSecret() {
@@ -258,11 +258,11 @@ public class MyCollectionBean {
             this.appUrl = appUrl;
         }
 
-        public PortalAppIconBean getPortalAppIcon() {
+        public portalAppIconBean getportalAppIcon() {
             return portalAppIcon;
         }
 
-        public void setPortalAppIcon(PortalAppIconBean portalAppIcon) {
+        public void setportalAppIcon(portalAppIconBean portalAppIcon) {
             this.portalAppIcon = portalAppIcon;
         }
 
@@ -290,7 +290,7 @@ public class MyCollectionBean {
             this.systemIdList = systemIdList;
         }
 
-        public static class PortalAppIconBean {
+        public static class portalAppIconBean {
             /**
              * templetId : null
              * templetCode : null
@@ -356,7 +356,7 @@ public class MyCollectionBean {
             }
         }
 
-        public static class PortalAppAuthentication {
+        public static class portalAppAuthentication {
             private String appAuthenticationAppId;
 
             private String appAuthenticationFace;

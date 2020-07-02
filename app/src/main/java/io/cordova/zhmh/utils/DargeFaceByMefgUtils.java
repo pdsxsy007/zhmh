@@ -34,9 +34,9 @@ public class DargeFaceByMefgUtils {
      */
     public static void jargeFace(ServiceAppListBean.ObjBean.AppsBean appsBean, Context context){
 
-        ServiceAppListBean.ObjBean.AppsBean.PortalAppAuthentication portalAppAuthentication = appsBean.getPortalAppAuthentication();
+        ServiceAppListBean.ObjBean.AppsBean.portalAppAuthentication portalAppAuthentication = appsBean.getportalAppAuthentication();
         if(portalAppAuthentication != null){
-            String appAuthenticationFace = appsBean.getPortalAppAuthentication().getAppAuthenticationFace();
+            String appAuthenticationFace = appsBean.getportalAppAuthentication().getAppAuthenticationFace();
             if(appAuthenticationFace != null){
                 if(appAuthenticationFace .equals("1")){
                     if (appsBean.getAppUrl().contains("{memberid}")){

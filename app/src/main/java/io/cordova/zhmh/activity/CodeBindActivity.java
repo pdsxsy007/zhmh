@@ -191,7 +191,7 @@ public class CodeBindActivity extends BaseActivity2 implements View.OnClickListe
                                     String userName = AesEncryptUtile.decrypt(loginBean.getAttributes().getUsername(),key) ;
 
                                     webView.setWebViewClient(mWebViewClient);
-                                    webView.loadUrl("http://iapp.zzuli.edu.cn/portal/login/appLogin");
+                                    webView.loadUrl("http://iapp.zzuli.edu.cn/portalnew/login/appLogin");
                                     String userId  = AesEncryptUtile.encrypt(userName+ "_"+ Calendar.getInstance().getTimeInMillis(),key);
                                     SPUtils.put(MyApp.getInstance(),"time",Calendar.getInstance().getTimeInMillis()+"");
                                     SPUtils.put(MyApp.getInstance(),"userId",userId);

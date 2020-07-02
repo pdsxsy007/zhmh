@@ -37,7 +37,7 @@ import io.cordova.zhmh.utils.MyApp;
 import io.cordova.zhmh.utils.SPUtils;
 import io.cordova.zhmh.web.ClassWebActivity;
 
-import static io.cordova.zhmh.UrlRes.insertPortalPositionUrl;
+import static io.cordova.zhmh.UrlRes.insertportalPositionUrl;
 
 /**
  * Implementation of App Widget functionality.
@@ -480,7 +480,7 @@ public class NewAppWidget extends AppWidgetProvider {
 
             }
 
-            OkGo.<String>post(UrlRes.HOME_URL+insertPortalPositionUrl)
+            OkGo.<String>post(UrlRes.HOME_URL+insertportalPositionUrl)
                     .tag(this)
                     .params("memberId", (String) SPUtils.get(MyApp.getInstance(), "userId", ""))
                     .params("positionLongitude", longitude)

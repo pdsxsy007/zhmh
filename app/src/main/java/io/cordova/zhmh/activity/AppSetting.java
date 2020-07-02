@@ -180,7 +180,7 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
                         //Log.e("ss",response.body());
                         UpdateBean updateBean = JSON.parseObject(response.body(),UpdateBean.class);
 
-                        portalVersionNumber = updateBean.getObj().getPortalVersionNumber();
+                        portalVersionNumber = updateBean.getObj().getportalVersionNumber();
 
                     }
                 });
@@ -312,9 +312,9 @@ public class AppSetting extends BaseActivity2 implements FingerprintHelper.Simpl
                         //Log.e("ss",response.body());
                         UpdateBean updateBean = JSON.parseObject(response.body(),UpdateBean.class);
 
-                        portalVersionNumber = updateBean.getObj().getPortalVersionNumber();
-                        int portalVersionUpdate = updateBean.getObj().getPortalVersionUpdate();
-                        String portalVersionDownloadAdress = updateBean.getObj().getPortalVersionDownloadAdress();
+                        portalVersionNumber = updateBean.getObj().getportalVersionNumber();
+                        int portalVersionUpdate = updateBean.getObj().getportalVersionUpdate();
+                        String portalVersionDownloadAdress = updateBean.getObj().getportalVersionDownloadAdress();
                         if(localVersionName.equals(portalVersionNumber)){
                             ToastUtils.showToast(AppSetting.this,"当前已是最新版本!");
                         }else {
