@@ -105,7 +105,7 @@ import pub.devrel.easypermissions.AfterPermissionGranted;
 import pub.devrel.easypermissions.EasyPermissions;
 
 import static io.cordova.zhmh.UrlRes.HOME_URL;
-import static io.cordova.zhmh.UrlRes.insertPortalPositionUrl;
+import static io.cordova.zhmh.UrlRes.insertportalPositionUrl;
 import static io.cordova.zhmh.activity.SplashActivity.getLocalVersionName;
 import static io.cordova.zhmh.utils.AesEncryptUtile.key;
 import static io.cordova.zhmh.utils.MyApp.getInstance;
@@ -125,7 +125,7 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
     String count;
 
     boolean isFirst = true, isHome = true, isFind = true, isService = true, isMy = true, isFive = true, isLogin = false;
-    String insertPortalAccessLog;
+    String insertportalAccessLog;
     Home1Fragment homePreFragment;
 
 
@@ -215,9 +215,9 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
 
         mainRadioGroup.check(R.id.rb_home_page);
         showFragment(flag);
-        insertPortalAccessLog = "1";
+        insertportalAccessLog = "1";
         if (isHome) {
-            netInsertPortal(insertPortalAccessLog);
+            netInsertportal(insertportalAccessLog);
         }
 
 
@@ -331,7 +331,7 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
             SPUtils.put(MainActivity.this,"speed",speed+"");
             SPUtils.put(MainActivity.this,"direction",direction+"");
             SPUtils.put(MainActivity.this,"locationWhere",locationWhere+"");
-            OkGo.<String>post(UrlRes.HOME_URL+insertPortalPositionUrl)
+            OkGo.<String>post(UrlRes.HOME_URL+insertportalPositionUrl)
                     .tag(this)
                     .params("memberId", (String) SPUtils.get(MyApp.getInstance(), "userId", ""))
                     .params("positionLongitude", longitude)
@@ -824,25 +824,25 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
                         flag = 0;
                         showFragment(0);
 
-                        insertPortalAccessLog = "5";
+                        insertportalAccessLog = "5";
                         if (isFive) {
-                            netInsertPortal(insertPortalAccessLog);
+                            netInsertportal(insertportalAccessLog);
                         }
                         break;
                     case R.id.rb_recommend:
                         flag = 1;
                         showFragment(1);
-                        insertPortalAccessLog = "2";
+                        insertportalAccessLog = "2";
                         if (isFind) {
-                            netInsertPortal(insertPortalAccessLog);
+                            netInsertportal(insertportalAccessLog);
                         }
                         break;
                     case R.id.rb_message:
                         if (isLogin) {
                             showFragment(2);
                             flag = 2;
-                            insertPortalAccessLog = "3";
-                            netInsertPortal(insertPortalAccessLog);
+                            insertportalAccessLog = "3";
+                            netInsertportal(insertportalAccessLog);
                         } else {
 
                             switch (flag) {
@@ -870,9 +870,9 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
                     case R.id.rb_shopping:
                         flag = 3;
                         showFragment(3);
-                        insertPortalAccessLog = "4";
+                        insertportalAccessLog = "4";
                         if (isService) {
-                            netInsertPortal(insertPortalAccessLog);
+                            netInsertportal(insertportalAccessLog);
                         }
                         break;
                     case R.id.rb_my:
@@ -880,9 +880,9 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
                         if (isLogin) {
                             showFragment(4);
                             flag = 4;
-                            insertPortalAccessLog = "5";
+                            insertportalAccessLog = "5";
                             if (isMy) {
-                                netInsertPortal(insertPortalAccessLog);
+                                netInsertportal(insertportalAccessLog);
                             }
                         } else {
                             //mainRadioGroup.check(R.id.rb_home_page);
@@ -1018,16 +1018,16 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
     /**
      * 第一次进入统计四大模块是否点击
      *
-     * @param insertPortalAccessLog
+     * @param insertportalAccessLog
      */
     BaseBean baseBean;
 
-    private void netInsertPortal(final String insertPortalAccessLog) {
+    private void netInsertportal(final String insertportalAccessLog) {
         String imei = MobileInfoUtils.getIMEI(this);
         OkGo.<String>post(UrlRes.HOME_URL + UrlRes.Four_Modules)
                 .params("portalAccessLogMemberId", (String) SPUtils.get(getInstance(), "userId", ""))
                 .params("portalAccessLogEquipmentId", imei)//设备ID
-                .params("portalAccessLogTarget", insertPortalAccessLog)//访问目标
+                .params("portalAccessLogTarget", insertportalAccessLog)//访问目标
                 .params("portalAccessLogVersionNumber", (String) SPUtils.get(getApplicationContext(), "versionName", ""))//版本号
                 .params("portalAccessLogOperatingSystem", "ANDROID")//版本号
                 .execute(new StringCallback() {
@@ -1037,15 +1037,15 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
                         if (null != response.body()) {
                             baseBean = JSON.parseObject(response.body(), BaseBean.class);
                             if (baseBean.isSuccess()) {
-                                if (insertPortalAccessLog.equals("1")) {
+                                if (insertportalAccessLog.equals("1")) {
                                     isHome = false;
-                                } else if (insertPortalAccessLog.equals("2")) {
+                                } else if (insertportalAccessLog.equals("2")) {
                                     isFind = false;
-                                } else if (insertPortalAccessLog.equals("3")) {
+                                } else if (insertportalAccessLog.equals("3")) {
                                     isService = false;
-                                } else if (insertPortalAccessLog.equals("4")) {
+                                } else if (insertportalAccessLog.equals("4")) {
                                     isMy = false;
-                                } else if (insertPortalAccessLog.equals("5")) {
+                                } else if (insertportalAccessLog.equals("5")) {
                                     isFive = false;
                                 }
                             }
@@ -1215,9 +1215,9 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
                         Log.e("ss", response.body());
 
                         UpdateBean updateBean = JSON.parseObject(response.body(), UpdateBean.class);
-                        String portalVersionNumber = updateBean.getObj().getPortalVersionNumber();
-                        int portalVersionUpdate = updateBean.getObj().getPortalVersionUpdate();
-                        String portalVersionDownloadAdress = updateBean.getObj().getPortalVersionDownloadAdress();
+                        String portalVersionNumber = updateBean.getObj().getportalVersionNumber();
+                        int portalVersionUpdate = updateBean.getObj().getportalVersionUpdate();
+                        String portalVersionDownloadAdress = updateBean.getObj().getportalVersionDownloadAdress();
                         logShow(portalVersionUpdate, portalVersionDownloadAdress, portalVersionNumber);
 
                     }
