@@ -180,6 +180,7 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
     protected void initView() {
         super.initView();
         //测试修改提交git
+        //
         Drawable drawableFirst = getResources().getDrawable(R.drawable.tab_home_page);
         drawableFirst.setBounds(0, 0, 69, 69);
         rb_home_page.setCompoundDrawables(null, drawableFirst, null, null);
