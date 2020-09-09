@@ -80,4 +80,5 @@
     <color name="app_theme_color">#0396ff</color>
     <color name="vtran">#60000000</color>
     <color name="touming">#00000000</color>
+    <color name="btn3">#CE413A</color>
 </resources>

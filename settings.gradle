@@ -1,1 +1,1 @@
-include ':app', ':libzxing', ':swipebacklibrary', ':ShortcutBadger'
+include ':app', ':libzxing', ':swipebacklibrary', ':ShortcutBadger', ':cardview'

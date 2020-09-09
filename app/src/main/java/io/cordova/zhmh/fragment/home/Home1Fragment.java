@@ -14,6 +14,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.View;
@@ -50,9 +51,11 @@ import java.util.List;
 import java.util.Map;
 
 
+import butterknife.BindView;
 import io.cordova.zhmh.R;
 import io.cordova.zhmh.UrlRes;
 import io.cordova.zhmh.activity.LoginActivity2;
+import io.cordova.zhmh.adapter.HomeTuiJianAdapter;
 import io.cordova.zhmh.bean.BannerBean;
 import io.cordova.zhmh.bean.ItemNewsBean;
 import io.cordova.zhmh.bean.MyCollectionBean;
@@ -105,6 +108,16 @@ public class Home1Fragment extends BaseFragment implements PermissionsUtil.IPerm
     TextView tv_title;
     String userId;
     private int flag = 0;
+
+
+    RecyclerView rc_tuijian;
+
+    private LinearLayoutManager mLinearLayoutManager;
+
+    private HomeTuiJianAdapter homeTuiJianAdapter;
+
+    private List<String> listsTuijian = new ArrayList<>();
+
     @Override
     protected int getLayoutResource() {
         return R.layout.fragment_first;
@@ -123,6 +136,9 @@ public class Home1Fragment extends BaseFragment implements PermissionsUtil.IPerm
         myDataList = view.findViewById(R.id.my_collection_list);
         iv_qr = view.findViewById(R.id.iv_qr);
         tv_title = view.findViewById(R.id.tv_title);
+        rc_tuijian = view.findViewById(R.id.rc_tuijian);
+        mLinearLayoutManager = new LinearLayoutManager(getActivity(), LinearLayout.HORIZONTAL,false);
+        rc_tuijian.setLayoutManager(mLinearLayoutManager);
         getBannerData();
 
         userId = (String) SPUtils.get(MyApp.getInstance(), "userId", "");
@@ -164,6 +180,15 @@ public class Home1Fragment extends BaseFragment implements PermissionsUtil.IPerm
         });
         registerBoradcastReceiver();
 
+        initHomeTuiJianData();
+    }
+
+    private void initHomeTuiJianData() {
+        for (int i = 0; i < 3; i++) {
+            listsTuijian.add("测试");
+        }
+        homeTuiJianAdapter = new HomeTuiJianAdapter(getActivity(),R.layout.itme_home_tuijian,listsTuijian);
+        rc_tuijian.setAdapter(homeTuiJianAdapter);
     }
 
     @Override
@@ -800,7 +825,6 @@ public class Home1Fragment extends BaseFragment implements PermissionsUtil.IPerm
 
     public void onScanQR() {
         isLogin = !StringUtils.isEmpty((String)SPUtils.get(MyApp.getInstance(),"username",""));
-        //Log.e("tag  = ","点击了");
         QRCodeManager.getInstance()
                 .with(getActivity())
                 .setReqeustType(0)
@@ -808,8 +832,6 @@ public class Home1Fragment extends BaseFragment implements PermissionsUtil.IPerm
                 .scanningQRCode(new OnQRCodeListener() {
                     @Override
                     public void onCompleted(String result) {
-                        //controlLog.append("\n\n(结果)" + result);
-                        //Log.e("QRCodeManager = ",result);
                         if(!isLogin){
                             Intent intent = new Intent(MyApp.getInstance(), LoginActivity2.class);
                             startActivity(intent);

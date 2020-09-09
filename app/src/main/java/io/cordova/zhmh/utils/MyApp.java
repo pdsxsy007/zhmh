@@ -74,7 +74,7 @@ public class MyApp extends Application {
         JVerificationInterface.init(instance);
 
 
-        Cockroach.install(new Cockroach.ExceptionHandler() {
+       /* Cockroach.install(new Cockroach.ExceptionHandler() {
 
             // handlerException内部建议手动try{  你的异常处理逻辑  }catch(Throwable e){ } ，以防handlerException内部再次抛出异常，导致循环调用handlerException
 
@@ -94,7 +94,7 @@ public class MyApp extends Application {
                 });
             }
         });
-
+*/
    }
 
 

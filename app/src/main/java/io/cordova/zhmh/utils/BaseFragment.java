@@ -2,14 +2,17 @@ package io.cordova.zhmh.utils;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.gyf.immersionbar.ImmersionBar;
 import com.lzy.okgo.OkGo;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
+import io.cordova.zhmh.R;
 
 /**
  * Fragment的基类
@@ -19,7 +22,8 @@ import butterknife.ButterKnife;
  * @author wangdh
  */
 public abstract class BaseFragment extends Fragment {
-    public int netStateType = 0;
+    protected Toolbar toolbar;
+    protected View statusBarView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = View.inflate(getActivity(), getLayoutResID(), null);
@@ -27,10 +31,7 @@ public abstract class BaseFragment extends Fragment {
         initView(view);
         initData();
         initListener();
-        /*if (!NetStateUtils.isConnect(getActivity()) ){
-            ToastUtils.showToast(getActivity(),"网络异常!");
-            netStateType = 1;
-        }*/
+        fitsLayoutOverlap();
         return view;
     }
 
@@ -45,6 +46,8 @@ public abstract class BaseFragment extends Fragment {
      * 初始化View
      */
     public void initView(View view){
+        //statusBarView = view.findViewById(R.id.status_bar_view);
+        toolbar = view.findViewById(R.id.toolbar);
 
     }
 
@@ -89,5 +92,13 @@ public abstract class BaseFragment extends Fragment {
         super.onPause();
         MobclickAgent.onPause(getContext());
         OkGo.getInstance().cancelTag(this);
+    }
+
+    private void fitsLayoutOverlap() {
+        if (statusBarView != null) {
+            ImmersionBar.setStatusBarView(this, statusBarView);
+        } else {
+            ImmersionBar.setTitleBar(this, toolbar);
+        }
     }
 }

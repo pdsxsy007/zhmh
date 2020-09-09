@@ -2,13 +2,18 @@ package io.cordova.zhmh.fragment;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.gyf.immersionbar.ImmersionBar;
+
 import butterknife.ButterKnife;
+import io.cordova.zhmh.R;
 
 
 public abstract class BaseFragment extends Fragment {
@@ -22,6 +27,8 @@ public abstract class BaseFragment extends Fragment {
 
     private boolean mIsVisible = false;
 
+    protected Toolbar toolbar;
+    protected View statusBarView;
 
     @Override
     public void setUserVisibleHint(boolean isVisibleToUser) {
@@ -45,6 +52,14 @@ public abstract class BaseFragment extends Fragment {
         initView(rootView);
         ButterKnife.bind(getActivity());
         return rootView;
+    }
+
+    @Override
+    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
+        super.onViewCreated(view, savedInstanceState);
+        //statusBarView = view.findViewById(R.id.status_bar_view);
+        toolbar = view.findViewById(R.id.toolbar);
+        fitsLayoutOverlap();
     }
 
     public boolean onBackPressed() {
@@ -101,5 +116,13 @@ public abstract class BaseFragment extends Fragment {
     @Override
     public void onDestroyView() {
         super.onDestroyView();
+    }
+
+    private void fitsLayoutOverlap() {
+        if (statusBarView != null) {
+            ImmersionBar.setStatusBarView(this, statusBarView);
+        } else {
+            ImmersionBar.setTitleBar(this, toolbar);
+        }
     }
 }

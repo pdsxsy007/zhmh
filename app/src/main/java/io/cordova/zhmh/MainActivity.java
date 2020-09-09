@@ -51,6 +51,7 @@ import com.baidu.location.BDAbstractLocationListener;
 import com.baidu.location.BDLocation;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
+import com.gyf.immersionbar.ImmersionBar;
 import com.jwsd.libzxing.OnQRCodeListener;
 import com.jwsd.libzxing.QRCodeManager;
 import com.lzy.okgo.OkGo;
@@ -179,8 +180,7 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
     @Override
     protected void initView() {
         super.initView();
-        //测试修改提交git
-        //sads
+
         Drawable drawableFirst = getResources().getDrawable(R.drawable.tab_home_page);
         drawableFirst.setBounds(0, 0, 69, 69);
         rb_home_page.setCompoundDrawables(null, drawableFirst, null, null);
@@ -216,6 +216,7 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
 
         mainRadioGroup.check(R.id.rb_home_page);
         showFragment(flag);
+        ImmersionBar.with(MainActivity.this).keyboardEnable(false).statusBarDarkFont(true,1f).navigationBarColor(R.color.btn3).init();
         insertportalAccessLog = "1";
         if (isHome) {
             netInsertportal(insertportalAccessLog);
@@ -224,34 +225,10 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
 
         isOpen();//判断悬浮窗权限
 
-//        getUpdateInfo();
         registerBoradcastReceiver();
 
         getDownLoadType();
-        /*permissionsUtil=  PermissionsUtil
-                .with(this)
-                .requestCode(0)
-                .isDebug(true)//开启log
-                .permissions(PermissionsUtil.Permission.Phone.READ_PHONE_STATE,
-                        PermissionsUtil.Permission.Location.ACCESS_FINE_LOCATION)
-                .request();
 
-
-        String  st = (String)SPUtils.get(this,"showys","");
-        if(st.equals("") || st == null){
-            showDialogs2();
-        }
-
-        String splash = getIntent().getStringExtra("splash");
-
-        if(splash == null){
-            permissionsUtil=  PermissionsUtil
-                    .with(this)
-                    .requestCode(1)
-                    .isDebug(true)//开启log
-                    .permissions(PermissionsUtil.Permission.Camera.CAMERA,PermissionsUtil.Permission.Storage.READ_EXTERNAL_STORAGE,PermissionsUtil.Permission.Storage.WRITE_EXTERNAL_STORAGE)
-                    .request();
-        }*/
 
         String splash =getIntent().getStringExtra("splash");
         String  st = (String)SPUtils.get(this,"showys","");
@@ -823,8 +800,9 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
                 switch (checkedId) {
                     case R.id.rb_home_page:
                         flag = 0;
-                        showFragment(0);
 
+                        showFragment(0);
+                        //ImmersionBar.with(MainActivity.this).keyboardEnable(false).statusBarDarkFont(true).navigationBarColor(R.color.btn3).init();
                         insertportalAccessLog = "5";
                         if (isFive) {
                             netInsertportal(insertportalAccessLog);
@@ -879,7 +857,9 @@ public class MainActivity extends BaseActivity3 implements PermissionsUtil.IPerm
                     case R.id.rb_my:
                         //if (isLogin && NetStateUtils.isConnect(getApplicationContext())){
                         if (isLogin) {
+
                             showFragment(4);
+                            ImmersionBar.with(MainActivity.this).keyboardEnable(false).statusBarDarkFont(true).navigationBarColor(R.color.btn3).init();
                             flag = 4;
                             insertportalAccessLog = "5";
                             if (isMy) {

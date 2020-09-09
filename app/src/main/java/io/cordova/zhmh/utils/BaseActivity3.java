@@ -5,10 +5,12 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
+import com.gyf.immersionbar.ImmersionBar;
 import com.lzy.okgo.OkGo;
 import com.umeng.analytics.MobclickAgent;
 
 import butterknife.ButterKnife;
+import io.cordova.zhmh.R;
 
 
 /**
@@ -40,6 +42,7 @@ public abstract class BaseActivity3 extends AppCompatActivity {
      * 初始化通知栏
      */
     protected void initSystemBar() {
+        ImmersionBar.with(this).navigationBarColor(R.color.colorPrimary).init();
     }
 
     /**

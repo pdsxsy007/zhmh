@@ -1,0 +1,31 @@
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:left="3dp"
+        android:top="3dp">
+        <shape android:shape="rectangle">
+
+            <solid android:color="#ffffff" />
+            <!-- <stroke android:width="1dp" android:color="#808080"/>-->
+            <corners android:radius="20dp" />
+            <stroke
+                android:width="0.7dp"
+                android:color="#F3F5F8" />
+        </shape>
+    </item>
+    <!-- 第二层 下部和有部偏移一定距离-->
+    <item
+        android:bottom="3dp"
+        android:right="3dp">
+        <shape android:shape="rectangle">
+
+            <solid android:color="#ffffff" />
+            <!-- <stroke android:width="1dp" android:color="#808080"/>-->
+            <corners android:radius="20dp" />
+            <stroke
+                android:width="0.33dp"
+                android:color="#F3F5F8" />
+        </shape>
+    </item>
+
+
+</layer-list>

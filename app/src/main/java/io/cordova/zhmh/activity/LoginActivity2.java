@@ -91,7 +91,7 @@ import static io.cordova.zhmh.utils.AesEncryptUtile.key;
 
 
 /**
- * Created by Administrator on 2018/11/15 0015.
+ * 主登录页面
  */
 
 public class LoginActivity2 extends LoginBaseActivity implements GestureDetector.OnGestureListener,PermissionsUtil.IPermissionsCallback{
